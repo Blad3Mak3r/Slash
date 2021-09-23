@@ -30,3 +30,9 @@ dependencies {
     api("ch.qos.logback:logback-classic:$logbackVersion")
     api("io.sentry:sentry:$sentryVersion")
 }
+
+tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        this.kotlinOptions.jvmTarget = "11"
+    }
+}
