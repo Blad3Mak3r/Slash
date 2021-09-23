@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "tv.blademaker"
-version = "1.1"
+version = "1.2"
 
 val jdaVersion = "4.3.0_310"
 val coroutinesVersion = "1.5.1"
