@@ -15,6 +15,7 @@ val sentryVersion = "5.1.2"
 repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
+    maven("https://jitpack.io")
 }
 
 dependencies {
