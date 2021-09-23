@@ -67,7 +67,7 @@ abstract class BaseSlashCommand(val commandName: String) {
         handle(ctx)
     }
 
-    internal open suspend fun handle(ctx: SlashCommandContext) {
+    open suspend fun handle(ctx: SlashCommandContext) {
         ctx.reply("Command not implemented.").setEphemeral(true).queue()
     }
 

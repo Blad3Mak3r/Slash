@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "tv.blademaker"
-version = "1.0"
+version = "1.1"
 
 val jdaVersion = "4.3.0_310"
 val coroutinesVersion = "1.5.1"
@@ -35,5 +35,26 @@ dependencies {
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         this.kotlinOptions.jvmTarget = "11"
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Blad3Mak3r/Slash")
+
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        register<MavenPublication>("grp") {
+            artifactId = "slash"
+            from(components["java"])
+        }
     }
 }
