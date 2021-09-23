@@ -61,7 +61,7 @@ internal object SlashUtils {
     internal fun captureSlashCommandException(ctx: SlashCommandContext, e: Throwable, logger: Logger? = null) {
         val message = "Exception executing handler for `${ctx.event.commandPath}` -> **${e.message}**"
 
-        if (ctx.event.isAcknowledged) ctx.send(message).setEphemeral(true).queue()
+        if (ctx.event.isAcknowledged) ctx.sendMessage(message).setEphemeral(true).queue()
         else ctx.reply(message).setEphemeral(true).queue()
 
         val errorMessage = "Exception executing handler for ${ctx.event.commandPath}, ${e.message}"
