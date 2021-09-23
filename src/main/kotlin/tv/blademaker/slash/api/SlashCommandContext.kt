@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 
+@Suppress("unused")
 open class SlashCommandContext(
     val event: SlashCommandEvent
 ) {
@@ -49,15 +50,17 @@ open class SlashCommandContext(
 
     fun getOption(name: String) = event.getOption(name)
 
+    // Replies
+
     fun reply(content: String) = event.reply(content)
 
-    fun reply(embed: MessageEmbed) = event.replyEmbeds(embed)
-
-    fun replyMessage(builder: MessageBuilder.() -> Unit): ReplyAction {
+    fun reply(builder: MessageBuilder.() -> Unit): ReplyAction {
         val message = MessageBuilder().apply(builder).build()
 
         return event.reply(message)
     }
+
+    fun replyEmbed(embed: MessageEmbed) = event.replyEmbeds(embed)
 
     fun replyEmbed(builder: EmbedBuilder.() -> Unit): ReplyAction {
         val embed = EmbedBuilder()
@@ -66,11 +69,21 @@ open class SlashCommandContext(
         return event.replyEmbeds(embed)
     }
 
-    fun send(content: String) = hook.sendMessage(content)
+    // Followup messages
 
-    fun send(embed: MessageEmbed) = hook.sendMessageEmbeds(embed)
+    fun sendMessage(content: String) = hook.sendMessage(content)
 
-    fun send(embedBuilder: EmbedBuilder) = hook.sendMessageEmbeds(embedBuilder.build())
+    fun sendMessage(messageBuilder: MessageBuilder) = hook.sendMessage(messageBuilder.build())
+
+    fun sendMessage(builder: MessageBuilder.() -> Unit): WebhookMessageAction<Message> {
+        val message = MessageBuilder().apply(builder).build()
+
+        return hook.sendMessage(message)
+    }
+
+    fun sendEmbed(embed: MessageEmbed) = hook.sendMessageEmbeds(embed)
+
+    fun sendEmbed(embedBuilder: EmbedBuilder) = hook.sendMessageEmbeds(embedBuilder.build())
 
     open fun sendEmbed(builder: EmbedBuilder.() -> Unit): WebhookMessageAction<Message> {
         val embed = EmbedBuilder()

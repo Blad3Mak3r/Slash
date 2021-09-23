@@ -25,6 +25,16 @@ abstract class BaseSlashCommand(val commandName: String) {
         return checks.all { it.test(ctx) }
     }
 
+    fun addChecks(check: Predicate<SlashCommandContext>) {
+        if (checks.contains(check)) error("Check already registered.")
+        checks.add(check)
+    }
+
+    fun removeChecks(check: Predicate<SlashCommandContext>) {
+        if (!checks.contains(check)) error("Check is not registered.")
+        checks.remove(check)
+    }
+
     private suspend fun handleSubCommand(ctx: SlashCommandContext): Boolean {
         val subCommandGroup = ctx.event.subcommandGroup
 
