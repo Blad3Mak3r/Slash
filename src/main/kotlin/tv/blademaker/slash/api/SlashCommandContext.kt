@@ -11,9 +11,9 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 
 @Suppress("unused")
-open class SlashCommandContext(
+interface SlashCommandContext {
+
     val event: SlashCommandEvent
-) {
 
     val isAcknowledged: Boolean
         get() = event.isAcknowledged
@@ -85,7 +85,7 @@ open class SlashCommandContext(
 
     fun sendEmbed(embedBuilder: EmbedBuilder) = hook.sendMessageEmbeds(embedBuilder.build())
 
-    open fun sendEmbed(builder: EmbedBuilder.() -> Unit): WebhookMessageAction<Message> {
+    fun sendEmbed(builder: EmbedBuilder.() -> Unit): WebhookMessageAction<Message> {
         val embed = EmbedBuilder()
             .apply(builder).build()
 

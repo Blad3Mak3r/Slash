@@ -24,12 +24,16 @@ class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, Corou
         launch { handleSuspend(event) }
     }
 
+    override fun createContext(event: SlashCommandEvent): SlashCommandContext {
+        return SlashCommandContextImpl(event)
+    }
+
     private suspend fun handleSuspend(event: SlashCommandEvent) {
         if (!event.isFromGuild)
             return event.reply("This command is not supported outside a guild.").queue()
 
         val command = getCommand(event.name) ?: return
-        val context = SlashCommandContext(event)
+        val context = createContext(event)
 
         logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
 
