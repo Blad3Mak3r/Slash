@@ -1,5 +1,6 @@
 package tv.blademaker.slash.api
 
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.api.annotations.Permissions
 import tv.blademaker.slash.api.annotations.SlashCommandOption
@@ -20,7 +21,7 @@ abstract class BaseSlashCommand(val commandName: String) {
         .filter { it.hasAnnotation<SlashCommandOption>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
         .map { SubCommand(it) }
 
-    private suspend fun doChecks(ctx: SlashCommandContext): Boolean {
+    private suspend fun <T : SlashCommandContext> doChecks(ctx: T): Boolean {
         if (checks.isEmpty()) return true
         return checks.all { it.test(ctx) }
     }
@@ -35,7 +36,7 @@ abstract class BaseSlashCommand(val commandName: String) {
         checks.remove(check)
     }
 
-    private suspend fun handleSubCommand(ctx: SlashCommandContext): Boolean {
+    private suspend fun <T : SlashCommandContext> handleSubCommand(ctx: T): Boolean {
         val subCommandGroup = ctx.event.subcommandGroup
 
         val subCommandName = ctx.event.subcommandName
@@ -70,14 +71,14 @@ abstract class BaseSlashCommand(val commandName: String) {
         }
     }
 
-    open suspend fun execute(ctx: SlashCommandContext) {
+    open suspend fun <T : SlashCommandContext> execute(ctx: T) {
         if (!doChecks(ctx)) return
         if (handleSubCommand(ctx)) return
 
         handle(ctx)
     }
 
-    open suspend fun handle(ctx: SlashCommandContext) {
+    open suspend fun <T : SlashCommandContext> handle(ctx: T) {
         ctx.reply("Command not implemented.").setEphemeral(true).queue()
     }
 
