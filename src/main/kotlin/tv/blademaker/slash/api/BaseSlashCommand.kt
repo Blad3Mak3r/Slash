@@ -20,7 +20,7 @@ abstract class BaseSlashCommand(val commandName: String) {
         .filter { it.hasAnnotation<SlashCommandOption>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
         .map { SubCommand(it) }
 
-    private fun doChecks(ctx: SlashCommandContext): Boolean {
+    private suspend fun doChecks(ctx: SlashCommandContext): Boolean {
         if (checks.isEmpty()) return true
         return checks.all { it.test(ctx) }
     }
