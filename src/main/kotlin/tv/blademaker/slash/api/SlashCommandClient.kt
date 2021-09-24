@@ -14,7 +14,5 @@ interface SlashCommandClient : EventListener {
 
     fun onSlashCommandEvent(event: SlashCommandEvent)
 
-    fun createContext(event: SlashCommandEvent): SlashCommandContext
-
     fun getCommand(name: String) = registry.firstOrNull { it.commandName.equals(name, true) }
 }

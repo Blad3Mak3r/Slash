@@ -11,7 +11,7 @@ import tv.blademaker.slash.internal.newCoroutineDispatcher
 import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
-class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, CoroutineScope {
+open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, CoroutineScope {
 
     private val dispatcher = newCoroutineDispatcher("slash-commands-worker-%s", 2, 50)
 
@@ -24,7 +24,7 @@ class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, Corou
         launch { handleSuspend(event) }
     }
 
-    override fun createContext(event: SlashCommandEvent): SlashCommandContext {
+    open suspend fun createContext(event: SlashCommandEvent, command: BaseSlashCommand): SlashCommandContext {
         return SlashCommandContextImpl(event)
     }
 
@@ -33,7 +33,7 @@ class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, Corou
             return event.reply("This command is not supported outside a guild.").queue()
 
         val command = getCommand(event.name) ?: return
-        val context = createContext(event)
+        val context = createContext(event, command)
 
         logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
 
