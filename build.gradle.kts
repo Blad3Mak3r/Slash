@@ -12,6 +12,7 @@ version = "1.2.9"
 val jdaVersion = "4.3.0_310"
 val coroutinesVersion = "1.5.1"
 val logbackVersion = "1.2.5"
+val prometheusVersion = "0.12.0"
 val sentryVersion = "5.4.0"
 
 repositories {
@@ -32,6 +33,8 @@ dependencies {
     api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
     api("ch.qos.logback:logback-classic:$logbackVersion")
     api("io.sentry:sentry:$sentryVersion")
+
+    api("io.prometheus:simpleclient:$prometheusVersion")
 }
 
 tasks {
