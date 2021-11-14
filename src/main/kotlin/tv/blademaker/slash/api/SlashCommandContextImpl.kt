@@ -9,4 +9,9 @@ class SlashCommandContextImpl(override val event: SlashCommandEvent) : SlashComm
     fun getExtra(): Any? {
         return extra.get()
     }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun setExtra(obj: Any? = null) {
+        this.setExtra(obj)
+    }
 }
