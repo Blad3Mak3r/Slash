@@ -92,6 +92,6 @@ interface SlashCommandContext {
 
         return hook.sendMessageEmbeds(embed)
     }
-    
-    var extra: AtomicReference<Any>
+
+    var extra: AtomicReference<Any?>
 }
