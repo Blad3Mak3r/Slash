@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
+import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("unused")
 interface SlashCommandContext {
@@ -91,4 +92,6 @@ interface SlashCommandContext {
 
         return hook.sendMessageEmbeds(embed)
     }
+    
+    var extra: AtomicReference<Any>
 }
