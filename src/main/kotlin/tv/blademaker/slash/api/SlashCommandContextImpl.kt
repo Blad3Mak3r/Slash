@@ -5,13 +5,4 @@ import java.util.concurrent.atomic.AtomicReference
 
 class SlashCommandContextImpl(override val event: SlashCommandEvent) : SlashCommandContext {
     override var extra: AtomicReference<Any?> = AtomicReference(null)
-
-    fun getExtra(): Any? {
-        return extra.get()
-    }
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun setExtra(obj: Any? = null) {
-        this.extra.set(obj)
-    }
 }
