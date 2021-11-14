@@ -12,7 +12,7 @@ version = "1.2.9"
 val jdaVersion = "4.3.0_310"
 val coroutinesVersion = "1.5.1"
 val logbackVersion = "1.2.5"
-val sentryVersion = "5.1.2"
+val sentryVersion = "5.4.0"
 
 repositories {
     mavenCentral()
