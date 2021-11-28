@@ -39,8 +39,12 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
 
         try {
             command.execute(context)
+            Metrics.incSuccessCommand(event)
         } catch (e: Exception) {
             SlashUtils.captureSlashCommandException(context, e, logger)
+            Metrics.incFailedCommand(event)
+        } finally {
+            Metrics.incHandledCommand(event)
         }
     }
 

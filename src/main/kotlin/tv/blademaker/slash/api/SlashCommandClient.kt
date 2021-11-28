@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.EventListener
 
+@Suppress("unused")
 interface SlashCommandClient : EventListener {
 
     val registry: List<BaseSlashCommand>
@@ -15,4 +16,8 @@ interface SlashCommandClient : EventListener {
     fun onSlashCommandEvent(event: SlashCommandEvent)
 
     fun getCommand(name: String) = registry.firstOrNull { it.commandName.equals(name, true) }
+
+    fun registerMetrics() {
+        Metrics.register()
+    }
 }
