@@ -1,11 +1,10 @@
 package tv.blademaker.slash.api
 
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.api.annotations.Permissions
 import tv.blademaker.slash.api.annotations.SlashCommandOption
+import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.internal.SlashUtils
-import java.util.function.Predicate
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.callSuspend
@@ -15,7 +14,7 @@ import kotlin.reflect.full.hasAnnotation
 
 abstract class BaseSlashCommand(val commandName: String) {
 
-    private val checks: MutableList<Predicate<SlashCommandContext>> = mutableListOf()
+    private val checks: MutableList<CommandExecutionCheck> = mutableListOf()
 
     private val subCommands: List<SubCommand> = this::class.functions
         .filter { it.hasAnnotation<SlashCommandOption>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
@@ -23,17 +22,34 @@ abstract class BaseSlashCommand(val commandName: String) {
 
     private suspend fun doChecks(ctx: SlashCommandContext): Boolean {
         if (checks.isEmpty()) return true
-        return checks.all { it.test(ctx) }
+        return checks.all { it(ctx) }
     }
 
-    fun addChecks(check: Predicate<SlashCommandContext>) {
+    @Suppress("unused")
+    fun addCheck(check: CommandExecutionCheck) {
         if (checks.contains(check)) error("Check already registered.")
         checks.add(check)
     }
 
-    fun removeChecks(check: Predicate<SlashCommandContext>) {
+
+    @Suppress("unused")
+    fun addChecks(checks: Collection<CommandExecutionCheck>) {
+        for (check in checks) {
+            addCheck(check)
+        }
+    }
+
+    @Suppress("unused")
+    fun removeCheck(check: CommandExecutionCheck) {
         if (!checks.contains(check)) error("Check is not registered.")
         checks.remove(check)
+    }
+
+    @Suppress("unused")
+    fun removeChecks(checks: Collection<CommandExecutionCheck>) {
+        for (check in checks) {
+            removeCheck(check)
+        }
     }
 
     private suspend fun handleSubCommand(ctx: SlashCommandContext): Boolean {
