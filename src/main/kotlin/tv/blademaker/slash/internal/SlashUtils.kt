@@ -20,10 +20,10 @@ import tv.blademaker.slash.api.SlashCommandContext
 import tv.blademaker.slash.api.annotations.Permissions
 import java.lang.reflect.Modifier
 
-internal object SlashUtils {
+object SlashUtils {
     private val LOGGER = LoggerFactory.getLogger(SlashUtils::class.java)
 
-    enum class PermissionTarget {
+    private enum class PermissionTarget {
         BOT, USER;
     }
 
@@ -82,7 +82,7 @@ internal object SlashUtils {
                 this.others = mapOf("type" to userType)
             }
             this.setExtra("Guild", "${ctx.guild.name} (${ctx.guild.id})")
-            this.setExtra("Command Path", ctx.event.commandPath)
+            this.setExtra("Command Path", ctx.event.commandString)
             throwable = e
         })
 
@@ -108,7 +108,7 @@ internal object SlashUtils {
         }.setEphemeral(true).queue()
     }
 
-    internal fun discoverSlashCommands(packageName: String): List<BaseSlashCommand> {
+    fun discoverSlashCommands(packageName: String): List<BaseSlashCommand> {
         val classes = Reflections(packageName, SubTypesScanner())
             .getSubTypesOf(BaseSlashCommand::class.java)
             .filter { !Modifier.isAbstract(it.modifiers) && BaseSlashCommand::class.java.isAssignableFrom(it) }
