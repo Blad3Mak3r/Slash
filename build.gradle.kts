@@ -7,13 +7,13 @@ plugins {
 }
 
 group = "tv.blademaker"
-version = "1.2.10"
+version = "1.3.0"
 
-val jdaVersion = "4.3.0_310"
-val coroutinesVersion = "1.5.1"
+val jdaVersion = "4.4.0_350"
+val coroutinesVersion = "1.5.2"
 val logbackVersion = "1.2.5"
 val prometheusVersion = "0.12.0"
-val sentryVersion = "5.4.0"
+val sentryVersion = "5.4.2"
 
 repositories {
     mavenCentral()
