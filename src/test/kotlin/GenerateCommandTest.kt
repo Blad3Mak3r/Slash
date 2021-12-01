@@ -7,28 +7,33 @@ class GenerateCommandTest {
 
     class CustomCommand : BaseSlashCommand("test") {
 
+        @Suppress("unused")
         @SlashCommandOption(group = "group1", name = "option1")
-        fun group1Option1(ctx: SlashCommandContext) {
+        fun group1Option1() {
 
         }
 
+        @Suppress("unused")
         @SlashCommandOption(group = "group1", name = "option2")
-        fun group1Option2(ctx: SlashCommandContext) {
+        fun group1Option2() {
 
         }
 
+        @Suppress("unused")
         @SlashCommandOption(group = "group2", name = "option1")
-        fun group2Option1(ctx: SlashCommandContext) {
+        fun group2Option1() {
 
         }
 
+        @Suppress("unused")
         @SlashCommandOption(group = "group2", name = "option2")
-        fun group2Option2(ctx: SlashCommandContext) {
+        fun group2Option2() {
 
         }
 
+        @Suppress("unused")
         @SlashCommandOption(name = "optionNoGroup")
-        fun optionNoGroup(ctx: SlashCommandContext) {
+        fun optionNoGroup() {
 
         }
 
