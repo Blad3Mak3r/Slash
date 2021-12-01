@@ -1,18 +1,19 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.6.0"
 
     `maven-publish`
 }
 
 group = "tv.blademaker"
-version = "1.3.0"
+version = "1.3.1"
 
 val jdaVersion = "4.4.0_350"
 val coroutinesVersion = "1.5.2"
-val logbackVersion = "1.2.5"
+val slf4jApi = "1.7.32"
 val prometheusVersion = "0.12.0"
+val reflectionsVersion = "0.10.2"
 val sentryVersion = "5.4.2"
 
 repositories {
@@ -22,16 +23,16 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib", "1.5.30"))
-    implementation(kotlin("reflect", "1.5.30"))
+    implementation(kotlin("stdlib", "1.6.0"))
+    implementation(kotlin("reflect", "1.6.0"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
 
-    implementation("org.reflections:reflections:0.9.12")
+    api("org.reflections:reflections:$reflectionsVersion")
 
     api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
-    api("ch.qos.logback:logback-classic:$logbackVersion")
+    api("org.slf4j:slf4j-api:$slf4jApi")
     api("io.sentry:sentry:$sentryVersion")
 
     api("io.prometheus:simpleclient:$prometheusVersion")
