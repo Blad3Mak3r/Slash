@@ -36,6 +36,8 @@ dependencies {
     api("io.sentry:sentry:$sentryVersion")
 
     api("io.prometheus:simpleclient:$prometheusVersion")
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 tasks {

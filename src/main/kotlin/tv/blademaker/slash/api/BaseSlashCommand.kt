@@ -20,6 +20,9 @@ abstract class BaseSlashCommand(val commandName: String) {
         .filter { it.hasAnnotation<SlashCommandOption>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
         .map { SubCommand(it) }
 
+    @Suppress("unused")
+    val paths: List<String> by lazy { generatePathForCommand(this) }
+
     private suspend fun doChecks(ctx: SlashCommandContext): Boolean {
         if (checks.isEmpty()) return true
         return checks.all { it(ctx) }
@@ -116,5 +119,17 @@ abstract class BaseSlashCommand(val commandName: String) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(BaseSlashCommand::class.java)
+
+        private fun generatePathForCommand(command: BaseSlashCommand): List<String> {
+            val list = mutableListOf<String>()
+
+            list.add(command.commandName)
+
+            command.subCommands.map {
+                if (it.groupName.isNotBlank()) "${command.commandName}/${it.groupName}/${it.name}" else "${command.commandName}/${it.name}"
+            }.forEach { list.add(it) }
+
+            return list.sorted()
+        }
     }
 }
