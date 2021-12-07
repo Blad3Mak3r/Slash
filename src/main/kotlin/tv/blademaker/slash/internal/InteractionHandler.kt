@@ -58,7 +58,7 @@ internal class InteractionHandler(
                     "${kType.classifier} is not a valid type for SlashCommand option: ${function.name}"
                 }
 
-                parametersList.add(FunctionParameter(command, function, name, kType, param.isOptional))
+                parametersList.add(FunctionParameter(command, function, name, kType))
             }
 
             return parametersList

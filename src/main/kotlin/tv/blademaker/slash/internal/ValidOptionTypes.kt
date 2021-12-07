@@ -38,7 +38,5 @@ enum class ValidOptionTypes(
         }
 
         fun get(type: KType) = values().find { it.kClass == type.classifier }
-
-        fun convert(type: KType, option: OptionMapping?) = get(type)?.convert(option) ?: error("Not valid option type")
     }
 }

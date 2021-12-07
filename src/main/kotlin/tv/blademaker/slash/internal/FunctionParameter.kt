@@ -1,5 +1,6 @@
 package tv.blademaker.slash.internal
 
+import org.slf4j.LoggerFactory
 import tv.blademaker.slash.api.BaseSlashCommand
 import tv.blademaker.slash.api.SlashCommandContext
 import kotlin.reflect.KFunction
@@ -9,9 +10,9 @@ internal class FunctionParameter(
     private val command: BaseSlashCommand,
     private val function: KFunction<*>,
     val name: String,
-    private val type: KType,
-    private val isOptional: Boolean
+    private val type: KType
 ) {
+    private val isOptional = type.isMarkedNullable
 
     fun compile(ctx: SlashCommandContext): Any? {
         val eventOption = ctx.getOption(name)
