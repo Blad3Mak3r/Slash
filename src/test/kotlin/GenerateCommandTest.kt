@@ -11,13 +11,13 @@ class GenerateCommandTest {
     object CustomCommand : BaseSlashCommand(DefaultSlashCommandClient(""), "test") {
 
         @SlashCommand
-        fun handle(ctx: SlashCommandContext, @Option("some") some: String) {
+        fun handle(ctx: SlashCommandContext, some: String) {
 
         }
 
 
         @SlashCommand(group = "group1", name = "option1")
-        fun group1Option1(ctx: SlashCommandContext, @Option("channel") channel: VoiceChannel) {
+        fun group1Option1(ctx: SlashCommandContext, channel: VoiceChannel?) {
 
         }
 
