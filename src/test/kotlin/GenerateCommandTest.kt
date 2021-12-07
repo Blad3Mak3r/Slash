@@ -1,20 +1,36 @@
 import net.dv8tion.jda.api.entities.VoiceChannel
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.junit.Test
 import tv.blademaker.slash.api.BaseSlashCommand
 import tv.blademaker.slash.api.DefaultSlashCommandClient
+import tv.blademaker.slash.api.SlashCommandClient
 import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.annotations.Option
 import tv.blademaker.slash.api.annotations.SlashCommand
 
 class GenerateCommandTest {
-    @Suppress("UNUSED_PARAMETER", "unused")
-    object CustomCommand : BaseSlashCommand(DefaultSlashCommandClient(""), "test") {
+
+    object DummySlashCommandClient : SlashCommandClient {
+        override val registry: List<BaseSlashCommand>
+            get() = listOf(
+                BasicCommand,
+                AdvancedCommand
+            )
+
+        override fun onSlashCommandEvent(event: SlashCommandEvent) {
+        }
+    }
+
+    object BasicCommand : BaseSlashCommand(DummySlashCommandClient, "basic") {
 
         @SlashCommand
-        fun handle(ctx: SlashCommandContext, some: String) {
+        fun handle(ctx: SlashCommandContext) {
 
         }
 
+    }
+
+    @Suppress("UNUSED_PARAMETER", "unused")
+    object AdvancedCommand : BaseSlashCommand(DummySlashCommandClient, "advanced") {
 
         @SlashCommand(group = "group1", name = "option1")
         fun group1Option1(ctx: SlashCommandContext, channel: VoiceChannel?) {
@@ -44,18 +60,39 @@ class GenerateCommandTest {
     }
 
     @Test
-    fun `Generate command`() {
-        val command = CustomCommand
+    fun `Test basic command`() {
+        val command = DummySlashCommandClient.getCommand("basic")!!
 
         val paths = command.paths
 
         val expected = listOf(
-            "test",
-            "test/optionNoGroup",
-            "test/group1/option1",
-            "test/group1/option2",
-            "test/group2/option1",
-            "test/group2/option2",
+            "basic"
+        ).sorted()
+
+        println("Command generated paths:")
+        println(paths)
+        println()
+        println("Expected paths:")
+        println(expected)
+        println()
+
+        assert(paths == expected) {
+            "Arrays are not equals"
+        }
+    }
+
+    @Test
+    fun `Test advanced command`() {
+        val command = DummySlashCommandClient.getCommand("advanced")!!
+
+        val paths = command.paths
+
+        val expected = listOf(
+            "advanced/optionNoGroup",
+            "advanced/group1/option1",
+            "advanced/group1/option2",
+            "advanced/group2/option1",
+            "advanced/group2/option2",
         ).sorted()
 
         println("Command generated paths:")

@@ -123,7 +123,20 @@ abstract class BaseSlashCommand(private val commandClient: SlashCommandClient, v
                 finalList.add(handler)
             }
 
+            check(finalList.isNotEmpty()) {
+                "SlashCommand ${command.commandName} does not have registered handlers."
+            }
+
+            checkDefault(command, finalList) {
+                "SlashCommand ${command.commandName} have registered more than 1 handler having a default handler."
+            }
+
             return finalList
+        }
+
+        private fun checkDefault(command: BaseSlashCommand, list: List<InteractionHandler>, lazyMessage: () -> String) {
+            if (list.size <= 1) return
+            if (list.any { it.path == command.commandName }) error(lazyMessage())
         }
     }
 }
