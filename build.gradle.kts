@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.6.0"
 
     `maven-publish`
+    signing
 }
 
 group = "tv.blademaker"
@@ -49,20 +50,61 @@ tasks {
 publishing {
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Blad3Mak3r/Slash")
+            name = "MavenCentral"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
 
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                username = System.getenv("CENTRAL_USER")
+                password = System.getenv("CENTRAL_PASS")
             }
         }
     }
 
     publications {
-        register<MavenPublication>("grp") {
+        create<MavenPublication>("MavenCentral") {
             artifactId = "slash"
+            groupId = project.group as String
+            version = project.version as String
             from(components["java"])
+
+            pom {
+                name.set(project.name)
+                description.set("Advanced Slash Command handler for Discord and JDA")
+                url.set("https://github.com/Blad3Mak3r/Slash")
+                issueManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/Blad3Mak3r/Slash/issues")
+                }
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("https://github.com/Blad3Mak3r/Slash/LICENSE.txt")
+                        distribution.set("repo")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/Blad3Mak3r/Slash")
+                    connection.set("https://github.com/Blad3Mak3r/Slash.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:Blad3Mak3r/Slash.git")
+                }
+                developers {
+                    developer {
+                        name.set("Juan Luis Caro")
+                        url.set("https://github.com/Blad3Mak3r")
+                    }
+                }
+            }
         }
     }
 }
+
+signing {
+    sign(publishing.publications["MavenCentral"])
+}
+
+/*val canSign = getProjectProperty("signing.keyId") != null
+if (canSign) {
+    signing {
+        sign(publishing.publications.getByName("Release"))
+    }
+}*/
