@@ -47,7 +47,7 @@ jobs:
       run: ./gradlew publish -Psigning.keyId=${{ secrets.SIGNING_KEY_ID }} -Psigning.password= -Psigning.secretKeyRingFile=$(echo ~/.gradle/secring.gpg)
       env:
         OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        OSSRH_PASSWORD: ${{ secerts.OSSHR_PASSWORD }}
+        OSSRH_PASSWORD: ${{ secrets.OSSHR_PASSWORD }}
         
     - name: Publish image to GitHub Release
       uses: softprops/action-gh-release@v1
