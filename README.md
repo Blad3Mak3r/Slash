@@ -10,7 +10,7 @@ Slash is a library that works on JDA for a simple implementation of Slash Comman
 Create a command inside the package ``net.example.commands`` called ``PingCommand.kt``:
 
 ```kotlin
-class PingCommand(commandClient: SlashCommandClient) : BaseSlashCommand(commandClient, "ping") {
+class PingCommand : BaseSlashCommand("ping") {
 
     @SlashCommand
     suspend fun default(ctx: SlashCommandContext) {
@@ -33,7 +33,7 @@ class PingCommand(commandClient: SlashCommandClient) : BaseSlashCommand(commandC
 Create a command inside package ``net.example.commands`` called ``RoleCommand.kt``:
 
 ```kotlin
-class RoleCommand(commandClient: SlashCommandClient) : BaseSlashCommand(commandClient, "role") {
+class RoleCommand : BaseSlashCommand("role") {
     
     // The parsed path is role/add
     // This handler required MANAGE_ROLES permission fot both, bot and user who execute the command.
@@ -76,7 +76,7 @@ This command will create 4 handlers with the following user representation:
 Create a command inside package ``net.example.commands`` called ``TwitchCommand.kt``:
 
 ```kotlin
-class TwitchCommand(commandClient: SlashCommandClient) : BaseSlashCommand(commandClient, "twitch") {
+class TwitchCommand : BaseSlashCommand("twitch") {
 
     // The parsed path is twitch/clips/top
     @SlashCommand(group = "clips", name = "top")

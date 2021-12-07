@@ -27,7 +27,7 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
     }
 
     open suspend fun createContext(event: SlashCommandEvent, command: BaseSlashCommand): SlashCommandContext {
-        return SlashCommandContextImpl(event)
+        return SlashCommandContextImpl(this, event)
     }
 
     open fun onPermissionsLackException(ex: PermissionsLackException) {
