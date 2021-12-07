@@ -4,7 +4,7 @@
 ## Info
 Slash is a library that works on JDA for a simple implementation of Slash Commands for Discord.
 
-**This library does not synchronize the commands created with the commands with the commands published in Discord.**
+**This library does not synchronize the commands created with the commands published on Discord.**
 
 ## Basic command
 Create a command inside the package ``net.example.commands`` called ``PingCommand.kt``:
