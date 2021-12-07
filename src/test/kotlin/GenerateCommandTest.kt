@@ -20,7 +20,7 @@ class GenerateCommandTest {
         }
     }
 
-    object BasicCommand : BaseSlashCommand(DummySlashCommandClient, "basic") {
+    object BasicCommand : BaseSlashCommand("basic") {
 
         @SlashCommand
         fun handle(ctx: SlashCommandContext) {
@@ -30,7 +30,7 @@ class GenerateCommandTest {
     }
 
     @Suppress("UNUSED_PARAMETER", "unused")
-    object AdvancedCommand : BaseSlashCommand(DummySlashCommandClient, "advanced") {
+    object AdvancedCommand : BaseSlashCommand("advanced") {
 
         @SlashCommand(group = "group1", name = "option1")
         fun group1Option1(ctx: SlashCommandContext, channel: VoiceChannel?) {

@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicReference
 @Suppress("unused")
 interface SlashCommandContext {
 
+    val commandClient: SlashCommandClient
     val event: SlashCommandEvent
 
     val isAcknowledged: Boolean
