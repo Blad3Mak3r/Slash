@@ -32,19 +32,4 @@ interface SlashCommandClient : EventListener {
     fun withJDA(jda: JDA) {
         jda.addEventListener(this)
     }
-
-    fun onLackOfPermissions(ctx: SlashCommandContext, target: PermissionTarget, permissions: Array<Permission>) {
-        when(target) {
-            PermissionTarget.BOT -> {
-                val perms = permissions.toHuman()
-                ctx.reply("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-            PermissionTarget.USER -> {
-                val perms = permissions.toHuman()
-                ctx.reply("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-        }.setEphemeral(true).queue()
-    }
 }

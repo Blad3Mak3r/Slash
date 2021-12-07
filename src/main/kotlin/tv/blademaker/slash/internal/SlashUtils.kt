@@ -20,6 +20,7 @@ import tv.blademaker.slash.api.PermissionTarget
 import tv.blademaker.slash.api.SlashCommandClient
 import tv.blademaker.slash.api.SlashCommandContext
 import tv.blademaker.slash.api.annotations.Permissions
+import tv.blademaker.slash.api.exceptions.PermissionsLackException
 import java.lang.reflect.Modifier
 
 object SlashUtils {
@@ -29,8 +30,8 @@ object SlashUtils {
         return this.joinToString(if (jump) "\n" else ", ") { it.getName() }
     }
 
-    internal fun hasPermissions(commandClient: SlashCommandClient, ctx: SlashCommandContext, permissions: Permissions?): Boolean {
-        if (permissions == null || permissions.bot.isEmpty() && permissions.user.isEmpty()) return true
+    internal fun checkPermissions(ctx: SlashCommandContext, permissions: Permissions?) {
+        if (permissions == null || permissions.bot.isEmpty() && permissions.user.isEmpty()) return
 
         var member: Member = ctx.member
 
@@ -39,8 +40,7 @@ object SlashUtils {
         var channelPerms = member.hasPermission(ctx.channel, permissions.user.toList())
 
         if (!(guildPerms && channelPerms)) {
-            commandClient.onLackOfPermissions(ctx, PermissionTarget.USER, permissions.user)
-            return false
+            throw PermissionsLackException(ctx, PermissionTarget.USER, permissions.user)
         }
 
         // Check for the bot permissions
@@ -49,11 +49,8 @@ object SlashUtils {
         channelPerms = member.hasPermission(ctx.channel, permissions.bot.toList())
 
         if (!(guildPerms && channelPerms)) {
-            commandClient.onLackOfPermissions(ctx, PermissionTarget.BOT, permissions.bot)
-            return false
+            throw PermissionsLackException(ctx, PermissionTarget.BOT, permissions.bot)
         }
-
-        return true
     }
 
     internal fun captureSlashCommandException(ctx: SlashCommandContext, e: Throwable, logger: Logger? = null) {
@@ -87,7 +84,7 @@ object SlashUtils {
         logger?.error(errorMessage, e)
     }
 
-    fun discoverSlashCommands(client: SlashCommandClient, packageName: String): List<BaseSlashCommand> {
+    fun discoverSlashCommands(packageName: String): List<BaseSlashCommand> {
         val classes = Reflections(packageName, Scanners.SubTypes)
             .getSubTypesOf(BaseSlashCommand::class.java)
             .filter { !Modifier.isAbstract(it.modifiers) && BaseSlashCommand::class.java.isAssignableFrom(it) }
@@ -97,7 +94,7 @@ object SlashUtils {
         val commands = mutableListOf<BaseSlashCommand>()
 
         for (clazz in classes) {
-            val instance = clazz.getDeclaredConstructor(SlashCommandClient::class.java).newInstance(client)
+            val instance = clazz.getDeclaredConstructor().newInstance()
             val commandName = instance.commandName.lowercase()
 
             if (commands.any { it.commandName.equals(commandName, true) }) {
