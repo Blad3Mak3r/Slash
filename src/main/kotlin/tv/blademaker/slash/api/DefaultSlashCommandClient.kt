@@ -6,7 +6,9 @@ import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.slf4j.LoggerFactory
+import tv.blademaker.slash.api.exceptions.PermissionsLackException
 import tv.blademaker.slash.internal.SlashUtils
+import tv.blademaker.slash.internal.SlashUtils.toHuman
 import tv.blademaker.slash.internal.newCoroutineDispatcher
 import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
@@ -18,7 +20,7 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
     override val coroutineContext: CoroutineContext
         get() = dispatcher + Job()
 
-    override val registry by lazy { SlashUtils.discoverSlashCommands(this, packageName) }
+    override val registry = SlashUtils.discoverSlashCommands(packageName)
 
     override fun onSlashCommandEvent(event: SlashCommandEvent) {
         launch { handleSuspend(event) }
@@ -26,6 +28,21 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
 
     open suspend fun createContext(event: SlashCommandEvent, command: BaseSlashCommand): SlashCommandContext {
         return SlashCommandContextImpl(event)
+    }
+
+    open fun onPermissionsLackException(ex: PermissionsLackException) {
+        when(ex.target) {
+            PermissionTarget.BOT -> {
+                val perms = ex.permissions.toHuman()
+                ex.context.reply("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
+                        "\nRequired permissions: **${perms}**.")
+            }
+            PermissionTarget.USER -> {
+                val perms = ex.permissions.toHuman()
+                ex.context.reply("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
+                        "\nRequired permissions: **${perms}**.")
+            }
+        }.setEphemeral(true).queue()
     }
 
     private suspend fun handleSuspend(event: SlashCommandEvent) {
@@ -40,6 +57,9 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         try {
             command.execute(context)
             Metrics.incSuccessCommand(event)
+        } catch (e: PermissionsLackException){
+            onPermissionsLackException(e)
+            Metrics.incFailedCommand(event)
         } catch (e: Exception) {
             SlashUtils.captureSlashCommandException(context, e, logger)
             Metrics.incFailedCommand(event)

@@ -9,7 +9,7 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
-abstract class BaseSlashCommand(private val commandClient: SlashCommandClient, val commandName: String) {
+abstract class BaseSlashCommand(val commandName: String) {
 
     private val checks: MutableList<CommandExecutionCheck> = mutableListOf()
 
@@ -57,7 +57,7 @@ abstract class BaseSlashCommand(private val commandClient: SlashCommandClient, v
             ?: error("No handler found for command path $commandPath")
 
         try {
-            if (!SlashUtils.hasPermissions(commandClient, ctx, handler.permissions)) return
+            SlashUtils.checkPermissions(ctx, handler.permissions)
 
             handler.execute(this, ctx)
         } catch (e: Exception) {
