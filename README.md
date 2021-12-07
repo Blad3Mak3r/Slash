@@ -6,6 +6,14 @@ Slash is a library that works on JDA for a simple implementation of Slash Comman
 
 **This library does not synchronize the commands created with the commands published on Discord.**
 
+## Todo
+- [x] Implement handler for default command.
+- [x] Implement handlers for sub-commands.
+- [x] Implement handlers for sub-commands groups.
+- [ ] Synchronize discord published commands with create commands.
+- [ ] Useful docs.
+- [ ] Be a nice a package :).
+
 ## Basic command
 Create a command inside the package ``net.example.commands`` called ``PingCommand.kt``:
 
