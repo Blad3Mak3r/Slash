@@ -1,27 +1,22 @@
 package tv.blademaker.slash.api
 
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.api.annotations.Permissions
-import tv.blademaker.slash.api.annotations.SlashCommandOption
+import tv.blademaker.slash.api.annotations.SlashCommand
 import tv.blademaker.slash.internal.CommandExecutionCheck
+import tv.blademaker.slash.internal.InteractionHandler
 import tv.blademaker.slash.internal.SlashUtils
-import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.callSuspend
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
-abstract class BaseSlashCommand(val commandName: String) {
+abstract class BaseSlashCommand(private val commandClient: SlashCommandClient, val commandName: String) {
 
     private val checks: MutableList<CommandExecutionCheck> = mutableListOf()
 
-    private val subCommands: List<SubCommand> = this::class.functions
-        .filter { it.hasAnnotation<SlashCommandOption>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
-        .map { SubCommand(it) }
+    private val interactionHandlers: List<InteractionHandler> by lazy { compileInteractionHandlers(this) }
 
     @Suppress("unused")
-    val paths: List<String> by lazy { generatePathForCommand(this) }
+    val paths: List<String> by lazy { interactionHandlers.map { it.path }.sorted() }
 
     private suspend fun doChecks(ctx: SlashCommandContext): Boolean {
         if (checks.isEmpty()) return true
@@ -55,7 +50,22 @@ abstract class BaseSlashCommand(val commandName: String) {
         }
     }
 
-    private suspend fun handleSubCommand(ctx: SlashCommandContext): Boolean {
+    private suspend fun handleInteraction(ctx: SlashCommandContext) {
+        val commandPath = ctx.event.commandPath
+
+        val handler = interactionHandlers.find { it.path == commandPath }
+            ?: error("No handler found for command path $commandPath")
+
+        try {
+            if (!SlashUtils.hasPermissions(commandClient, ctx, handler.permissions)) return
+
+            handler.execute(this, ctx)
+        } catch (e: Exception) {
+            SlashUtils.captureSlashCommandException(ctx, e, log)
+        }
+    }
+
+    /*private suspend fun handleSubCommand(ctx: SlashCommandContext): Boolean {
         val subCommandGroup = ctx.event.subcommandGroup
 
         val subCommandName = ctx.event.subcommandName
@@ -88,48 +98,32 @@ abstract class BaseSlashCommand(val commandName: String) {
             SlashUtils.captureSlashCommandException(ctx, e, logger)
             return false
         }
-    }
+    }*/
 
     open suspend fun execute(ctx: SlashCommandContext) {
         if (!doChecks(ctx)) return
-        if (handleSubCommand(ctx)) return
 
-        handle(ctx)
-    }
-
-    open suspend fun handle(ctx: SlashCommandContext) {
-        ctx.reply("Command not implemented.").setEphemeral(true).queue()
-    }
-
-    class SubCommand private constructor(
-        private val handler: KFunction<*>,
-        private val annotation: SlashCommandOption,
-        val permissions: Permissions?
-    ) {
-        constructor(f: KFunction<*>) : this(f, f.findAnnotation<SlashCommandOption>()!!, f.findAnnotation<Permissions>())
-
-        val name: String
-            get() = annotation.name.takeIf { it.isNotBlank() } ?: handler.name
-
-        val groupName: String
-            get() = annotation.group
-
-        suspend fun execute(instance: BaseSlashCommand, ctx: SlashCommandContext) = handler.callSuspend(instance, ctx)
+        handleInteraction(ctx)
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(BaseSlashCommand::class.java)
+        private val log = LoggerFactory.getLogger(BaseSlashCommand::class.java)
 
-        private fun generatePathForCommand(command: BaseSlashCommand): List<String> {
-            val list = mutableListOf<String>()
+        private fun compileInteractionHandlers(command: BaseSlashCommand): List<InteractionHandler> {
+            val handlers = command::class.functions
+                .filter { it.hasAnnotation<SlashCommand>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+                .map { InteractionHandler(command, it) }
 
-            list.add(command.commandName)
+            val finalList = mutableListOf<InteractionHandler>()
 
-            command.subCommands.map {
-                if (it.groupName.isNotBlank()) "${command.commandName}/${it.groupName}/${it.name}" else "${command.commandName}/${it.name}"
-            }.forEach { list.add(it) }
+            for (handler in handlers) {
+                check(!finalList.any { it.path == handler.path }) {
+                    "Found more than one InteractionHandler for the same path ${handler.path}"
+                }
+                finalList.add(handler)
+            }
 
-            return list.sorted()
+            return finalList
         }
     }
 }

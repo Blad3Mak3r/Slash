@@ -18,7 +18,7 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
     override val coroutineContext: CoroutineContext
         get() = dispatcher + Job()
 
-    override val registry = SlashUtils.discoverSlashCommands(packageName)
+    override val registry by lazy { SlashUtils.discoverSlashCommands(this, packageName) }
 
     override fun onSlashCommandEvent(event: SlashCommandEvent) {
         launch { handleSuspend(event) }

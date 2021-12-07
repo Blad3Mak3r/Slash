@@ -12,10 +12,12 @@ import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.api.BaseSlashCommand
+import tv.blademaker.slash.api.PermissionTarget
+import tv.blademaker.slash.api.SlashCommandClient
 import tv.blademaker.slash.api.SlashCommandContext
 import tv.blademaker.slash.api.annotations.Permissions
 import java.lang.reflect.Modifier
@@ -23,15 +25,11 @@ import java.lang.reflect.Modifier
 object SlashUtils {
     private val LOGGER = LoggerFactory.getLogger(SlashUtils::class.java)
 
-    private enum class PermissionTarget {
-        BOT, USER;
-    }
-
-    private fun Array<Permission>.toHuman(jump: Boolean = false): String {
+    fun Array<Permission>.toHuman(jump: Boolean = false): String {
         return this.joinToString(if (jump) "\n" else ", ") { it.getName() }
     }
 
-    internal fun hasPermissions(ctx: SlashCommandContext, permissions: Permissions?): Boolean {
+    internal fun hasPermissions(commandClient: SlashCommandClient, ctx: SlashCommandContext, permissions: Permissions?): Boolean {
         if (permissions == null || permissions.bot.isEmpty() && permissions.user.isEmpty()) return true
 
         var member: Member = ctx.member
@@ -41,7 +39,7 @@ object SlashUtils {
         var channelPerms = member.hasPermission(ctx.channel, permissions.user.toList())
 
         if (!(guildPerms && channelPerms)) {
-            replyRequiredPermissions(ctx, PermissionTarget.USER, permissions.user)
+            commandClient.onLackOfPermissions(ctx, PermissionTarget.USER, permissions.user)
             return false
         }
 
@@ -51,7 +49,7 @@ object SlashUtils {
         channelPerms = member.hasPermission(ctx.channel, permissions.bot.toList())
 
         if (!(guildPerms && channelPerms)) {
-            replyRequiredPermissions(ctx, PermissionTarget.BOT, permissions.bot)
+            commandClient.onLackOfPermissions(ctx, PermissionTarget.BOT, permissions.bot)
             return false
         }
 
@@ -89,27 +87,8 @@ object SlashUtils {
         logger?.error(errorMessage, e)
     }
 
-    private fun replyRequiredPermissions(
-        ctx: SlashCommandContext,
-        target: PermissionTarget,
-        permissions: Array<Permission>
-    ) {
-        when(target) {
-            PermissionTarget.BOT -> {
-                val perms = permissions.toHuman()
-                ctx.reply("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-            PermissionTarget.USER -> {
-                val perms = permissions.toHuman()
-                ctx.reply("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-        }.setEphemeral(true).queue()
-    }
-
-    fun discoverSlashCommands(packageName: String): List<BaseSlashCommand> {
-        val classes = Reflections(packageName, SubTypesScanner())
+    fun discoverSlashCommands(client: SlashCommandClient, packageName: String): List<BaseSlashCommand> {
+        val classes = Reflections(packageName, Scanners.SubTypes)
             .getSubTypesOf(BaseSlashCommand::class.java)
             .filter { !Modifier.isAbstract(it.modifiers) && BaseSlashCommand::class.java.isAssignableFrom(it) }
 
@@ -118,7 +97,7 @@ object SlashUtils {
         val commands = mutableListOf<BaseSlashCommand>()
 
         for (clazz in classes) {
-            val instance = clazz.getDeclaredConstructor().newInstance()
+            val instance = clazz.getDeclaredConstructor(SlashCommandClient::class.java).newInstance(client)
             val commandName = instance.commandName.lowercase()
 
             if (commands.any { it.commandName.equals(commandName, true) }) {
