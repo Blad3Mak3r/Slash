@@ -1,39 +1,43 @@
+import net.dv8tion.jda.api.entities.VoiceChannel
 import org.junit.Test
 import tv.blademaker.slash.api.BaseSlashCommand
+import tv.blademaker.slash.api.DefaultSlashCommandClient
 import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.annotations.SlashCommandOption
+import tv.blademaker.slash.api.annotations.Option
+import tv.blademaker.slash.api.annotations.SlashCommand
 
 class GenerateCommandTest {
+    @Suppress("UNUSED_PARAMETER", "unused")
+    object CustomCommand : BaseSlashCommand(DefaultSlashCommandClient(""), "test") {
 
-    class CustomCommand : BaseSlashCommand("test") {
-
-        @Suppress("unused")
-        @SlashCommandOption(group = "group1", name = "option1")
-        fun group1Option1() {
-
-        }
-
-        @Suppress("unused")
-        @SlashCommandOption(group = "group1", name = "option2")
-        fun group1Option2() {
+        @SlashCommand
+        fun handle(ctx: SlashCommandContext, @Option("some") some: String) {
 
         }
 
-        @Suppress("unused")
-        @SlashCommandOption(group = "group2", name = "option1")
-        fun group2Option1() {
+
+        @SlashCommand(group = "group1", name = "option1")
+        fun group1Option1(ctx: SlashCommandContext, @Option("channel") channel: VoiceChannel) {
 
         }
 
-        @Suppress("unused")
-        @SlashCommandOption(group = "group2", name = "option2")
-        fun group2Option2() {
+        @SlashCommand(group = "group1", name = "option2")
+        fun group1Option2(ctx: SlashCommandContext) {
 
         }
 
-        @Suppress("unused")
-        @SlashCommandOption(name = "optionNoGroup")
-        fun optionNoGroup() {
+        @SlashCommand(group = "group2", name = "option1")
+        fun group2Option1(ctx: SlashCommandContext) {
+
+        }
+
+        @SlashCommand(group = "group2", name = "option2")
+        fun group2Option2(ctx: SlashCommandContext) {
+
+        }
+
+        @SlashCommand(name = "optionNoGroup")
+        fun optionNoGroup(ctx: SlashCommandContext) {
 
         }
 
@@ -41,7 +45,7 @@ class GenerateCommandTest {
 
     @Test
     fun `Generate command`() {
-        val command = CustomCommand()
+        val command = CustomCommand
 
         val paths = command.paths
 
