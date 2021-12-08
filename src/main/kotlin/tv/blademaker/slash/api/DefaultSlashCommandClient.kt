@@ -10,7 +10,6 @@ import tv.blademaker.slash.api.exceptions.PermissionsLackException
 import tv.blademaker.slash.internal.SlashUtils
 import tv.blademaker.slash.internal.SlashUtils.toHuman
 import tv.blademaker.slash.internal.newCoroutineDispatcher
-import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, CoroutineScope {
@@ -45,6 +44,17 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         }.setEphemeral(true).queue()
     }
 
+    /**
+     * Executed when a command return an exception
+     *
+     * @param context The current [SlashCommandContext]
+     * @param command The command that throw the exception [BaseSlashCommand]
+     * @param ex The threw exception
+     */
+    open fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception) {
+        SlashUtils.captureSlashCommandException(context, ex, logger)
+    }
+
     private suspend fun handleSuspend(event: SlashCommandEvent) {
         if (!event.isFromGuild)
             return event.reply("This command is not supported outside a guild.").queue()
@@ -61,7 +71,7 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
             onPermissionsLackException(e)
             Metrics.incFailedCommand(event)
         } catch (e: Exception) {
-            SlashUtils.captureSlashCommandException(context, e, logger)
+            onGenericException(context, command, e)
             Metrics.incFailedCommand(event)
         } finally {
             Metrics.incHandledCommand(event)
