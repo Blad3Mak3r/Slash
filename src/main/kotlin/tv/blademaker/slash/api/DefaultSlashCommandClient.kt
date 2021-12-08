@@ -68,7 +68,7 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         }
     }
 
-    companion object {
+    private companion object {
         private val logger = LoggerFactory.getLogger(DefaultSlashCommandClient::class.java)
 
         private fun logCommand(guild: Guild, content: String) = logger.info("[\u001b[32m${guild.name}(${guild.id})\u001b[0m] $content")
