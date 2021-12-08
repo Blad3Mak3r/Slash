@@ -2,13 +2,12 @@ package tv.blademaker.slash.internal
 
 import tv.blademaker.slash.api.BaseSlashCommand
 import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.annotations.Option
+import tv.blademaker.slash.api.annotations.OptionName
 import tv.blademaker.slash.api.annotations.Permissions
 import tv.blademaker.slash.api.annotations.SlashCommand
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
 
 internal class InteractionHandler(
     private val command: BaseSlashCommand,
@@ -52,7 +51,7 @@ internal class InteractionHandler(
             val validParams = function.parameters.subList(2, function.parameters.size)
 
             for (param in validParams) {
-                val name = param.name!!
+                val name = param.findAnnotation<OptionName>()?.value ?: param.name!!
                 val kType = param.type
                 check(ValidOptionTypes.isValidType(kType.classifier)) {
                     "${kType.classifier} is not a valid type for SlashCommand option: ${function.name}"
