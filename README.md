@@ -1,6 +1,8 @@
 # Slash
 ### 🚧 This project is currently in active development 🚧
 
+![Maven Central](https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue)
+
 ## Info
 Slash is a library that works on JDA for a simple implementation of Slash Commands for Discord.
 
@@ -132,16 +134,26 @@ the set a custom name for an option.
 
 ``commandClient`` will register ``PingCommand``, ``RoleCommand`` and ``TwitchCommand``.
 
-## Installation
-Maven Central comming soon...
+## Download
+![Maven Central](https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue)
+
+### Gradle
 ```kotlin
 repositories {
-    maven {
-        url = uri("https://maven.pkg.github.com/Blad3Mak3r/Slash")
-        credentials {
-            username = "username"
-            password = "password"
-        }
-    }
+    mavenCentral()
 }
+
+dependencies {
+    implementation("tv.blademaker:slash:VERSION")
+}
+```
+
+### Maven
+```xml
+<dependency>
+    <groupId>tv.blademaker</groupId>
+    <artifactId>slash</artifactId>
+    <version>VERSION</version>
+</dependency>
+        
 ```
