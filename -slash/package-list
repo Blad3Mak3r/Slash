@@ -1,9 +1,9 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 $dokka.location:tv.blademaker.slash.api.annotations////PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/index.html
-$dokka.location:tv.blademaker.slash.api.annotations/Option///PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-option/index.html
-$dokka.location:tv.blademaker.slash.api.annotations/Option/Option/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-option/-option.html
-$dokka.location:tv.blademaker.slash.api.annotations/Option/name/#/PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-option/name.html
+$dokka.location:tv.blademaker.slash.api.annotations/OptionName///PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-option-name/index.html
+$dokka.location:tv.blademaker.slash.api.annotations/OptionName/OptionName/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-option-name/-option-name.html
+$dokka.location:tv.blademaker.slash.api.annotations/OptionName/value/#/PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-option-name/value.html
 $dokka.location:tv.blademaker.slash.api.annotations/Permissions///PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-permissions/index.html
 $dokka.location:tv.blademaker.slash.api.annotations/Permissions/Permissions/#kotlin.Array[net.dv8tion.jda.api.Permission]#kotlin.Array[net.dv8tion.jda.api.Permission]/PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-permissions/-permissions.html
 $dokka.location:tv.blademaker.slash.api.annotations/Permissions/bot/#/PointingToDeclaration/-slash/tv.blademaker.slash.api.annotations/-permissions/bot.html
@@ -19,7 +19,6 @@ $dokka.location:tv.blademaker.slash.api.exceptions/PermissionsLackException/cont
 $dokka.location:tv.blademaker.slash.api.exceptions/PermissionsLackException/permissions/#/PointingToDeclaration/-slash/tv.blademaker.slash.api.exceptions/-permissions-lack-exception/permissions.html
 $dokka.location:tv.blademaker.slash.api.exceptions/PermissionsLackException/target/#/PointingToDeclaration/-slash/tv.blademaker.slash.api.exceptions/-permissions-lack-exception/target.html
 $dokka.location:tv.blademaker.slash.api////PointingToDeclaration/-slash/tv.blademaker.slash.api/index.html
-$dokka.location:tv.blademaker.slash.api/BaseSlashCommand.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.api/-base-slash-command/-companion/index.html
 $dokka.location:tv.blademaker.slash.api/BaseSlashCommand///PointingToDeclaration/-slash/tv.blademaker.slash.api/-base-slash-command/index.html
 $dokka.location:tv.blademaker.slash.api/BaseSlashCommand/BaseSlashCommand/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.api/-base-slash-command/-base-slash-command.html
 $dokka.location:tv.blademaker.slash.api/BaseSlashCommand/addCheck/#kotlin.coroutines.SuspendFunction1[tv.blademaker.slash.api.SlashCommandContext,kotlin.Boolean]/PointingToDeclaration/-slash/tv.blademaker.slash.api/-base-slash-command/add-check.html
@@ -29,11 +28,11 @@ $dokka.location:tv.blademaker.slash.api/BaseSlashCommand/execute/#tv.blademaker.
 $dokka.location:tv.blademaker.slash.api/BaseSlashCommand/paths/#/PointingToDeclaration/-slash/tv.blademaker.slash.api/-base-slash-command/paths.html
 $dokka.location:tv.blademaker.slash.api/BaseSlashCommand/removeCheck/#kotlin.coroutines.SuspendFunction1[tv.blademaker.slash.api.SlashCommandContext,kotlin.Boolean]/PointingToDeclaration/-slash/tv.blademaker.slash.api/-base-slash-command/remove-check.html
 $dokka.location:tv.blademaker.slash.api/BaseSlashCommand/removeChecks/#kotlin.collections.Collection[kotlin.coroutines.SuspendFunction1[tv.blademaker.slash.api.SlashCommandContext,kotlin.Boolean]]/PointingToDeclaration/-slash/tv.blademaker.slash.api/-base-slash-command/remove-checks.html
-$dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/-companion/index.html
 $dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient///PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/index.html
 $dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient/DefaultSlashCommandClient/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/-default-slash-command-client.html
 $dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient/coroutineContext/#/PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/coroutine-context.html
 $dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient/createContext/#net.dv8tion.jda.api.events.interaction.SlashCommandEvent#tv.blademaker.slash.api.BaseSlashCommand/PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/create-context.html
+$dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient/onGenericException/#tv.blademaker.slash.api.SlashCommandContext#tv.blademaker.slash.api.BaseSlashCommand#java.lang.Exception/PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/on-generic-exception.html
 $dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient/onPermissionsLackException/#tv.blademaker.slash.api.exceptions.PermissionsLackException/PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/on-permissions-lack-exception.html
 $dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient/onSlashCommandEvent/#net.dv8tion.jda.api.events.interaction.SlashCommandEvent/PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/on-slash-command-event.html
 $dokka.location:tv.blademaker.slash.api/DefaultSlashCommandClient/registry/#/PointingToDeclaration/-slash/tv.blademaker.slash.api/-default-slash-command-client/registry.html
@@ -84,28 +83,19 @@ $dokka.location:tv.blademaker.slash.extensions//setSlashCommandClient/net.dv8tio
 $dokka.location:tv.blademaker.slash.extensions//setSlashCommandClient/net.dv8tion.jda.api.JDABuilder#tv.blademaker.slash.api.SlashCommandClient/PointingToDeclaration/-slash/tv.blademaker.slash.extensions/set-slash-command-client.html
 $dokka.location:tv.blademaker.slash.extensions//setSlashCommandClient/net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder#tv.blademaker.slash.api.SlashCommandClient/PointingToDeclaration/-slash/tv.blademaker.slash.extensions/set-slash-command-client.html
 $dokka.location:tv.blademaker.slash.extensions//setSlashCommandClient/net.dv8tion.jda.api.sharding.ShardManager#tv.blademaker.slash.api.SlashCommandClient/PointingToDeclaration/-slash/tv.blademaker.slash.extensions/set-slash-command-client.html
-$dokka.location:tv.blademaker.slash.internal.converters////PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/index.html
-$dokka.location:tv.blademaker.slash.internal.converters/DoubleOptionConverter///PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-double-option-converter/index.html
-$dokka.location:tv.blademaker.slash.internal.converters/DoubleOptionConverter/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-double-option-converter/convert.html
-$dokka.location:tv.blademaker.slash.internal.converters/IntOptionConverter///PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-int-option-converter/index.html
-$dokka.location:tv.blademaker.slash.internal.converters/IntOptionConverter/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-int-option-converter/convert.html
-$dokka.location:tv.blademaker.slash.internal.converters/TextChannelOptionConverter///PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-text-channel-option-converter/index.html
-$dokka.location:tv.blademaker.slash.internal.converters/TextChannelOptionConverter/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-text-channel-option-converter/convert.html
-$dokka.location:tv.blademaker.slash.internal.converters/VoiceChannelOptionConverter///PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-voice-channel-option-converter/index.html
-$dokka.location:tv.blademaker.slash.internal.converters/VoiceChannelOptionConverter/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal.converters/-voice-channel-option-converter/convert.html
 $dokka.location:tv.blademaker.slash.internal////PointingToDeclaration/-slash/tv.blademaker.slash.internal/index.html
 $dokka.location:tv.blademaker.slash.internal/OptionConverter///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-option-converter/index.html
 $dokka.location:tv.blademaker.slash.internal/OptionConverter/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-option-converter/convert.html
 $dokka.location:tv.blademaker.slash.internal/SlashUtils///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-utils/index.html
 $dokka.location:tv.blademaker.slash.internal/SlashUtils/asEphemeral/net.dv8tion.jda.api.requests.RestAction[*]#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-utils/as-ephemeral.html
 $dokka.location:tv.blademaker.slash.internal/SlashUtils/discoverSlashCommands/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-utils/discover-slash-commands.html
-$dokka.location:tv.blademaker.slash.internal/SlashUtils/toHuman/kotlin.Array[net.dv8tion.jda.api.Permission]#kotlin.Boolean/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-utils/to-human.html
 $dokka.location:tv.blademaker.slash.internal/UncaughtExceptionHandler///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-uncaught-exception-handler/index.html
 $dokka.location:tv.blademaker.slash.internal/UncaughtExceptionHandler/uncaughtException/#java.lang.Thread#kotlin.Throwable/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-uncaught-exception-handler/uncaught-exception.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.BOOLEAN///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-b-o-o-l-e-a-n/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion/get/#kotlin.reflect.KType/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/get.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion/isValidType/#kotlin.reflect.KClassifier?/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/is-valid-type.html
+$dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.DOUBLE///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-d-o-u-b-l-e/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.FLOAT///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-f-l-o-a-t/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.GUILD_CHANNEL///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-g-u-i-l-d_-c-h-a-n-n-e-l/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.INTEGER///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-i-n-t-e-g-e-r/index.html
@@ -124,5 +114,4 @@ tv.blademaker.slash.api.annotations
 tv.blademaker.slash.api.exceptions
 tv.blademaker.slash.extensions
 tv.blademaker.slash.internal
-tv.blademaker.slash.internal.converters
 
