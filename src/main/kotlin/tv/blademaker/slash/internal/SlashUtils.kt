@@ -26,7 +26,7 @@ import java.lang.reflect.Modifier
 object SlashUtils {
     private val LOGGER = LoggerFactory.getLogger(SlashUtils::class.java)
 
-    fun Array<Permission>.toHuman(jump: Boolean = false): String {
+    internal fun Array<Permission>.toHuman(jump: Boolean = false): String {
         return this.joinToString(if (jump) "\n" else ", ") { it.getName() }
     }
 
@@ -84,6 +84,22 @@ object SlashUtils {
         logger?.error(errorMessage, e)
     }
 
+    /**
+     * Discover the [BaseSlashCommand] inside the package.
+     *
+     * @param packageName The package to lookup.
+     *
+     * @throws IllegalStateException When you try to register more than 1 command with the same name,
+     * a command that contains a default handler with sub-commands handlers, a command contains more
+     * than 1 handler for the same command path (command/group/subcommand) or a command does not contain
+     * handlers.
+     *
+     * @throws NoSuchMethodException When cannot initialize a command class with no empty constructor.
+     *
+     * @see java.lang.Class.getDeclaredConstructor
+     * @see java.lang.reflect.Constructor.newInstance
+     * @see tv.blademaker.slash.api.BaseSlashCommand
+     */
     fun discoverSlashCommands(packageName: String): List<BaseSlashCommand> {
         val classes = Reflections(packageName, Scanners.SubTypes)
             .getSubTypesOf(BaseSlashCommand::class.java)

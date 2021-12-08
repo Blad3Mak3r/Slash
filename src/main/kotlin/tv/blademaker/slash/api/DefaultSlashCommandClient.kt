@@ -12,6 +12,16 @@ import tv.blademaker.slash.internal.SlashUtils.toHuman
 import tv.blademaker.slash.internal.newCoroutineDispatcher
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Extendable coroutine based SlashCommandClient
+ *
+ * @param packageName The package name where commands are located (me.example.commands)
+ *
+ * @see SlashCommandClient
+ * @see CoroutineScope
+ *
+ * @see SlashUtils.discoverSlashCommands
+ */
 open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, CoroutineScope {
 
     private val dispatcher = newCoroutineDispatcher("slash-commands-worker-%s", 2, 50)
@@ -29,6 +39,12 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         return SlashCommandContextImpl(this, event)
     }
 
+    /**
+     * Executed when an interaction event does not meet the required permissions.
+     *
+     * @param ex The threw exception [PermissionsLackException], this exception includes
+     * the current SlashCommandContext, the permission target (user, bot) and the required permissions.
+     */
     open fun onPermissionsLackException(ex: PermissionsLackException) {
         when(ex.target) {
             PermissionTarget.BOT -> {
