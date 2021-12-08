@@ -17,7 +17,7 @@ val coroutinesVersion = "1.5.2"
 val slf4jApi = "1.7.32"
 val prometheusVersion = "0.12.0"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "5.4.2"
+val sentryVersion = "5.4.3"
 
 repositories {
     mavenCentral()
