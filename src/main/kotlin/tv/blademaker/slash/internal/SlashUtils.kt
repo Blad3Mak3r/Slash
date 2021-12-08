@@ -98,7 +98,7 @@ object SlashUtils {
             val commandName = instance.commandName.lowercase()
 
             if (commands.any { it.commandName.equals(commandName, true) }) {
-                throw IllegalStateException("Command with name $commandName is already registered.")
+                error("Command with name $commandName is already registered.")
             }
 
             commands.add(instance)
