@@ -1,6 +1,8 @@
 # Slash
 ### 🚧 This project is currently in active development 🚧
 
+![Maven Central](https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue)
+
 ## Info
 Slash is a library that works on JDA for a simple implementation of Slash Commands for Discord.
 
