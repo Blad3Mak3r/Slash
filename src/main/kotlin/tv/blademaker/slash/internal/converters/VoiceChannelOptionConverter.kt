@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import tv.blademaker.slash.internal.OptionConverter
 
-object VoiceChannelOptionConverter : OptionConverter<VoiceChannel> {
+internal object VoiceChannelOptionConverter : OptionConverter<VoiceChannel> {
     override fun convert(optionMapping: OptionMapping?): VoiceChannel? {
         return optionMapping?.asGuildChannel?.let { if (it is VoiceChannel) it else null }
     }

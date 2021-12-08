@@ -26,6 +26,7 @@ enum class ValidOptionTypes(
     ROLE(Role::class, RoleOptionConverter),
     INTEGER(Int::class, IntOptionConverter),
     FLOAT(Float::class, FloatOptionConverter),
+    DOUBLE(Double::class, DoubleOptionConverter),
     TEXT_CHANNEL(TextChannel::class, TextChannelOptionConverter),
     VOICE_CHANNEL(VoiceChannel::class, VoiceChannelOptionConverter);
 
