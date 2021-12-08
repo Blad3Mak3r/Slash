@@ -2,8 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.6.0"
+    id("org.jetbrains.dokka") version "1.6.0"
 
     `maven-publish`
+    `java-library`
     signing
 }
 
@@ -41,10 +43,30 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
+val dokkaOutputDir = "$buildDir/dokka"
+
 tasks {
     withType<KotlinCompile> {
         this.kotlinOptions.jvmTarget = "11"
     }
+
+    getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
+        outputDirectory.set(file(dokkaOutputDir))
+    }
+}
+
+val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
+    delete(dokkaOutputDir)
+}
+
+val javadocJar = tasks.register<Jar>("javadocJar") {
+    dependsOn(deleteDokkaOutputDir, tasks.dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(dokkaOutputDir)
+}
+
+java {
+    withSourcesJar()
 }
 
 publishing {
@@ -66,6 +88,7 @@ publishing {
             groupId = project.group as String
             version = project.version as String
             from(components["java"])
+            artifact(javadocJar)
 
             pom {
                 name.set(project.name)
