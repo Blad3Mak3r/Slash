@@ -107,20 +107,6 @@ object SlashUtils {
         return commands
     }
 
-    private fun optionToString(option: OptionMapping): String {
-        return try {
-            when (option.type) {
-                in LONG_TYPES -> option.asLong.toString()
-                OptionType.BOOLEAN -> option.asBoolean.toString()
-                else -> option.asString
-            }
-        } catch (e: Exception) {
-            "EXCEPTION"
-        }
-    }
-
-    private val LONG_TYPES = setOf(OptionType.CHANNEL, OptionType.ROLE, OptionType.USER, OptionType.INTEGER)
-
     @Suppress("unused")
     fun RestAction<*>.asEphemeral(): RestAction<*> {
         when(this) {
