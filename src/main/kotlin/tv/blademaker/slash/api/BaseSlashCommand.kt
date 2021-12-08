@@ -106,7 +106,7 @@ abstract class BaseSlashCommand(val commandName: String) {
         handleInteraction(ctx)
     }
 
-    companion object {
+    private companion object {
         private val log = LoggerFactory.getLogger(BaseSlashCommand::class.java)
 
         private fun compileInteractionHandlers(command: BaseSlashCommand): List<InteractionHandler> {
