@@ -5,6 +5,7 @@ import tv.blademaker.slash.api.BaseSlashCommand
 import tv.blademaker.slash.api.DefaultSlashCommandClient
 import tv.blademaker.slash.api.SlashCommandClient
 import tv.blademaker.slash.api.SlashCommandContext
+import tv.blademaker.slash.api.annotations.OptionName
 import tv.blademaker.slash.api.annotations.SlashCommand
 
 class GenerateCommandTest {
@@ -33,8 +34,9 @@ class GenerateCommandTest {
     object AdvancedCommand : BaseSlashCommand("advanced") {
 
         @SlashCommand(group = "group1", name = "option1")
-        fun group1Option1(ctx: SlashCommandContext, channel: VoiceChannel?) {
-
+        fun group1Option1(ctx: SlashCommandContext, @OptionName("channel") voiceChannel: VoiceChannel?) {
+            // We are using @OptionName with custom name channel
+            // this means voiceChannel will be equal to ctx.getOption("channel")
         }
 
         @SlashCommand(group = "group1", name = "option2")

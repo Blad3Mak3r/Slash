@@ -122,6 +122,14 @@ val commandClient = DefaultCommandClient("com.example.commands").apply {
 }
 ```
 
+## Custom Option names
+You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/api/annotations/OptionName.kt)
+the set a custom name for an option.
+```kotlin
+@SlashCommand
+
+```
+
 ``commandClient`` will register ``PingCommand``, ``RoleCommand`` and ``TwitchCommand``.
 
 ## Installation
