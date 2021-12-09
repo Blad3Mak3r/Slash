@@ -29,8 +29,7 @@ dependencies {
     implementation(kotlin("stdlib", "1.6.0"))
     implementation(kotlin("reflect", "1.6.0"))
 
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
     api("org.reflections:reflections:$reflectionsVersion")
 
