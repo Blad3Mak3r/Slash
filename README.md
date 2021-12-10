@@ -107,6 +107,45 @@ This command will create 2 handlers with the following user representation:
 - /twitch clips top (channel?)
 - /twitch clips random (channel?)
 
+## Custom Option names
+You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/api/annotations/OptionName.kt)
+the set a custom name for an option.
+```kotlin
+@SlashCommand
+suspend fun customName(ctx: SlashCommandContext, @OptionName("query") option1: String) {
+    // the variable option1 will get the content of ctx.getOption("query")!
+}
+
+```
+
+## Using context actions
+You can build context actions inside SlashCommands so easy.
+```kotlin
+@SlashCommand
+suspend fun contextActions(ctx: SlashCommandContext) {
+    
+    // This is a context action
+    val embedAction: EmbedContextAction = ctx.embed {
+        setTitle("Embed Title")
+    }
+    0
+    val messageAction: MessageContextAction = ctx.message {
+        append("Message content")
+    }
+    
+    // To execute an action use send() or reply()
+    val messageResult: ReplyAction = messageAction.reply().await()
+    
+    val embedResult: WebhookMessageAction<Message> = embedAction.send().await()
+    
+    // You can get the generated message use 'original'.
+    val embed = embedAction.original
+    
+    val message = messageAction.original
+    
+}
+```
+
 ## Registering commands
 Register ``DefaultCommandClient()`` with the package name where the commands are located, and register
 the event listener in your JDA or ShardManager builder.
@@ -122,14 +161,6 @@ val commandClient = DefaultCommandClient("com.example.commands").apply {
     // Expose prometheus statistics to your current metrics collection
     withMetrics()
 }
-```
-
-## Custom Option names
-You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/api/annotations/OptionName.kt)
-the set a custom name for an option.
-```kotlin
-@SlashCommand
-
 ```
 
 ``commandClient`` will register ``PingCommand``, ``RoleCommand`` and ``TwitchCommand``.
