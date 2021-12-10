@@ -57,7 +57,7 @@ object SlashUtils {
         val message = "Exception executing handler for `${ctx.event.commandPath}` -> **${e.message}**"
 
         if (ctx.event.isAcknowledged) ctx.sendMessage(message).setEphemeral(true).queue()
-        else ctx.reply(message).setEphemeral(true).queue()
+        else ctx.replyMessage(message).setEphemeral(true).queue()
 
         val errorMessage = "Exception executing handler for ${ctx.event.commandPath}, ${e.message}"
 
