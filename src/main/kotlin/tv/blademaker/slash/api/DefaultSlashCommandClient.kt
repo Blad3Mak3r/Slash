@@ -49,12 +49,12 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         when(ex.target) {
             PermissionTarget.BOT -> {
                 val perms = ex.permissions.toHuman()
-                ex.context.reply("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
+                ex.context.replyMessage("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
                         "\nRequired permissions: **${perms}**.")
             }
             PermissionTarget.USER -> {
                 val perms = ex.permissions.toHuman()
-                ex.context.reply("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
+                ex.context.replyMessage("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
                         "\nRequired permissions: **${perms}**.")
             }
         }.setEphemeral(true).queue()
