@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.language.jvm.tasks.ProcessResources
+import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     kotlin("jvm") version "1.6.0"
@@ -51,6 +53,25 @@ tasks {
 
     getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
         outputDirectory.set(file(dokkaOutputDir))
+    }
+
+    @Suppress("UnstableApiUsage")
+    named<ProcessResources>("processResources") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+        val tokens = mapOf(
+            "project.version"       to project.version
+        )
+
+        from("src/main/resources") {
+            include("module.properties")
+            //expand(tokens)
+            filter<ReplaceTokens>("tokens" to tokens)
+        }
+    }
+
+    named("build") {
+        dependsOn(processResources)
     }
 }
 
@@ -123,10 +144,10 @@ publishing {
 
 
 class Version(
-    val major: Int,
-    val minor: Int,
-    val revision: Int,
-    val classifier: String? = null
+    private val major: Int,
+    private val minor: Int,
+    private val revision: Int,
+    private val classifier: String? = null
 ) {
     override fun toString(): String {
         return "$major.$minor.$revision" + if (classifier != null) "-$classifier" else ""
