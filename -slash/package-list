@@ -134,6 +134,10 @@ $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.USER///PointingToD
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.VOICE_CHANNEL///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-v-o-i-c-e_-c-h-a-n-n-e-l/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/convert.html
+$dokka.location:tv.blademaker.slash////PointingToDeclaration/-slash/tv.blademaker.slash/index.html
+$dokka.location:tv.blademaker.slash/SlashInfo///PointingToDeclaration/-slash/tv.blademaker.slash/-slash-info/index.html
+$dokka.location:tv.blademaker.slash/SlashInfo/VERSION/#/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-info/-v-e-r-s-i-o-n.html
+tv.blademaker.slash
 tv.blademaker.slash.api
 tv.blademaker.slash.api.actions
 tv.blademaker.slash.api.annotations
