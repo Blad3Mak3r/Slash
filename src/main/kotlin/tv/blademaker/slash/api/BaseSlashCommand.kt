@@ -2,9 +2,9 @@ package tv.blademaker.slash.api
 
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.api.annotations.SlashCommand
+import tv.blademaker.slash.internal.Checks
 import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.internal.InteractionHandler
-import tv.blademaker.slash.internal.SlashUtils
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
@@ -56,13 +56,9 @@ abstract class BaseSlashCommand(val commandName: String) {
         val handler = interactionHandlers.find { it.path == commandPath }
             ?: error("No handler found for command path $commandPath")
 
-        try {
-            SlashUtils.checkPermissions(ctx, handler.permissions)
+        Checks.commandPermissions(ctx, handler.permissions)
 
-            handler.execute(this, ctx)
-        } catch (e: Exception) {
-            SlashUtils.captureSlashCommandException(ctx, e, log)
-        }
+        handler.execute(this, ctx)
     }
 
     /*private suspend fun handleSubCommand(ctx: SlashCommandContext): Boolean {
