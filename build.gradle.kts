@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.gradle.language.jvm.tasks.ProcessResources
-import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     kotlin("jvm") version "1.6.0"
@@ -12,7 +10,8 @@ plugins {
 }
 
 group = "tv.blademaker"
-version = Version(0, 5, 0).toString()
+val versionObj = Version(0, 5, 1)
+version = versionObj.toString()
 
 val jdaVersion = "4.4.0_350"
 val coroutinesVersion = "1.5.2"
@@ -70,11 +69,16 @@ java {
     withSourcesJar()
 }
 
+val mavenCentralRepository = if (versionObj.isSnapshot)
+    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+else
+    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+
 publishing {
     repositories {
         maven {
             name = "MavenCentral"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            url = uri(mavenCentralRepository)
 
             credentials {
                 username = System.getenv("OSSRH_USERNAME")
@@ -122,16 +126,15 @@ publishing {
     }
 }
 
-
-
 class Version(
     private val major: Int,
     private val minor: Int,
-    private val revision: Int,
-    private val classifier: String? = null
+    private val revision: Int
 ) {
+    val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
+
     override fun toString(): String {
-        return "$major.$minor.$revision" + if (classifier != null) "-$classifier" else ""
+        return "$major.$minor.$revision" + if (isSnapshot) "-SNAPSHOT" else ""
     }
 }
 
