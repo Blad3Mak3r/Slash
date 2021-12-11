@@ -12,6 +12,7 @@ import tv.blademaker.slash.api.SlashCommandContext
 import tv.blademaker.slash.api.SlashCommandContextImpl
 import tv.blademaker.slash.api.exceptions.PermissionsLackException
 import tv.blademaker.slash.api.SlashUtils
+import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.internal.newCoroutineDispatcher
 import kotlin.coroutines.CoroutineContext
 import kotlin.system.measureNanoTime
@@ -31,6 +32,8 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
 
     private val dispatcher = newCoroutineDispatcher("slash-commands-worker-%s", 2, 50)
 
+    private val globalChecks: MutableList<CommandExecutionCheck> = mutableListOf()
+
     override val coroutineContext: CoroutineContext
         get() = dispatcher + Job()
 
@@ -47,6 +50,16 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         return SlashCommandContextImpl(this, event)
     }
 
+    fun addGlobalCheck(check: CommandExecutionCheck) {
+        if (globalChecks.contains(check)) error("Check already registered.")
+        globalChecks.add(check)
+    }
+
+    private suspend fun runChecks(ctx: SlashCommandContext): Boolean {
+        if (globalChecks.isEmpty()) return true
+        return globalChecks.all { it(ctx) }
+    }
+
     private suspend fun handleSuspend(event: SlashCommandEvent) {
         if (!event.isFromGuild)
             return event.reply("This command is not supported outside a guild.").queue()
@@ -55,6 +68,8 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         val context = createContext(event, command)
 
         logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
+
+        if (!runChecks(context)) return
 
         try {
             val start = System.nanoTime()
