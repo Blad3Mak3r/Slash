@@ -1,14 +1,25 @@
-# Slash
+[maven-central-shield]: https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue
+[maven-central]: https://search.maven.org/artifact/tv.blademaker/slash
+
+# Slash [![Maven Central][maven-central-shield]][maven-central]
 ### 🚧 This project is currently in active development 🚧
+Slash is a library that works with JDA for an advanced implementation of Slash Commands for Discord.
 
-![Maven Central](https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue)
 
-## Info
-Slash is a library that works on JDA for a simple implementation of Slash Commands for Discord.
+## Table of contents
+- [ToDo](#todo)
+- [Commands creation](#create-commands)
+    - [Basic command](#basic-command)
+    - [Sub-commands and permissions](#sub-commands-slash-command-with-permissions)
+    - [Advanced commands](#advanced-commands-with-sub-command-groups-and-permissions)
+    - [Registering commands](#registering-commands)
+    - [Using Context Actions](#using-context-actions)
+    - [Custom Option names](#custom-option-names)
+- [Download](#download)
 
 **This library does not synchronize the commands created with the commands published on Discord.**
 
-## Todo
+## ToDo
 - [x] Implement handler for default command.
 - [x] Implement handlers for sub-commands.
 - [x] Implement handlers for sub-commands groups.
@@ -16,7 +27,9 @@ Slash is a library that works on JDA for a simple implementation of Slash Comman
 - [ ] Useful docs.
 - [ ] Be a nice a package :).
 
-## Basic command
+## Create commands
+
+### Basic command
 Create a command inside the package ``net.example.commands`` called ``PingCommand.kt``:
 
 ```kotlin
@@ -39,7 +52,7 @@ class PingCommand : BaseSlashCommand("ping") {
 }
 ```
 
-## Sub-commands slash command with permissions
+### Sub-commands slash command with permissions
 Create a command inside package ``net.example.commands`` called ``RoleCommand.kt``:
 
 ```kotlin
@@ -82,7 +95,7 @@ This command will create 4 handlers with the following user representation:
 - /role list: (member?)
 - /role compare: (member) (member)
 
-## Advanced commands with sub-command groups and permissions
+### Advanced commands with sub-command groups and permissions
 Create a command inside package ``net.example.commands`` called ``TwitchCommand.kt``:
 
 ```kotlin
@@ -107,18 +120,26 @@ This command will create 2 handlers with the following user representation:
 - /twitch clips top (channel?)
 - /twitch clips random (channel?)
 
-## Custom Option names
-You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/api/annotations/OptionName.kt)
-the set a custom name for an option.
-```kotlin
-@SlashCommand
-suspend fun customName(ctx: SlashCommandContext, @OptionName("query") option1: String) {
-    // the variable option1 will get the content of ctx.getOption("query")!
-}
+### Registering commands
+Register ``DefaultCommandClient()`` with the package name where the commands are located, and register
+the event listener in your JDA or ShardManager builder.
 
+```kotlin
+val commandClient = DefaultCommandClient("com.example.commands").apply {
+    
+    // Register the event listener
+    withShardManager(shardManager)
+    // or
+    withJDA(jda)
+    
+    // Expose prometheus statistics to your current metrics collection
+    withMetrics()
+}
 ```
 
-## Using context actions
+``commandClient`` will register ``PingCommand``, ``RoleCommand`` and ``TwitchCommand``.
+
+### Using context actions
 You can build context actions inside SlashCommands so easy.
 ```kotlin
 @SlashCommand
@@ -146,27 +167,18 @@ suspend fun contextActions(ctx: SlashCommandContext) {
 }
 ```
 
-## Registering commands
-Register ``DefaultCommandClient()`` with the package name where the commands are located, and register
-the event listener in your JDA or ShardManager builder.
-
+### Custom Option names
+You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/api/annotations/OptionName.kt)
+the set a custom name for an option.
 ```kotlin
-val commandClient = DefaultCommandClient("com.example.commands").apply {
-    
-    // Register the event listener
-    withShardManager(shardManager)
-    // or
-    withJDA(jda)
-    
-    // Expose prometheus statistics to your current metrics collection
-    withMetrics()
+@SlashCommand
+suspend fun customName(ctx: SlashCommandContext, @OptionName("query") option1: String) {
+    // the variable option1 will get the content of ctx.getOption("query")!
 }
 ```
 
-``commandClient`` will register ``PingCommand``, ``RoleCommand`` and ``TwitchCommand``.
-
 ## Download
-![Maven Central](https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue)
+[![Maven Central][maven-central-shield]][maven-central]
 
 ### Gradle
 ```kotlin
