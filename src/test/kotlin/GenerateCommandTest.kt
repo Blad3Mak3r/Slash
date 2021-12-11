@@ -2,8 +2,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.junit.Test
 import tv.blademaker.slash.api.BaseSlashCommand
-import tv.blademaker.slash.api.DefaultSlashCommandClient
-import tv.blademaker.slash.api.SlashCommandClient
+import tv.blademaker.slash.client.SlashCommandClient
 import tv.blademaker.slash.api.SlashCommandContext
 import tv.blademaker.slash.api.annotations.OptionName
 import tv.blademaker.slash.api.annotations.SlashCommand

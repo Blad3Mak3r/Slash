@@ -1,6 +1,7 @@
 package tv.blademaker.slash.api
 
 import io.prometheus.client.Counter
+import io.prometheus.client.Gauge
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 
 internal object Metrics {
@@ -15,8 +16,9 @@ internal object Metrics {
         EXECUTED_COMMANDS.labels(event.commandPath).inc()
     }
 
-    fun incSuccessCommand(event: SlashCommandEvent) {
+    fun incSuccessCommand(event: SlashCommandEvent, measuredTime: Long) {
         SUCCESSFUL_EXECUTED_COMMANDS.labels(event.commandPath).inc()
+        MEASURED_COMMAND_EXECUTION.labels(event.commandPath).set(measuredTime.toDouble())
     }
 
     fun incFailedCommand(event: SlashCommandEvent) {
@@ -38,6 +40,12 @@ internal object Metrics {
     private val FAILED_EXECUTED_COMMANDS: Counter = Counter.build()
         .name("slash_commands_failed")
         .help("Slash commands handled that ends on a Exception.")
+        .labelNames("pathName")
+        .create()
+
+    private val MEASURED_COMMAND_EXECUTION: Gauge = Gauge.build()
+        .name("slash_measured_execution_time")
+        .help("The time in milliseconds require to execute the command.")
         .labelNames("pathName")
         .create()
 }

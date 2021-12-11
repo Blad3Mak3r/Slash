@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import tv.blademaker.slash.api.actions.ContextAction
+import tv.blademaker.slash.client.SlashCommandClient
 import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("unused")
