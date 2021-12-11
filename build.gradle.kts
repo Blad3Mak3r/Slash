@@ -54,25 +54,6 @@ tasks {
     getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
         outputDirectory.set(file(dokkaOutputDir))
     }
-
-    @Suppress("UnstableApiUsage")
-    named<ProcessResources>("processResources") {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
-        val tokens = mapOf(
-            "project.version"       to project.version
-        )
-
-        from("src/main/resources") {
-            include("module.properties")
-            //expand(tokens)
-            filter<ReplaceTokens>("tokens" to tokens)
-        }
-    }
-
-    named("build") {
-        dependsOn(processResources)
-    }
 }
 
 val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
