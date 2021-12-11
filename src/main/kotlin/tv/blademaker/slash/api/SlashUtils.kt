@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory
 import java.lang.reflect.Modifier
 
 object SlashUtils {
-    private val LOGGER = LoggerFactory.getLogger(SlashUtils::class.java)
 
     /**
      * Convert an [Array] of [Permission] in a readable list.
@@ -47,8 +46,6 @@ object SlashUtils {
         val classes = Reflections(packageName, Scanners.SubTypes)
             .getSubTypesOf(BaseSlashCommand::class.java)
             .filter { !Modifier.isAbstract(it.modifiers) && BaseSlashCommand::class.java.isAssignableFrom(it) }
-
-        LOGGER.info("Discovered a total of ${classes.size} slash commands in package $packageName")
 
         val commands = mutableListOf<BaseSlashCommand>()
 
