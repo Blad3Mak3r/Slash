@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "tv.blademaker"
-version = "0.5.0"
+version = Version(0, 5, 0).toString()
 
 val jdaVersion = "4.4.0_350"
 val coroutinesVersion = "1.5.2"
@@ -120,13 +120,22 @@ publishing {
     }
 }
 
-signing {
-    sign(publishing.publications["MavenCentral"])
+
+
+class Version(
+    val major: Int,
+    val minor: Int,
+    val revision: Int,
+    val classifier: String? = null
+) {
+    override fun toString(): String {
+        return "$major.$minor.$revision" + if (classifier != null) "-$classifier" else ""
+    }
 }
 
-/*val canSign = getProjectProperty("signing.keyId") != null
+val canSign = System.getenv("SIGNING_KEY_ID") != null
 if (canSign) {
     signing {
-        sign(publishing.publications.getByName("Release"))
+        sign(publishing.publications["MavenCentral"])
     }
-}*/
+}
