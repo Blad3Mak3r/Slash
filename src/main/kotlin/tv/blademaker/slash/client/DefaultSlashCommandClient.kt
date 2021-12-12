@@ -46,6 +46,15 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         launch { handleSuspend(event) }
     }
 
+    override fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception) {
+        val message = "Exception executing handler for `${context.event.commandPath}` -> **${ex.message}**"
+
+        logger.error(message, ex)
+
+        if (context.event.isAcknowledged) context.sendMessage(message).setEphemeral(true).queue()
+        else context.replyMessage(message).setEphemeral(true).queue()
+    }
+
     open suspend fun createContext(event: SlashCommandEvent, command: BaseSlashCommand): SlashCommandContext {
         return SlashCommandContextImpl(this, event)
     }
