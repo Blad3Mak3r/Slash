@@ -6,12 +6,10 @@ import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.api.BaseSlashCommand
+import tv.blademaker.slash.api.*
 import tv.blademaker.slash.api.Metrics
-import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.SlashCommandContextImpl
 import tv.blademaker.slash.api.exceptions.PermissionsLackException
-import tv.blademaker.slash.api.SlashUtils
+import tv.blademaker.slash.api.SlashUtils.toHuman
 import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.internal.newCoroutineDispatcher
 import kotlin.coroutines.CoroutineContext
@@ -46,13 +44,43 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         launch { handleSuspend(event) }
     }
 
-    override fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception) {
+    /**
+     * Executed when a command return an exception
+     *
+     * @param context The current [SlashCommandContext]
+     * @param command The command that throw the exception [BaseSlashCommand]
+     * @param ex The threw exception
+     */
+    open fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception) {
         val message = "Exception executing handler for `${context.event.commandPath}` -> **${ex.message}**"
 
         logger.error(message, ex)
 
         if (context.event.isAcknowledged) context.sendMessage(message).setEphemeral(true).queue()
         else context.replyMessage(message).setEphemeral(true).queue()
+    }
+
+    /**
+     * Executed when an interaction event does not meet the required permissions.
+     *
+     * @param ex The threw exception [PermissionsLackException], this exception includes
+     * the current SlashCommandContext, the permission target (user, bot) and the required permissions.
+     */
+    open fun onPermissionsLackException(ex: PermissionsLackException) {
+        when(ex.target) {
+            PermissionTarget.BOT -> {
+                val perms = ex.permissions.toHuman()
+                logger.warn("Bot doesn't have the required permissions to execute '${ex.context.event.commandString}'.")
+                ex.context.replyMessage("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
+                        "\nRequired permissions: **${perms}**.")
+            }
+            PermissionTarget.USER -> {
+                val perms = ex.permissions.toHuman()
+                logger.warn("User ${ex.context.author} doesn't have the required permissions to execute '${ex.context.event.commandString}'.")
+                ex.context.replyMessage("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
+                        "\nRequired permissions: **${perms}**.")
+            }
+        }.setEphemeral(true).queue()
     }
 
     open suspend fun createContext(event: SlashCommandEvent, command: BaseSlashCommand): SlashCommandContext {

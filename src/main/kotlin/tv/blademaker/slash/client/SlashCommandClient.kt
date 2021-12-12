@@ -35,36 +35,6 @@ interface SlashCommandClient : EventListener {
     fun getCommand(name: String) = registry.firstOrNull { it.commandName.equals(name, true) }
 
     /**
-     * Executed when a command return an exception
-     *
-     * @param context The current [SlashCommandContext]
-     * @param command The command that throw the exception [BaseSlashCommand]
-     * @param ex The threw exception
-     */
-    fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception)
-
-    /**
-     * Executed when an interaction event does not meet the required permissions.
-     *
-     * @param ex The threw exception [PermissionsLackException], this exception includes
-     * the current SlashCommandContext, the permission target (user, bot) and the required permissions.
-     */
-    fun onPermissionsLackException(ex: PermissionsLackException) {
-        when(ex.target) {
-            PermissionTarget.BOT -> {
-                val perms = ex.permissions.toHuman()
-                ex.context.replyMessage("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-            PermissionTarget.USER -> {
-                val perms = ex.permissions.toHuman()
-                ex.context.replyMessage("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-        }.setEphemeral(true).queue()
-    }
-
-    /**
      * Enable prometheus metrics exporters
      */
     fun withMetrics() {
