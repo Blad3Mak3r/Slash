@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.EventListener
 import net.dv8tion.jda.api.sharding.ShardManager
+import org.slf4j.LoggerFactory
 import tv.blademaker.slash.api.BaseSlashCommand
 import tv.blademaker.slash.api.Metrics
 import tv.blademaker.slash.api.PermissionTarget
@@ -40,12 +41,7 @@ interface SlashCommandClient : EventListener {
      * @param command The command that throw the exception [BaseSlashCommand]
      * @param ex The threw exception
      */
-    fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception) {
-        val message = "Exception executing handler for `${context.event.commandPath}` -> **${ex.message}**"
-
-        if (context.event.isAcknowledged) context.sendMessage(message).setEphemeral(true).queue()
-        else context.replyMessage(message).setEphemeral(true).queue()
-    }
+    fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception)
 
     /**
      * Executed when an interaction event does not meet the required permissions.
