@@ -14,14 +14,42 @@ interface ContextAction<T> {
     val original: T
 
     /**
+     * Send a followup message to the interaction.
+     *
+     * This requires the interaction to be acknowledged.
+     *
      * @see net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
      */
-    fun send(): WebhookMessageAction<Message>
+    fun send(ephemeral: Boolean = false): WebhookMessageAction<Message>
 
     /**
+     * Send a reply message to the interaction.
+     *
+     * This not requires the interaction to be acknowledged.
+     *
      * @see net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
      */
-    fun reply(): ReplyAction
+    fun reply(ephemeral: Boolean = false): ReplyAction
+
+    /**
+     * Queue the request and don't wait for the response.
+     *
+     * Automatically check if the interaction was acknowledged.
+     *
+     * If not ACK: reply(ephemeral: Boolean).queue()
+     * If ACK: send(ephemeral: Boolean).queue()
+     *
+     * @param ephemeral Set if the message is ephemeral.
+     *
+     * @see ContextAction.send
+     * @see ContextAction.reply
+     */
+    fun queue(ephemeral: Boolean = false) {
+        when (ctx.event.isAcknowledged) {
+            true -> send(ephemeral).queue()
+            false -> reply(ephemeral).queue()
+        }
+    }
 
     @Suppress
     companion object {
