@@ -16,9 +16,9 @@ version = versionObj.toString()
 val jdaVersion = "4.4.0_350"
 val coroutinesVersion = "1.5.2"
 val slf4jApi = "1.7.32"
-val prometheusVersion = "0.12.0"
+val prometheusVersion = "0.13.0"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "5.4.3"
+val sentryVersion = "5.5.0"
 
 repositories {
     mavenCentral()
