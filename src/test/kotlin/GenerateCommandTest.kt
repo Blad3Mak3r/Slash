@@ -12,6 +12,7 @@ import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.annotations.OptionName
 import tv.blademaker.slash.annotations.SlashCommand
 import tv.blademaker.slash.context.AutoCompleteContext
+import tv.blademaker.slash.context.impl.GuildSlashCommandContext
 
 class GenerateCommandTest {
 
@@ -45,7 +46,7 @@ class GenerateCommandTest {
     @Suppress("UNUSED_PARAMETER", "unused")
     object AdvancedCommand : BaseSlashCommand("advanced") {
 
-        @SlashCommand(group = "group1", name = "option1", target = InteractionTarget.ALL)
+        @SlashCommand(group = "group1", name = "option1", target = InteractionTarget.GUILD)
         fun group1Option1(ctx: SlashCommandContext, @OptionName("channel") voiceChannel: VoiceChannel?) {
             // We are using @OptionName with custom name channel
             // this means voiceChannel will be equal to ctx.getOption("channel")

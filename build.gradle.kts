@@ -42,6 +42,7 @@ dependencies {
     api("io.prometheus:simpleclient:$prometheusVersion")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("ch.qos.logback:logback-classic:1.2.7")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
