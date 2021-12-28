@@ -1,4 +1,4 @@
-package tv.blademaker.slash.api.annotations
+package tv.blademaker.slash.annotations
 
 /**
  * Define a custom name for a command event option, this means you can use a different variable name

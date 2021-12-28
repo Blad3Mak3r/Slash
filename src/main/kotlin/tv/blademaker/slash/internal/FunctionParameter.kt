@@ -1,8 +1,7 @@
 package tv.blademaker.slash.internal
 
-import org.slf4j.LoggerFactory
-import tv.blademaker.slash.api.BaseSlashCommand
-import tv.blademaker.slash.api.SlashCommandContext
+import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.context.InteractionContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 
@@ -14,8 +13,8 @@ internal class FunctionParameter(
 ) {
     private val isOptional = type.isMarkedNullable
 
-    fun compile(ctx: SlashCommandContext): Any? {
-        val eventOption = ctx.getOption(name)
+    fun compile(ctx: InteractionContext): Any? {
+        val eventOption = ctx.getOptionOrNull(name)
 
         if (!isOptional && eventOption == null) error("Parameter marked as non-optional is not present in application event: $this")
 

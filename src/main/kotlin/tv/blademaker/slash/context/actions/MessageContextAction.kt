@@ -1,9 +1,9 @@
-package tv.blademaker.slash.api.actions
+package tv.blademaker.slash.context.actions
 
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
-import tv.blademaker.slash.api.SlashCommandContext
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
+import tv.blademaker.slash.context.SlashCommandContext
 
 @Suppress("unused")
 class MessageContextAction(override val ctx: SlashCommandContext, override val original: Message) : ContextAction<Message> {
@@ -12,7 +12,7 @@ class MessageContextAction(override val ctx: SlashCommandContext, override val o
         return ctx.hook.sendMessage(original).setEphemeral(ephemeral)
     }
 
-    override fun reply(ephemeral: Boolean): ReplyAction {
+    override fun reply(ephemeral: Boolean): ReplyCallbackAction {
         return ctx.event.reply(original).setEphemeral(ephemeral)
     }
 

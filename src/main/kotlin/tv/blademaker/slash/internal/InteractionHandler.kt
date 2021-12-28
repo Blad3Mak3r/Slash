@@ -1,10 +1,10 @@
 package tv.blademaker.slash.internal
 
-import tv.blademaker.slash.api.BaseSlashCommand
-import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.annotations.OptionName
-import tv.blademaker.slash.api.annotations.Permissions
-import tv.blademaker.slash.api.annotations.SlashCommand
+import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.annotations.*
+import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.context.AutoCompleteContext
+import tv.blademaker.slash.exceptions.InteractionTargetMismatch
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
@@ -12,12 +12,12 @@ import kotlin.reflect.full.findAnnotation
 internal class InteractionHandler(
     private val command: BaseSlashCommand,
     private val function: KFunction<*>
-) {
+) : Handler {
 
     private val annotation: SlashCommand = function.findAnnotation()!!
     val permissions: Permissions? = function.findAnnotation()
 
-    val path = buildString {
+    override val path = buildString {
         append(command.commandName)
         if (annotation.group.isNotBlank()) append("/${annotation.group}")
         if (annotation.name.isNotBlank()) append("/${annotation.name}")
@@ -25,9 +25,20 @@ internal class InteractionHandler(
 
     private val options: List<FunctionParameter> = buildHandlerParameters(command, function)
 
-    suspend fun execute(instance: BaseSlashCommand, ctx: SlashCommandContext) {
+    private fun checkTarget(ctx: SlashCommandContext) {
+        val result = when (annotation.target) {
+            InteractionTarget.ALL -> true
+            InteractionTarget.GUILD -> ctx.event.isFromGuild
+            InteractionTarget.DM -> !ctx.event.isFromGuild
+        }
+
+        if (!result) throw InteractionTargetMismatch(ctx, path, annotation.target)
+    }
+
+    suspend fun execute(ctx: SlashCommandContext) {
+        checkTarget(ctx)
         val params = options.map { it.compile(ctx) }.toTypedArray()
-        function.callSuspend(instance, ctx, *params)
+        function.callSuspend(command, ctx, *params)
     }
 
     companion object {

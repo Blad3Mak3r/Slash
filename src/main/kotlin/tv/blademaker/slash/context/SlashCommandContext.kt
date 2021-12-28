@@ -1,29 +1,41 @@
-package tv.blademaker.slash.api
+package tv.blademaker.slash.context
 
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
-import tv.blademaker.slash.api.actions.ContextAction
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
+import net.dv8tion.jda.api.sharding.ShardManager
+import tv.blademaker.slash.context.actions.ContextAction
 import tv.blademaker.slash.client.SlashCommandClient
+import tv.blademaker.slash.extensions.Snowflake
 import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("unused")
-interface SlashCommandContext {
+interface SlashCommandContext : InteractionContext {
 
     val commandClient: SlashCommandClient
-    val event: SlashCommandEvent
+    val event: SlashCommandInteractionEvent
 
     val isAcknowledged: Boolean
         get() = event.isAcknowledged
 
+    val interaction: Interaction
+        get() = event.interaction
+
+    val interactionId: Snowflake
+        get() = Snowflake(interaction.idLong)
+
     val jda: JDA
         get() = event.jda
+
+    val shardManager: ShardManager?
+        get() = jda.shardManager
 
     @Suppress("MemberVisibilityCanBePrivate")
     val hook: InteractionHook
@@ -32,14 +44,14 @@ interface SlashCommandContext {
     val options: List<OptionMapping>
         get() = event.options
 
-    val guild: Guild
-        get() = event.guild!!
+    val guild: Guild?
+        get() = event.guild
 
-    val member: Member
-        get() = event.member!!
+    val member: Member?
+        get() = event.member
 
-    val selfMember: Member
-        get() = event.guild!!.selfMember
+    val selfMember: Member?
+        get() = event.guild?.selfMember
 
     val channel: TextChannel
         get() = event.channel as TextChannel
@@ -47,12 +59,20 @@ interface SlashCommandContext {
     val author: User
         get() = event.user
 
-    fun acknowledge(ephemeral: Boolean = false): ReplyAction {
+    fun tryAcknowledge(ephemeral: Boolean = false): ReplyCallbackAction {
         if (isAcknowledged) throw IllegalStateException("Current command is already ack.")
         return event.deferReply(ephemeral)
     }
 
+    fun acknowledge(ephemeral: Boolean = false) {
+        if (!isAcknowledged) event.deferReply(ephemeral).queue()
+    }
+
     fun getOption(name: String) = event.getOption(name)
+
+    override fun getOptionOrNull(name: String): OptionMapping? {
+        return event.getOption(name)
+    }
 
     // Replies
 

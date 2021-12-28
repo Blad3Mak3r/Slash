@@ -21,3 +21,6 @@ fun DefaultShardManagerBuilder.setSlashCommandClient(slashCommandClient: SlashCo
 fun ShardManager.setSlashCommandClient(slashCommandClient: SlashCommandClient) {
     addEventListener(slashCommandClient)
 }
+
+@JvmInline
+value class Snowflake(val value: Long)

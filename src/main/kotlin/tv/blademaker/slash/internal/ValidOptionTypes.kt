@@ -2,13 +2,11 @@ package tv.blademaker.slash.internal
 
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
-import tv.blademaker.slash.api.SlashCommandContext
 import tv.blademaker.slash.internal.converters.*
 import tv.blademaker.slash.internal.converters.BooleanOptionConverter
 import tv.blademaker.slash.internal.converters.LongOptionConverter
 import tv.blademaker.slash.internal.converters.StringOptionConverter
 import tv.blademaker.slash.internal.converters.UserOptionConverter
-import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 

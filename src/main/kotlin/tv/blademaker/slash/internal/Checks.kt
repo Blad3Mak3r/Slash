@@ -1,18 +1,19 @@
 package tv.blademaker.slash.internal
 
 import net.dv8tion.jda.api.entities.Member
-import tv.blademaker.slash.api.PermissionTarget
-import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.annotations.Permissions
-import tv.blademaker.slash.api.exceptions.PermissionsLackException
+import tv.blademaker.slash.PermissionTarget
+import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.annotations.Permissions
+import tv.blademaker.slash.exceptions.PermissionsLackException
 
 typealias CommandExecutionCheck = suspend (ctx: SlashCommandContext) -> Boolean
 
 internal object Checks {
     fun commandPermissions(ctx: SlashCommandContext, permissions: Permissions?) {
+        if (!ctx.event.isFromGuild) return
         if (permissions == null || permissions.bot.isEmpty() && permissions.user.isEmpty()) return
 
-        var member: Member = ctx.member
+        var member: Member = ctx.member!!
 
         // Check for the user permissions
         var guildPerms = member.hasPermission(permissions.user.toList())
@@ -23,7 +24,7 @@ internal object Checks {
         }
 
         // Check for the bot permissions
-        member = ctx.selfMember
+        member = ctx.selfMember!!
         guildPerms = member.hasPermission(permissions.bot.toList())
         channelPerms = member.hasPermission(ctx.channel, permissions.bot.toList())
 

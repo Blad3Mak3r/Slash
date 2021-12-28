@@ -1,8 +1,8 @@
-package tv.blademaker.slash.api.exceptions
+package tv.blademaker.slash.exceptions
 
 import net.dv8tion.jda.api.Permission
-import tv.blademaker.slash.api.PermissionTarget
-import tv.blademaker.slash.api.SlashCommandContext
+import tv.blademaker.slash.PermissionTarget
+import tv.blademaker.slash.context.SlashCommandContext
 import java.lang.RuntimeException
 
 class PermissionsLackException(

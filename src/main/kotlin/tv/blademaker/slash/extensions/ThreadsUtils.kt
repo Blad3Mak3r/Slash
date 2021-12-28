@@ -1,4 +1,4 @@
-package tv.blademaker.slash.internal
+package tv.blademaker.slash.extensions
 
 import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,7 +32,8 @@ internal fun newThreadFactory(name: String,
         corePoolSize, maximumPoolSize,
         keepAliveTime, unit,
         LinkedBlockingQueue(),
-        CustomThreadFactory(name, daemon))
+        CustomThreadFactory(name, daemon)
+    )
 }
 
 internal fun newCoroutineDispatcher(name: String,

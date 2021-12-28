@@ -1,7 +1,6 @@
-package tv.blademaker.slash.api
+package tv.blademaker.slash
 
 data class DiscoveryResult(
     val elapsedTime: Long,
-    val count: Int,
     val commands: List<BaseSlashCommand>
 )

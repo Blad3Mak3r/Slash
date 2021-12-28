@@ -3,18 +3,28 @@ package tv.blademaker.slash.client
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.sharding.ShardManager
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.api.*
-import tv.blademaker.slash.api.Metrics
-import tv.blademaker.slash.api.exceptions.PermissionsLackException
-import tv.blademaker.slash.api.SlashUtils.toHuman
+import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.PermissionTarget
+import tv.blademaker.slash.SlashUtils
+import tv.blademaker.slash.metrics.Metrics
+import tv.blademaker.slash.exceptions.PermissionsLackException
+import tv.blademaker.slash.SlashUtils.toHuman
+import tv.blademaker.slash.annotations.InteractionTarget
+import tv.blademaker.slash.context.AutoCompleteContext
+import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.context.SlashCommandContextImpl
+import tv.blademaker.slash.exceptions.InteractionTargetMismatch
 import tv.blademaker.slash.internal.CommandExecutionCheck
-import tv.blademaker.slash.internal.newCoroutineDispatcher
+import tv.blademaker.slash.extensions.newCoroutineDispatcher
+import tv.blademaker.slash.metrics.MetricsStrategy
 import kotlin.coroutines.CoroutineContext
-import kotlin.system.measureNanoTime
-import kotlin.system.measureTimeMillis
 
 /**
  * Extendable coroutine based SlashCommandClient
@@ -26,7 +36,12 @@ import kotlin.system.measureTimeMillis
  *
  * @see SlashUtils.discoverSlashCommands
  */
-open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, CoroutineScope {
+open class DefaultSlashCommandClient private constructor(
+    packageName: String,
+    strategy: MetricsStrategy?
+) : SlashCommandClient, CoroutineScope {
+
+    private val metrics: Metrics? = if (strategy != null) Metrics(strategy) else null
 
     private val dispatcher = newCoroutineDispatcher("slash-commands-worker-%s", 2, 50)
 
@@ -35,13 +50,33 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
     override val coroutineContext: CoroutineContext
         get() = dispatcher + Job()
 
-    override val registry = SlashUtils.discoverSlashCommands(packageName).let {
-        logger.info("Discovered a total of ${it.count} commands in ${it.elapsedTime}ms.")
+    private val discoveryResult = SlashUtils.discoverSlashCommands(packageName)
+
+    override val registry = discoveryResult.let {
+        logger.info("Discovered a total of ${it.commands.size} commands in ${it.elapsedTime}ms.")
         it.commands
     }
 
-    override fun onSlashCommandEvent(event: SlashCommandEvent) {
-        launch { handleSuspend(event) }
+    constructor(packageName: String,
+                         jda: JDA,
+                         metrics: MetricsStrategy? = null
+    ) : this(packageName, metrics) {
+        lazy { jda.addEventListener(this) }
+    }
+
+    constructor(packageName: String,
+                         shardManager:ShardManager,
+                         metrics: MetricsStrategy? = null
+    ) : this(packageName, metrics) {
+        lazy { shardManager.addEventListener(this) }
+    }
+
+    override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
+        launch { handleSlashCommandEvent(event) }
+    }
+
+    override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
+        launch { handleAutoCompleteEvent(event) }
     }
 
     /**
@@ -52,7 +87,7 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
      * @param ex The threw exception
      */
     open fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception) {
-        val message = "Exception executing handler for `${context.event.commandPath}` -> **${ex.message}**"
+        val message = "Exception executing handler for `${context.event.commandPath}`:\n```\n${ex.message}\n```"
 
         logger.error(message, ex)
 
@@ -83,7 +118,15 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         }.setEphemeral(true).queue()
     }
 
-    open suspend fun createContext(event: SlashCommandEvent, command: BaseSlashCommand): SlashCommandContext {
+    open fun onInteractionTargetMismatch(ex: InteractionTargetMismatch) {
+        when (ex.target) {
+            InteractionTarget.GUILD -> ex.context.replyMessage("This command cannot be used outside of a **space**.").queue()
+            InteractionTarget.DM -> ex.context.replyMessage("This command cannot be used on a **space**.").queue()
+            else -> throw IllegalStateException("Received InteractionTargetMismatch on a command with target InteractionTarget.ALL, report this to developer.")
+        }
+    }
+
+    open suspend fun createContext(event: SlashCommandInteractionEvent, command: BaseSlashCommand): SlashCommandContext {
         return SlashCommandContextImpl(this, event)
     }
 
@@ -97,14 +140,29 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         return globalChecks.all { it(ctx) }
     }
 
-    private suspend fun handleSuspend(event: SlashCommandEvent) {
-        if (!event.isFromGuild)
-            return event.reply("This command is not supported outside a guild.").queue()
+    private suspend fun handleAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
+        println(event.name)
+        println(event.commandPath)
+        val command = getCommand(event.name) ?: return
+        println(command.commandName)
+        val context = AutoCompleteContext(event)
+
+        //logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
+
+        try {
+            command.executeAutoComplete(context)
+        } catch (e: Exception) {
+            logger.error("Exception executing auto-complete handler for command ${command.commandName}: ${e.message}", e)
+        }
+    }
+
+    private suspend fun handleSlashCommandEvent(event: SlashCommandInteractionEvent) {
 
         val command = getCommand(event.name) ?: return
         val context = createContext(event, command)
 
-        logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
+        if (event.isFromGuild) logCommand(event.guild!!, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
+        else logCommand(event.user, "uses command \u001B[33m${event.commandString}\u001B[0m")
 
         if (!runChecks(context)) return
 
@@ -112,15 +170,17 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
             val start = System.nanoTime()
             command.execute(context)
             val end = (System.nanoTime() - start) / 1_000_000
-            Metrics.incSuccessCommand(event, end)
-        } catch (e: PermissionsLackException){
+            metrics?.incSuccessCommand(event, end)
+        } catch (e: PermissionsLackException) {
             onPermissionsLackException(e)
-            Metrics.incFailedCommand(event)
+            metrics?.incFailedCommand(event)
+        } catch (e: InteractionTargetMismatch) {
+            onInteractionTargetMismatch(e)
         } catch (e: Exception) {
             onGenericException(context, command, e)
-            Metrics.incFailedCommand(event)
+            metrics?.incFailedCommand(event)
         } finally {
-            Metrics.incHandledCommand(event)
+            metrics?.incHandledCommand(event)
         }
     }
 
@@ -128,5 +188,6 @@ open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, 
         private val logger = LoggerFactory.getLogger(DefaultSlashCommandClient::class.java)
 
         private fun logCommand(guild: Guild, content: String) = logger.info("[\u001b[32m${guild.name}(${guild.id})\u001b[0m] $content")
+        private fun logCommand(user: User, content: String) = logger.info("[\u001b[32m${user.asTag}(${user.id})\u001b[0m] $content")
     }
 }
