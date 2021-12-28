@@ -19,7 +19,7 @@ import tv.blademaker.slash.SlashUtils.toHuman
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.context.SlashCommandContext
-import tv.blademaker.slash.context.SlashCommandContextImpl
+import tv.blademaker.slash.context.impl.SlashCommandContextImpl
 import tv.blademaker.slash.exceptions.InteractionTargetMismatch
 import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
@@ -111,7 +111,7 @@ open class DefaultSlashCommandClient private constructor(
             }
             PermissionTarget.USER -> {
                 val perms = ex.permissions.toHuman()
-                logger.warn("User ${ex.context.author} doesn't have the required permissions to execute '${ex.context.event.commandString}'.")
+                logger.warn("User ${ex.context.user} doesn't have the required permissions to execute '${ex.context.event.commandString}'.")
                 ex.context.replyMessage("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
                         "\nRequired permissions: **${perms}**.")
             }

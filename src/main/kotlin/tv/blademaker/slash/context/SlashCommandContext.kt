@@ -7,7 +7,9 @@ import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
+import net.dv8tion.jda.api.interactions.commands.CommandInteraction
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -17,47 +19,36 @@ import tv.blademaker.slash.extensions.Snowflake
 import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("unused")
-interface SlashCommandContext : InteractionContext {
+interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent> {
 
     val commandClient: SlashCommandClient
-    val event: SlashCommandInteractionEvent
+
+    override val interaction: CommandInteraction
+        get() = event.interaction
 
     val isAcknowledged: Boolean
         get() = event.isAcknowledged
 
-    val interaction: Interaction
-        get() = event.interaction
-
-    val interactionId: Snowflake
-        get() = Snowflake(interaction.idLong)
-
-    val jda: JDA
-        get() = event.jda
-
     val shardManager: ShardManager?
         get() = jda.shardManager
 
-    @Suppress("MemberVisibilityCanBePrivate")
     val hook: InteractionHook
         get() = event.hook
 
     val options: List<OptionMapping>
         get() = event.options
 
+    val channel: TextChannel
+        get() = event.channel as TextChannel
+
+    val user: User
+        get() = event.user
+
     val guild: Guild?
         get() = event.guild
 
     val member: Member?
         get() = event.member
-
-    val selfMember: Member?
-        get() = event.guild?.selfMember
-
-    val channel: TextChannel
-        get() = event.channel as TextChannel
-
-    val author: User
-        get() = event.user
 
     fun tryAcknowledge(ephemeral: Boolean = false): ReplyCallbackAction {
         if (isAcknowledged) throw IllegalStateException("Current command is already ack.")
@@ -69,10 +60,6 @@ interface SlashCommandContext : InteractionContext {
     }
 
     fun getOption(name: String) = event.getOption(name)
-
-    override fun getOptionOrNull(name: String): OptionMapping? {
-        return event.getOption(name)
-    }
 
     // Replies
 
