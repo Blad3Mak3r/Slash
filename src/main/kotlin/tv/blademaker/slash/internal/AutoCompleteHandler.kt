@@ -52,7 +52,7 @@ internal class AutoCompleteHandler(
 
             if (function.parameters.size <= 2) return parametersList
 
-            val param = function.parameters[3]
+            val param = function.parameters[2]
             val name = param.findAnnotation<OptionName>()?.value ?: param.name!!
             val kType = param.type
             check(ValidOptionTypes.isValidType(kType.classifier)) {

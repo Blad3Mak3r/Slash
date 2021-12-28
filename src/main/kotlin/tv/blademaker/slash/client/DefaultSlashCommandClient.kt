@@ -4,10 +4,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.BaseSlashCommand
@@ -19,6 +21,7 @@ import tv.blademaker.slash.SlashUtils.toHuman
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.context.impl.GuildSlashCommandContext
 import tv.blademaker.slash.context.impl.SlashCommandContextImpl
 import tv.blademaker.slash.exceptions.InteractionTargetMismatch
 import tv.blademaker.slash.internal.CommandExecutionCheck
@@ -36,9 +39,9 @@ import kotlin.coroutines.CoroutineContext
  *
  * @see SlashUtils.discoverSlashCommands
  */
-open class DefaultSlashCommandClient private constructor(
+open class DefaultSlashCommandClient constructor(
     packageName: String,
-    strategy: MetricsStrategy?
+    strategy: MetricsStrategy? = null
 ) : SlashCommandClient, CoroutineScope {
 
     private val metrics: Metrics? = if (strategy != null) Metrics(strategy) else null
@@ -57,26 +60,28 @@ open class DefaultSlashCommandClient private constructor(
         it.commands
     }
 
-    constructor(packageName: String,
-                         jda: JDA,
-                         metrics: MetricsStrategy? = null
-    ) : this(packageName, metrics) {
-        lazy { jda.addEventListener(this) }
-    }
-
-    constructor(packageName: String,
-                         shardManager:ShardManager,
-                         metrics: MetricsStrategy? = null
-    ) : this(packageName, metrics) {
-        lazy { shardManager.addEventListener(this) }
-    }
-
     override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
         launch { handleSlashCommandEvent(event) }
     }
 
     override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
         launch { handleAutoCompleteEvent(event) }
+    }
+
+    fun register(jda: JDA) {
+        jda.addEventListener(this)
+    }
+
+    fun register(shardManager: ShardManager) {
+        shardManager.addEventListener(this)
+    }
+
+    fun register(jdaBuilder: JDABuilder) {
+        jdaBuilder.addEventListeners(this)
+    }
+
+    fun register(shardManagerBuilder: DefaultShardManagerBuilder) {
+        shardManagerBuilder.addEventListeners(this)
     }
 
     /**
@@ -130,6 +135,10 @@ open class DefaultSlashCommandClient private constructor(
         return SlashCommandContextImpl(this, event)
     }
 
+    open suspend fun createGuildContext(event: SlashCommandInteractionEvent, command: BaseSlashCommand): GuildSlashCommandContext {
+        return GuildSlashCommandContext(this, event)
+    }
+
     fun addGlobalCheck(check: CommandExecutionCheck) {
         if (globalChecks.contains(check)) error("Check already registered.")
         globalChecks.add(check)
@@ -141,10 +150,7 @@ open class DefaultSlashCommandClient private constructor(
     }
 
     private suspend fun handleAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
-        println(event.name)
-        println(event.commandPath)
         val command = getCommand(event.name) ?: return
-        println(command.commandName)
         val context = AutoCompleteContext(event)
 
         //logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
@@ -157,9 +163,16 @@ open class DefaultSlashCommandClient private constructor(
     }
 
     private suspend fun handleSlashCommandEvent(event: SlashCommandInteractionEvent) {
+        val commandPath = event.commandPath
 
         val command = getCommand(event.name) ?: return
-        val context = createContext(event, command)
+        val handler = command.handlers.slash.find { it.path == commandPath }
+            ?: error("No handler found for slash command path $commandPath")
+
+        val context = when (handler.target) {
+            InteractionTarget.GUILD -> createGuildContext(event, command)
+            else -> createContext(event, command)
+        }
 
         if (event.isFromGuild) logCommand(event.guild!!, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
         else logCommand(event.user, "uses command \u001B[33m${event.commandString}\u001B[0m")
@@ -168,7 +181,7 @@ open class DefaultSlashCommandClient private constructor(
 
         try {
             val start = System.nanoTime()
-            command.execute(context)
+            command.execute(context, handler)
             val end = (System.nanoTime() - start) / 1_000_000
             metrics?.incSuccessCommand(event, end)
         } catch (e: PermissionsLackException) {

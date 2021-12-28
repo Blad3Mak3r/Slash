@@ -18,7 +18,7 @@ abstract class BaseSlashCommand(val commandName: String) {
 
     private val checks: MutableList<CommandExecutionCheck> = mutableListOf()
 
-    private val handlers by lazy { compileHandlers(this) }
+    internal val handlers by lazy { compileHandlers(this) }
 
     @Suppress("unused")
     val paths: List<String> by lazy { handlers.slash.map { it.path }.sorted() }
@@ -55,14 +55,8 @@ abstract class BaseSlashCommand(val commandName: String) {
         }
     }
 
-    private suspend fun handleSlashCommand(ctx: SlashCommandContext) {
-        val commandPath = ctx.event.commandPath
-
-        val handler = handlers.slash.find { it.path == commandPath }
-            ?: error("No handler found for slash command path $commandPath")
-
+    private suspend fun handleSlashCommand(ctx: SlashCommandContext, handler: InteractionHandler) {
         if (ctx is GuildSlashCommandContext) Checks.commandPermissions(ctx, handler.permissions)
-
         handler.execute(ctx)
     }
 
@@ -76,11 +70,11 @@ abstract class BaseSlashCommand(val commandName: String) {
         handler.execute(ctx)
     }
 
-    open suspend fun execute(ctx: SlashCommandContext) {
+    open suspend fun execute(ctx: SlashCommandContext, handler: InteractionHandler) {
         SlashUtils.log.debug("Starting execution of command (${this.commandName}).")
         if (!doChecks(ctx)) return
 
-        handleSlashCommand(ctx)
+        handleSlashCommand(ctx, handler)
         SlashUtils.log.debug("Finalized execution of command (${this.commandName}).")
     }
 
@@ -138,10 +132,6 @@ abstract class BaseSlashCommand(val commandName: String) {
                     "Found more than one AutocompleteHandler for the same path (${handler.path}) and option (${handler.optionName})."
                 }
                 finalList.add(handler)
-            }
-
-            check(finalList.isNotEmpty()) {
-                "SlashCommand ${command.commandName} does not have registered handlers."
             }
 
             return finalList
