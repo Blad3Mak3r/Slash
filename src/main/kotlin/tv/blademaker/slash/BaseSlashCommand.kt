@@ -1,7 +1,11 @@
-package tv.blademaker.slash.api
+package tv.blademaker.slash
 
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.api.annotations.SlashCommand
+import tv.blademaker.slash.annotations.AutoComplete
+import tv.blademaker.slash.annotations.SlashCommand
+import tv.blademaker.slash.context.AutoCompleteContext
+import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.Checks
 import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.internal.InteractionHandler
@@ -13,10 +17,10 @@ abstract class BaseSlashCommand(val commandName: String) {
 
     private val checks: MutableList<CommandExecutionCheck> = mutableListOf()
 
-    private val interactionHandlers: List<InteractionHandler> by lazy { compileInteractionHandlers(this) }
+    private val handlers by lazy { compileHandlers(this) }
 
     @Suppress("unused")
-    val paths: List<String> by lazy { interactionHandlers.map { it.path }.sorted() }
+    val paths: List<String> by lazy { handlers.slash.map { it.path }.sorted() }
 
     private suspend fun doChecks(ctx: SlashCommandContext): Boolean {
         if (checks.isEmpty()) return true
@@ -50,60 +54,51 @@ abstract class BaseSlashCommand(val commandName: String) {
         }
     }
 
-    private suspend fun handleInteraction(ctx: SlashCommandContext) {
+    private suspend fun handleSlashCommand(ctx: SlashCommandContext) {
         val commandPath = ctx.event.commandPath
 
-        val handler = interactionHandlers.find { it.path == commandPath }
-            ?: error("No handler found for command path $commandPath")
+        val handler = handlers.slash.find { it.path == commandPath }
+            ?: error("No handler found for slash command path $commandPath")
 
         Checks.commandPermissions(ctx, handler.permissions)
 
-        handler.execute(this, ctx)
+        handler.execute(ctx)
     }
 
-    /*private suspend fun handleSubCommand(ctx: SlashCommandContext): Boolean {
-        val subCommandGroup = ctx.event.subcommandGroup
+    private suspend fun handleAutoComplete(ctx: AutoCompleteContext) {
+        val commandPath = ctx.commandPath
+        val option = ctx.focusedOption
 
-        val subCommandName = ctx.event.subcommandName
-            ?: return false
+        val handler = handlers.autoComplete.find { it.path == commandPath && it.optionName == option.name }
+            ?: error("No handler found for auto-complete command path $commandPath")
 
-        try {
-            val subCommand = subCommands
-                .filter { if (subCommandGroup != null) it.groupName == subCommandGroup else true }
-                .find { s -> s.name.equals(subCommandName, true) }
-
-            if (subCommand == null) {
-                logger.warn("Not found any valid handler for options '$subCommandName', executing default handler.")
-                return false
-            }
-
-            logger.debug("Executing '${subCommand.name}' for option '$subCommandName'")
-
-            try {
-                if (!SlashUtils.hasPermissions(ctx, subCommand.permissions)) return true
-
-                subCommand.execute(this, ctx)
-            } catch (e: Exception) {
-                SlashUtils.captureSlashCommandException(ctx, e, logger)
-
-                return true
-            }
-            return true
-        } catch (e: Exception) {
-            logger.error("Exception getting KFunctions to handle subcommand $subCommandName", e)
-            SlashUtils.captureSlashCommandException(ctx, e, logger)
-            return false
-        }
-    }*/
+        handler.execute(ctx)
+    }
 
     open suspend fun execute(ctx: SlashCommandContext) {
+        SlashUtils.log.debug("Starting execution of command (${this.commandName}).")
         if (!doChecks(ctx)) return
 
-        handleInteraction(ctx)
+        handleSlashCommand(ctx)
+        SlashUtils.log.debug("Finalized execution of command (${this.commandName}).")
     }
 
+    suspend fun executeAutoComplete(ctx: AutoCompleteContext) {
+        SlashUtils.log.debug("Starting execution of auto-complete handler of command (${this.commandName}).")
+        handleAutoComplete(ctx)
+        SlashUtils.log.debug("Finalized execution of auto-complete handler of command (${this.commandName}).")
+    }
+
+    internal data class Handlers(
+        val slash: List<InteractionHandler>,
+        val autoComplete: List<AutoCompleteHandler>
+    )
+
     private companion object {
-        private val log = LoggerFactory.getLogger(BaseSlashCommand::class.java)
+        private fun compileHandlers(command: BaseSlashCommand) = Handlers(
+            compileInteractionHandlers(command),
+            compileAutoCompleteHandlers(command)
+        )
 
         private fun compileInteractionHandlers(command: BaseSlashCommand): List<InteractionHandler> {
             val handlers = command::class.functions
@@ -125,6 +120,27 @@ abstract class BaseSlashCommand(val commandName: String) {
 
             checkDefault(command, finalList) {
                 "SlashCommand ${command.commandName} have registered more than 1 handler having a default handler."
+            }
+
+            return finalList
+        }
+
+        private fun compileAutoCompleteHandlers(command: BaseSlashCommand): List<AutoCompleteHandler> {
+            val handlers = command::class.functions
+                .filter { it.hasAnnotation<AutoComplete>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+                .map { AutoCompleteHandler(command, it) }
+
+            val finalList = mutableListOf<AutoCompleteHandler>()
+
+            for (handler in handlers) {
+                check(!finalList.any { it.path == handler.path && it.optionName == handler.optionName }) {
+                    "Found more than one AutocompleteHandler for the same path (${handler.path}) and option (${handler.optionName})."
+                }
+                finalList.add(handler)
+            }
+
+            check(finalList.isNotEmpty()) {
+                "SlashCommand ${command.commandName} does not have registered handlers."
             }
 
             return finalList

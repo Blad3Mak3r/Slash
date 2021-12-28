@@ -1,11 +1,16 @@
+@file:Suppress("UNUSED_PARAMETER", "unused")
+
 import net.dv8tion.jda.api.entities.VoiceChannel
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.junit.Test
-import tv.blademaker.slash.api.BaseSlashCommand
+import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.annotations.AutoComplete
 import tv.blademaker.slash.client.SlashCommandClient
-import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.annotations.OptionName
-import tv.blademaker.slash.api.annotations.SlashCommand
+import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.annotations.OptionName
+import tv.blademaker.slash.annotations.SlashCommand
+import tv.blademaker.slash.context.AutoCompleteContext
 
 class GenerateCommandTest {
 
@@ -16,7 +21,10 @@ class GenerateCommandTest {
                 AdvancedCommand
             )
 
-        override fun onSlashCommandEvent(event: SlashCommandEvent) {
+        override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
+        }
+
+        override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
         }
     }
 
@@ -25,6 +33,10 @@ class GenerateCommandTest {
         @SlashCommand
         fun handle(ctx: SlashCommandContext) {
 
+        }
+
+        @AutoComplete(optionName = "name")
+        fun handleNext(ctx: AutoCompleteContext, @OptionName("name") option: String) {
         }
 
     }

@@ -1,15 +1,21 @@
-package tv.blademaker.slash.api
+package tv.blademaker.slash
 
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.slf4j.LoggerFactory
+import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.annotations.InteractionTarget
 import java.lang.reflect.Modifier
 
 object SlashUtils {
+
+    internal var DEFAULT_INTERACTION_TARGET = InteractionTarget.ALL
+
+    val log = LoggerFactory.getLogger("Slash")
 
     /**
      * Convert an [Array] of [Permission] in a readable list.
@@ -36,7 +42,7 @@ object SlashUtils {
      *
      * @see java.lang.Class.getDeclaredConstructor
      * @see java.lang.reflect.Constructor.newInstance
-     * @see tv.blademaker.slash.api.BaseSlashCommand
+     * @see tv.blademaker.slash.BaseSlashCommand
      *
      * @return A [DiscoveryResult] with the elapsed time to discover commands, the count of commands
      * discovered and the commands itself.
@@ -62,7 +68,6 @@ object SlashUtils {
 
         return DiscoveryResult(
             elapsedTime = (System.nanoTime() - start) / 1_000_000,
-            count = commands.size,
             commands = commands
         )
     }
@@ -70,7 +75,7 @@ object SlashUtils {
     @Suppress("unused")
     fun RestAction<*>.asEphemeral(): RestAction<*> {
         when(this) {
-            is ReplyAction -> this.setEphemeral(true)
+            is ReplyCallbackAction -> this.setEphemeral(true)
             is WebhookMessageAction<*> -> this.setEphemeral(true)
         }
 

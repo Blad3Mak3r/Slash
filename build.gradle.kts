@@ -10,13 +10,13 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 5, 3)
+val versionObj = Version(0, 6, 0)
 version = versionObj.toString()
 
 val jdaVersion = "4.4.0_350"
-val coroutinesVersion = "1.5.2"
+val coroutinesVersion = "1.6.0"
 val slf4jApi = "1.7.32"
-val prometheusVersion = "0.13.0"
+val prometheusVersion = "0.14.1"
 val reflectionsVersion = "0.10.2"
 val sentryVersion = "5.5.0"
 
@@ -32,9 +32,10 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
-    api("org.reflections:reflections:$reflectionsVersion")
+    implementation("org.reflections:reflections:$reflectionsVersion")
 
-    api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
+    //api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
+    implementation("com.github.DV8FromtheWorld:JDA:09ecf2e") { exclude(module = "opus-java") }
     api("org.slf4j:slf4j-api:$slf4jApi")
     api("io.sentry:sentry:$sentryVersion")
 

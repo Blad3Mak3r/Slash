@@ -1,4 +1,4 @@
-package tv.blademaker.slash.api.annotations
+package tv.blademaker.slash.annotations
 
 import net.dv8tion.jda.api.Permission
 
