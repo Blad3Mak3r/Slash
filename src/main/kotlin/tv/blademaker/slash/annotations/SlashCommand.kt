@@ -5,5 +5,5 @@ package tv.blademaker.slash.annotations
 annotation class SlashCommand(
     val name: String = "",
     val group: String = "",
-    val target: InteractionTarget = InteractionTarget.ALL
+    val target: InteractionTarget
 )
