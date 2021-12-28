@@ -62,7 +62,11 @@ interface ContextAction<T> {
         }
 
         internal fun build(ctx: SlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
-            return EmbedContextAction(ctx, EmbedBuilder().setColor(ctx.selfMember?.color).apply(embedBuilder).build())
+            return EmbedContextAction(ctx, EmbedBuilder().apply(embedBuilder).build())
+        }
+
+        internal fun build(ctx: tv.blademaker.slash.context.impl.GuildSlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
+            return EmbedContextAction(ctx, EmbedBuilder().setColor(ctx.selfMember.color).apply(embedBuilder).build())
         }
 
         internal fun build(ctx: SlashCommandContext, message: Message): MessageContextAction {

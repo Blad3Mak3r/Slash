@@ -5,6 +5,7 @@ import tv.blademaker.slash.annotations.AutoComplete
 import tv.blademaker.slash.annotations.SlashCommand
 import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.context.impl.GuildSlashCommandContext
 import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.Checks
 import tv.blademaker.slash.internal.CommandExecutionCheck
@@ -60,7 +61,7 @@ abstract class BaseSlashCommand(val commandName: String) {
         val handler = handlers.slash.find { it.path == commandPath }
             ?: error("No handler found for slash command path $commandPath")
 
-        Checks.commandPermissions(ctx, handler.permissions)
+        if (ctx is GuildSlashCommandContext) Checks.commandPermissions(ctx, handler.permissions)
 
         handler.execute(ctx)
     }

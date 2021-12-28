@@ -1,8 +1,8 @@
-package tv.blademaker.slash.context
+package tv.blademaker.slash.context.impl
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import tv.blademaker.slash.client.SlashCommandClient
+import tv.blademaker.slash.context.SlashCommandContext
 import java.util.concurrent.atomic.AtomicReference
 
 class SlashCommandContextImpl(
@@ -11,7 +11,4 @@ class SlashCommandContextImpl(
 ) : SlashCommandContext {
 
     override var extra: AtomicReference<Any?> = AtomicReference(null)
-    override fun getOptionOrNull(name: String): OptionMapping? {
-        return event.getOption(name)
-    }
 }

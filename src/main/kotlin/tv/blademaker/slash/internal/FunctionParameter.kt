@@ -1,7 +1,8 @@
 package tv.blademaker.slash.internal
 
 import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.context.InteractionContext
+import tv.blademaker.slash.context.AutoCompleteContext
+import tv.blademaker.slash.context.SlashCommandContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 
@@ -13,10 +14,21 @@ internal class FunctionParameter(
 ) {
     private val isOptional = type.isMarkedNullable
 
-    fun compile(ctx: InteractionContext): Any? {
-        val eventOption = ctx.getOptionOrNull(name)
+    fun compile(ctx: SlashCommandContext): Any? {
+        val eventOption = ctx.getOption(name)
 
-        if (!isOptional && eventOption == null) error("Parameter marked as non-optional is not present in application event: $this")
+        if (!isOptional && eventOption == null) error("Parameter marked as non-optional is not present in slash command event: $this")
+
+        val converter = ValidOptionTypes.get(type)
+            ?: error("Not found valid OptionCompiler for ${type.classifier}")
+
+        return converter.convert(eventOption)
+    }
+
+    fun compile(ctx: AutoCompleteContext): Any? {
+        val eventOption = ctx.getOption(name)
+
+        if (!isOptional && eventOption == null) error("Parameter marked as non-optional is not present in auto-complete event: $this")
 
         val converter = ValidOptionTypes.get(type)
             ?: error("Not found valid OptionCompiler for ${type.classifier}")

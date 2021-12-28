@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import org.junit.Test
 import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.annotations.AutoComplete
+import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.client.SlashCommandClient
 import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.annotations.OptionName
@@ -30,7 +31,7 @@ class GenerateCommandTest {
 
     object BasicCommand : BaseSlashCommand("basic") {
 
-        @SlashCommand
+        @SlashCommand(target = InteractionTarget.ALL)
         fun handle(ctx: SlashCommandContext) {
 
         }
@@ -44,28 +45,28 @@ class GenerateCommandTest {
     @Suppress("UNUSED_PARAMETER", "unused")
     object AdvancedCommand : BaseSlashCommand("advanced") {
 
-        @SlashCommand(group = "group1", name = "option1")
+        @SlashCommand(group = "group1", name = "option1", target = InteractionTarget.ALL)
         fun group1Option1(ctx: SlashCommandContext, @OptionName("channel") voiceChannel: VoiceChannel?) {
             // We are using @OptionName with custom name channel
             // this means voiceChannel will be equal to ctx.getOption("channel")
         }
 
-        @SlashCommand(group = "group1", name = "option2")
+        @SlashCommand(group = "group1", name = "option2", target = InteractionTarget.ALL)
         fun group1Option2(ctx: SlashCommandContext) {
 
         }
 
-        @SlashCommand(group = "group2", name = "option1")
+        @SlashCommand(group = "group2", name = "option1", target = InteractionTarget.ALL)
         fun group2Option1(ctx: SlashCommandContext) {
 
         }
 
-        @SlashCommand(group = "group2", name = "option2")
+        @SlashCommand(group = "group2", name = "option2", target = InteractionTarget.ALL)
         fun group2Option2(ctx: SlashCommandContext) {
 
         }
 
-        @SlashCommand(name = "optionNoGroup")
+        @SlashCommand(name = "optionNoGroup", target = InteractionTarget.ALL)
         fun optionNoGroup(ctx: SlashCommandContext) {
 
         }
