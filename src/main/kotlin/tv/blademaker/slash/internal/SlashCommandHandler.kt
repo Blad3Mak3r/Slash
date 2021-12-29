@@ -72,12 +72,12 @@ class SlashCommandHandler(
 
             when (target) {
                 InteractionTarget.ALL, InteractionTarget.DM -> {
-                    check(contextClassifier !is GuildSlashCommandContext) {
+                    check(contextClassifier != GuildSlashCommandContext::class) {
                         "Do not use GuildSlashCommandContext with a non-guild InteractionTarget, use SlashCommandContext instead -> $classFunctionName"
                     }
                 }
                 InteractionTarget.GUILD -> {
-                    if (contextClassifier !is GuildSlashCommandContext) {
+                    if (contextClassifier != GuildSlashCommandContext::class) {
                         log.warn("You are not using GuildSlashCommandContext on a guild InteractionTarget -> $classFunctionName")
                     }
                 }
