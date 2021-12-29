@@ -106,14 +106,14 @@ class RoleCommand : BaseSlashCommand("role") {
     }
 
     // The parsed path is role/list
-    @SlashCommand("list")
+    @SlashCommand("list", target = InteractionTarget.GUILD)
     suspend fun listRoles(ctx: GuildSlashCommandContext, member: Member?) {
         // This handler has a nullable param, that means the option on the command event
         // can be null.
     }
 
     // The parsed path is role/compare
-    @SlashCommand("compare")
+    @SlashCommand("compare", target = InteractionTarget.GUILD)
     suspend fun compareRoles(ctx: GuildSlashCommandContext, member1: Member, member2: Member) {
         // This handler will compare the roles between two members from the guild.
     }
@@ -192,22 +192,34 @@ val commandClient = SlashCommandClient.default("com.example.commands")
 ### Using context actions
 You can build context actions inside SlashCommands so easy.
 ```kotlin
-@SlashCommand
+@SlashCommand(target = InteractionTarget.ALL)
 suspend fun contextActions(ctx: SlashCommandContext) {
     
     // This is a context action
     val embedAction: EmbedContextAction = ctx.embed {
         setTitle("Embed Title")
     }
-    0
+    
     val messageAction: MessageContextAction = ctx.message {
         append("Message content")
     }
     
     // To execute an action use send() or reply()
+    // Only use this if you know if the interaction was acknowledged or
+    // you need the response from discord.
     val messageResult: ReplyAction = messageAction.reply().await()
     
     val embedResult: WebhookMessageAction<Message> = embedAction.send().await()
+    
+    // You can queue the request
+    // This will check if the interaction was acknowledged previusly and use the correct behaviour
+    ctx.embed {
+        setDescription("This is the third message but i dont need to use reply() or send()")
+    }.queue()
+    
+    // When using queue() you can set if the message hast the ephemeral flag or not (by default is set to false)
+    ctx.message("This message will be ephemeral").queue(true)
+    // Ephemeral messages only are ephemeral when the first reply is ephemeral.
     
     // You can get the generated message use 'original'.
     val embed = embedAction.original
@@ -215,6 +227,22 @@ suspend fun contextActions(ctx: SlashCommandContext) {
     val message = messageAction.original
     
 }
+```
+
+### Acknowledge Interactions
+You have 3 seconds to respond or acknowledge an interaction, you can handle this so easy with the following code.
+```kotlin
+
+@SlashCommand(target = InteractionTarget.ALL)
+suspend fun someCommand(ctx: SlashCommandContext) {
+    // If your need to wait before continue the code execution, you can use
+    ctx.tryAcknowledge().await()
+    // But if the interaction is already acknowledged this will thow an IllegalStateException.
+    
+    // If you dont know if your interaction was acknowledged and dont need to wait use
+    ctx.acknowledge()
+}
+
 ```
 
 ### Custom Option names
