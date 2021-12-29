@@ -49,8 +49,8 @@ open class SuspendingCommandExecutor(
             val time = (System.nanoTime() - startTime) / 1_000_000
 
             client.metrics?.incSuccessCommand(event, time)
-        } catch (e: Exception) {
-            client.exceptionHandler.wrap(e, handler.parent, event)
+        } catch (expected: Exception) {
+            client.exceptionHandler.wrap(expected, handler.parent, event)
             client.metrics?.incFailedCommand(event)
         }
     }
