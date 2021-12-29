@@ -8,8 +8,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.client.DefaultSlashCommandClient
 import tv.blademaker.slash.context.AutoCompleteContext
+import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
-import tv.blademaker.slash.context.impl.GuildSlashCommandContext
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
 import kotlin.coroutines.CoroutineContext
 

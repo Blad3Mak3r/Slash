@@ -3,9 +3,8 @@ package tv.blademaker.slash.internal
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.annotations.*
+import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
-import tv.blademaker.slash.context.AutoCompleteContext
-import tv.blademaker.slash.context.impl.GuildSlashCommandContext
 import tv.blademaker.slash.exceptions.InteractionTargetMismatch
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
@@ -73,12 +72,12 @@ class SlashCommandHandler(
 
             when (target) {
                 InteractionTarget.ALL, InteractionTarget.DM -> {
-                    check(contextClassifier != GuildSlashCommandContext::class) {
+                    check(contextClassifier !is GuildSlashCommandContext) {
                         "Do not use GuildSlashCommandContext with a non-guild InteractionTarget, use SlashCommandContext instead -> $classFunctionName"
                     }
                 }
                 InteractionTarget.GUILD -> {
-                    if (contextClassifier != GuildSlashCommandContext::class) {
+                    if (contextClassifier !is GuildSlashCommandContext) {
                         log.warn("You are not using GuildSlashCommandContext on a guild InteractionTarget -> $classFunctionName")
                     }
                 }

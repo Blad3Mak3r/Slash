@@ -1,15 +1,13 @@
 package tv.blademaker.slash.context
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import tv.blademaker.slash.context.impl.GuildSlashCommandContext
-import tv.blademaker.slash.context.impl.SlashCommandContextImpl
 
-class DefaultContextCreator : ContextCreator {
+class ContextCreatorImpl : ContextCreator {
     override suspend fun createGuildContext(event: SlashCommandInteractionEvent): GuildSlashCommandContext {
-        return GuildSlashCommandContext(event)
+        return SlashCommandContext.guild(event)
     }
 
     override suspend fun createContext(event: SlashCommandInteractionEvent): SlashCommandContext {
-        return SlashCommandContextImpl(event)
+        return SlashCommandContext.impl(event)
     }
 }

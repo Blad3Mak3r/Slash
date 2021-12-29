@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.entities.Member
 import tv.blademaker.slash.PermissionTarget
 import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.annotations.Permissions
-import tv.blademaker.slash.context.impl.GuildSlashCommandContext
+import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.exceptions.PermissionsLackException
 
 typealias CommandExecutionCheck = suspend (ctx: SlashCommandContext) -> Boolean

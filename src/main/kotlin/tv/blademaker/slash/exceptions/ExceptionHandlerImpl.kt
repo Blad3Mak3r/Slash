@@ -9,7 +9,7 @@ import tv.blademaker.slash.SlashUtils.toHuman
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.SlashCommandContext
 
-class DefaultExceptionHandler : ExceptionHandler {
+class ExceptionHandlerImpl : ExceptionHandler {
     override fun onException(ex: Exception, command: BaseSlashCommand, event: SlashCommandInteractionEvent) {
         val message = "Exception executing handler for slash command `${event.commandPath}`:\n```\n${ex.message}\n```"
 

@@ -1,21 +1,18 @@
 package tv.blademaker.slash.context
 
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
-import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.sharding.ShardManager
 import tv.blademaker.slash.context.actions.ContextAction
-import tv.blademaker.slash.client.SlashCommandClient
-import tv.blademaker.slash.extensions.Snowflake
+import tv.blademaker.slash.context.impl.GuildSlashCommandContextImpl
+import tv.blademaker.slash.context.impl.SlashCommandContextImpl
 import java.util.concurrent.atomic.AtomicReference
 
 @Suppress("unused")
@@ -217,4 +214,14 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      * An extra object (reference) the set what you want.
      */
     var extra: AtomicReference<Any?>
+
+    companion object {
+        fun impl(event: SlashCommandInteractionEvent): SlashCommandContext {
+            return SlashCommandContextImpl(event)
+        }
+
+        fun guild(event: SlashCommandInteractionEvent): GuildSlashCommandContext {
+            return GuildSlashCommandContextImpl(event)
+        }
+    }
 }

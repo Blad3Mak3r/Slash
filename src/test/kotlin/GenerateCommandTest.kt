@@ -3,7 +3,6 @@
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import org.junit.Test
 import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.annotations.AutoComplete
 import tv.blademaker.slash.annotations.InteractionTarget
@@ -12,8 +11,7 @@ import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.annotations.OptionName
 import tv.blademaker.slash.annotations.SlashCommand
 import tv.blademaker.slash.context.AutoCompleteContext
-import tv.blademaker.slash.context.impl.GuildSlashCommandContext
-import tv.blademaker.slash.exceptions.DefaultExceptionHandler
+import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
 
 class GenerateCommandTest {
@@ -24,7 +22,7 @@ class GenerateCommandTest {
                 BasicCommand,
                 AdvancedCommand
             )
-        override val exceptionHandler: ExceptionHandler = DefaultExceptionHandler()
+        override val exceptionHandler: ExceptionHandler = ExceptionHandlerImpl()
 
         override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
         }

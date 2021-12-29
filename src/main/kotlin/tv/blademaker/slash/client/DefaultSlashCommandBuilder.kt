@@ -3,8 +3,8 @@ package tv.blademaker.slash.client
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.sharding.ShardManager
 import tv.blademaker.slash.context.ContextCreator
-import tv.blademaker.slash.context.DefaultContextCreator
-import tv.blademaker.slash.exceptions.DefaultExceptionHandler
+import tv.blademaker.slash.context.ContextCreatorImpl
+import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.internal.SuspendingCommandExecutor
@@ -42,8 +42,8 @@ class DefaultSlashCommandBuilder(
     private fun build(): DefaultSlashCommandClient {
         return DefaultSlashCommandClient(
             packageName,
-            exceptionHandler ?: DefaultExceptionHandler(),
-            contextCreator ?: DefaultContextCreator(),
+            exceptionHandler ?: ExceptionHandlerImpl(),
+            contextCreator ?: ContextCreatorImpl(),
             checks,
             metrics
         )

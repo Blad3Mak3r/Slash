@@ -1,17 +1,7 @@
 package tv.blademaker.slash
 
-import tv.blademaker.slash.annotations.AutoComplete
-import tv.blademaker.slash.annotations.SlashCommand
-import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.context.SlashCommandContext
-import tv.blademaker.slash.context.impl.GuildSlashCommandContext
-import tv.blademaker.slash.internal.AutoCompleteHandler
-import tv.blademaker.slash.internal.Checks
 import tv.blademaker.slash.internal.CommandExecutionCheck
-import tv.blademaker.slash.internal.SlashCommandHandler
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.hasAnnotation
 
 abstract class BaseSlashCommand(val commandName: String) {
 

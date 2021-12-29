@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
+import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
 
 interface ContextAction<T> {
@@ -65,7 +66,7 @@ interface ContextAction<T> {
             return EmbedContextAction(ctx, EmbedBuilder().apply(embedBuilder).build())
         }
 
-        internal fun build(ctx: tv.blademaker.slash.context.impl.GuildSlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
+        internal fun build(ctx: GuildSlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
             return EmbedContextAction(ctx, EmbedBuilder().setColor(ctx.selfMember.color).apply(embedBuilder).build())
         }
 

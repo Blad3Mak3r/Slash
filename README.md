@@ -1,13 +1,18 @@
 [maven-central-shield]: https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue
 [maven-central]: https://search.maven.org/artifact/tv.blademaker/slash
+[kotlin]: https://kotlinlang.org/
+[jda]: https://github.com/DV8FromTheWorld/JDA
+[jda-rework-interactions]: https://github.com/DV8FromTheWorld/JDA/tree/rework/interactions
+[slash-commands]: https://discord.com/developers/docs/interactions/application-commands
 
 # Slash [![Maven Central][maven-central-shield]][maven-central]
 ### 🚧 This project is currently in active development 🚧
-Slash is a library that works with JDA for an advanced implementation of Slash Commands for Discord.
+Slash is a library witten 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Slash Commands][slash-commands]** for Discord.
 
 
 ## Table of contents
 - [ToDo](#todo)
+- [Requirements](#requirements)
 - [Commands creation](#create-commands)
     - [Basic command](#basic-command)
     - [Sub-commands and permissions](#sub-commands-slash-command-with-permissions)
@@ -23,9 +28,16 @@ Slash is a library that works with JDA for an advanced implementation of Slash C
 - [x] Implement handler for default command.
 - [x] Implement handlers for sub-commands.
 - [x] Implement handlers for sub-commands groups.
+- [x] Add support for **Auto Complete** command interactions.
+- [x] Add support for non-guild commands (DM commands).
 - [ ] Synchronize discord published commands with create commands.
 - [ ] Useful docs.
 - [ ] Be a nice a package :).
+
+## Requirements
+- This version of **Slash** requires **[JDA Rework Interactions][jda-rework-interactions]** branch to work properly.
+- JDK 11.
+- Kotlin support with coroutines and reflections.
 
 ## Create commands
 
@@ -33,9 +45,12 @@ Slash is a library that works with JDA for an advanced implementation of Slash C
 Create a command inside the package ``net.example.commands`` called ``PingCommand.kt``:
 
 ```kotlin
-class PingCommand : BaseSlashCommand("ping") {
 
-    @SlashCommand
+ import java.lang.reflect.Memberclass PingCommand : BaseSlashCommand("ping") {
+
+    // This command can be used on guilds and direct messages.
+    // SlashCommandContext is used on DM and ALL targets.
+    @SlashCommand(target = InteractionTarget.ALL)
     suspend fun default(ctx: SlashCommandContext) {
         ctx.acknowledge(true).queue()
 
@@ -50,6 +65,23 @@ class PingCommand : BaseSlashCommand("ping") {
     }
 
 }
+
+class Whois : BaseSlashCommand("whois") {
+    
+    // This command only can be used on guilds.
+    // If you try to use it with SlashCommandContext instead of GuildSlashCommandContext
+    // the library will report warms about this.
+    @SlashCommand(target = InteractionTarget.GUILD)
+    suspend fun default(ctx: GuildSlashCommandContext, member: Member) {
+        ctx.embed {
+            setAuthor(/* ... */)
+            setTitle("Whois ${membed.asTag}")
+            setDescription(/* ... */)
+        }.queue()
+        // When using queue on a ContextAction will automatically select between
+        // reply() and send()
+    }
+}
 ```
 
 ### Sub-commands slash command with permissions
@@ -60,30 +92,30 @@ class RoleCommand : BaseSlashCommand("role") {
     
     // The parsed path is role/add
     // This handler required MANAGE_ROLES permission fot both, bot and user who execute the command.
-    @SlashCommand("add")
+    @SlashCommand("add", target = InteractionTarget.GUILD)
     @Permissions(bot = [Permission.MANAGE_ROLES], user = [Permission.MANAGE_ROLES])
-    suspend fun addRole(ctx: SlashCommandContext, member: Member) {
+    suspend fun addRole(ctx: GuildSlashCommandContext, member: Member) {
         // This handler will add a role to the member.
     }
 
     // The parsed path is role/remove
     // This handler required MANAGE_ROLES permission fot both, bot and user who execute the command.
-    @SlashCommand("remove")
+    @SlashCommand("remove", target = InteractionTarget.GUILD)
     @Permissions(bot = [Permission.MANAGE_ROLES], user = [Permission.MANAGE_ROLES])
-    suspend fun removeRole(ctx: SlashCommandContext, member: Member) {
+    suspend fun removeRole(ctx: GuildSlashCommandContext, member: Member) {
         // This handler will remove a role to a member if the member have the role.
     }
 
     // The parsed path is role/list
     @SlashCommand("list")
-    suspend fun listRoles(ctx: SlashCommandContext, member: Member?) {
-        // This handler have a nullable param, that means the option on the command event
+    suspend fun listRoles(ctx: GuildSlashCommandContext, member: Member?) {
+        // This handler has a nullable param, that means the option on the command event
         // can be null.
     }
 
     // The parsed path is role/compare
     @SlashCommand("compare")
-    suspend fun compareRoles(ctx: SlashCommandContext, member1: Member, member2: Member) {
+    suspend fun compareRoles(ctx: GuildSlashCommandContext, member1: Member, member2: Member) {
         // This handler will compare the roles between two members from the guild.
     }
 }
@@ -102,14 +134,14 @@ Create a command inside package ``net.example.commands`` called ``TwitchCommand.
 class TwitchCommand : BaseSlashCommand("twitch") {
 
     // The parsed path is twitch/clips/top
-    @SlashCommand(group = "clips", name = "top")
+    @SlashCommand(group = "clips", name = "top", target = InteractionTarget.ALL)
     @Permissions(bot = [Permission.MESSAGE_EMBED_LINKS])
     suspend fun clipTop(ctx: SlashCommandContext, channel: String?) {
         
     }
 
     // The parsed path is twitch/clips/random
-    @SlashCommand(group = "clips", name = "random")
+    @SlashCommand(group = "clips", name = "random", target = InteractionTarget.ALL)
     @Permissions(bot = [Permission.MESSAGE_EMBED_LINKS])
     suspend fun clipRandom(ctx: SlashCommandContext, channel: String?) {
         
@@ -121,20 +153,39 @@ This command will create 2 handlers with the following user representation:
 - /twitch clips random (channel?)
 
 ### Registering commands
-Register ``DefaultCommandClient()`` with the package name where the commands are located, and register
+Register the handler using ``SlashCommandClient.default(packageName)`` with the package name where the commands are located, and register
 the event listener in your JDA or ShardManager builder.
 
 ```kotlin
-val commandClient = DefaultCommandClient("com.example.commands").apply {
+val shardManager = DefaultShardManagerBuilder().apply { /* ... */ }.build(false)
+
+val commandClient = SlashCommandClient.default("com.example.commands")
+  .contextCreator(object : ContextCreator {
+    // You can override the default ContextCreator
     
-    // Register the event listener
-    withShardManager(shardManager)
-    // or
-    withJDA(jda)
+    override suspend fun createContext(event: SlashCommandInteractionEvent): SlashCommandContext {
+      return SlashCommandContext.impl(event)
+    }
+
+    // SlashCommandContext and GuildSlashCommandContext contains an extra object
+    // that is a AtomicReference<Any?> so you can set any object here on the context creation
+    // and retrieve it when you handle the command.
+    override suspend fun createGuildContext(event: SlashCommandInteractionEvent): GuildSlashCommandContext {
+      val context = SlashCommandContext.guild(event)
+      context.extra.set(Utils.getGuildConfig(event))
+      return context
+    }
+
+  })
+  .addCheck { ctx ->
+    // Imagine you have an ignored channels filter, you can add the global check here.
+    if (!ctx.isFromGuild || ctx.guild == null) return true
     
-    // Expose prometheus statistics to your current metrics collection
-    withMetrics()
-}
+    val cannotExecute = Utils.checkIgnoredChannels(ctx.guild)
+    
+    return !cannotExecute
+  }
+  .buildWith(shardManager)
 ```
 
 ``commandClient`` will register ``PingCommand``, ``RoleCommand`` and ``TwitchCommand``.
