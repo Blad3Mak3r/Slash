@@ -3,8 +3,12 @@ package tv.blademaker.slash.internal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import org.slf4j.LoggerFactory
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.client.DefaultSlashCommandClient
 import tv.blademaker.slash.context.AutoCompleteContext
@@ -44,6 +48,8 @@ open class SuspendingCommandExecutor(
             if (!handler.parent.doChecks(ctx)) return@launch
             if (ctx is GuildSlashCommandContext) Checks.handlerPermissions(ctx, handler.permissions)
 
+
+            logEvent(event)
             val startTime = System.nanoTime()
             handler.execute(ctx)
             val time = (System.nanoTime() - startTime) / 1_000_000
@@ -59,9 +65,27 @@ open class SuspendingCommandExecutor(
         try {
             val ctx = AutoCompleteContext(event)
 
+            logEvent(event)
             handler.execute(ctx)
         } catch (e: Exception) {
             client.exceptionHandler.wrap(e, handler.parent, event)
+        }
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(SuspendingCommandExecutor::class.java)
+
+        private fun logEvent(event: SlashCommandInteractionEvent) {
+            log.info("${getEventLogPrefix(event)} [Slash Command] --> ${event.commandString}")
+        }
+
+        private fun logEvent(event: CommandAutoCompleteInteractionEvent) {
+            log.info("${getEventLogPrefix(event)} [Auto Complete] --> ${event.commandString}")
+        }
+
+        private fun getEventLogPrefix(event: GenericInteractionCreateEvent) = when (event.isFromGuild) {
+            true -> "[\u001b[32mSP::${event.guild?.name}(${event.guild?.id})\u001b[0m] ${event.user.asTag}"
+            false -> "[\u001b[32mDM::${event.user.asTag}(${event.user.id})\u001b[0m]"
         }
     }
 }

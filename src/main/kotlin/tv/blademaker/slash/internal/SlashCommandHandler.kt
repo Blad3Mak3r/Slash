@@ -40,8 +40,7 @@ class SlashCommandHandler(
 
     suspend fun execute(ctx: SlashCommandContext) {
         checkTarget(ctx)
-        val params = options.map { it.compile(ctx) }.toTypedArray()
-        function.callSuspend(parent, ctx, *params)
+        function.callSuspend(parent, ctx, *options.map { it.compile(ctx) }.toTypedArray())
     }
 
     companion object {

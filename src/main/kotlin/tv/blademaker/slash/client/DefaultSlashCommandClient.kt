@@ -1,8 +1,6 @@
 package tv.blademaker.slash.client
 
 import kotlinx.coroutines.CoroutineScope
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
@@ -41,7 +39,7 @@ class DefaultSlashCommandClient internal constructor(
     private val discoveryResult = SlashUtils.discoverSlashCommands(packageName)
 
     override val registry = discoveryResult.let {
-        logger.info("Discovered a total of ${it.commands.size} commands in ${it.elapsedTime}ms.")
+        log.info("Discovered a total of ${it.commands.size} commands in ${it.elapsedTime}ms.")
         it.commands
     }
 
@@ -69,9 +67,7 @@ class DefaultSlashCommandClient internal constructor(
     }
 
     override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
-        val handler = findHandler(event) ?: return
-
-        executor.execute(event, handler)
+        findHandler(event)?.run { executor.execute(event, this) }
     }
 
     fun addCheck(check: CommandExecutionCheck) {
@@ -79,58 +75,7 @@ class DefaultSlashCommandClient internal constructor(
         checks.add(check)
     }
 
-    /*private suspend fun handleAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
-        val command = getCommand(event.name) ?: return
-        val context = AutoCompleteContext(event)
-
-        //logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
-
-        try {
-            command.executeAutoComplete(context)
-        } catch (e: Exception) {
-            logger.error("Exception executing auto-complete handler for command ${command.commandName}: ${e.message}", e)
-        }
-    }*/
-
-    /*private suspend fun handleSlashCommandEvent(event: SlashCommandInteractionEvent) {
-        val commandPath = event.commandPath
-
-        val command = getCommand(event.name) ?: return
-        val handler = command.handlers.slash.find { it.path == commandPath }
-            ?: error("No handler found for slash command path $commandPath")
-
-        val context = when (handler.target) {
-            InteractionTarget.GUILD -> createGuildContext(event, command)
-            else -> createContext(event, command)
-        }
-
-        if (event.isFromGuild) logCommand(event.guild!!, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
-        else logCommand(event.user, "uses command \u001B[33m${event.commandString}\u001B[0m")
-
-        if (!runChecks(context)) return
-
-        try {
-            val start = System.nanoTime()
-            command.execute(context, handler)
-            val end = (System.nanoTime() - start) / 1_000_000
-            metrics?.incSuccessCommand(event, end)
-        } catch (ex: PermissionsLackException) {
-            exceptionHandler.onPermissionLackException(ex)
-            metrics?.incFailedCommand(event)
-        } catch (ex: InteractionTargetMismatch) {
-            exceptionHandler.onInteractionTargetMismatch(ex)
-        } catch (ex: Exception) {
-            exceptionHandler.onException(ex, command, context)
-            metrics?.incFailedCommand(event)
-        } finally {
-            metrics?.incHandledCommand(event)
-        }
-    }*/
-
     private companion object {
-        private val logger = LoggerFactory.getLogger(DefaultSlashCommandClient::class.java)
-
-        private fun logCommand(guild: Guild, content: String) = logger.info("[\u001b[32m${guild.name}(${guild.id})\u001b[0m] $content")
-        private fun logCommand(user: User, content: String) = logger.info("[\u001b[32m${user.asTag}(${user.id})\u001b[0m] $content")
+        private val log = LoggerFactory.getLogger(DefaultSlashCommandClient::class.java)
     }
 }

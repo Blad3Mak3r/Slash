@@ -30,8 +30,7 @@ class AutoCompleteHandler(
     private val options: List<FunctionParameter> = buildHandlerParameters(parent, function)
 
     suspend fun execute(ctx: AutoCompleteContext) {
-        val params = options.map { it.compile(ctx) }.toTypedArray()
-        function.callSuspend(parent, ctx, *params)
+        function.callSuspend(parent, ctx, *options.map { it.compile(ctx) }.toTypedArray())
     }
 
     companion object {
