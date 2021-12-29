@@ -45,8 +45,7 @@ Slash is a library witten 100% with **[Kotlin][kotlin]** that works with **[JDA 
 Create a command inside the package ``net.example.commands`` called ``PingCommand.kt``:
 
 ```kotlin
-
- import java.lang.reflect.Memberclass PingCommand : BaseSlashCommand("ping") {
+class PingCommand : BaseSlashCommand("ping") {
 
     // This command can be used on guilds and direct messages.
     // SlashCommandContext is used on DM and ALL targets.
