@@ -11,8 +11,8 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
 
-internal class AutoCompleteHandler(
-    private val command: BaseSlashCommand,
+class AutoCompleteHandler(
+    override val parent: BaseSlashCommand,
     private val function: KFunction<*>
 ) : Handler {
 
@@ -22,16 +22,16 @@ internal class AutoCompleteHandler(
         get() = annotation.optionName
 
     override val path = buildString {
-        append(command.commandName)
+        append(parent.commandName)
         if (annotation.group.isNotBlank()) append("/${annotation.group}")
         if (annotation.name.isNotBlank()) append("/${annotation.name}")
     }
 
-    private val options: List<FunctionParameter> = buildHandlerParameters(command, function)
+    private val options: List<FunctionParameter> = buildHandlerParameters(parent, function)
 
     suspend fun execute(ctx: AutoCompleteContext) {
         val params = options.map { it.compile(ctx) }.toTypedArray()
-        function.callSuspend(command, ctx, *params)
+        function.callSuspend(parent, ctx, *params)
     }
 
     companion object {

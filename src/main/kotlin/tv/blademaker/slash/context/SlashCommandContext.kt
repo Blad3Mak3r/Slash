@@ -21,8 +21,6 @@ import java.util.concurrent.atomic.AtomicReference
 @Suppress("unused")
 interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent> {
 
-    val commandClient: SlashCommandClient
-
     override val interaction: CommandInteraction
         get() = event.interaction
 

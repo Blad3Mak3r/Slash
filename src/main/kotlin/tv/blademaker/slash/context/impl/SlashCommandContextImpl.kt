@@ -6,7 +6,6 @@ import tv.blademaker.slash.context.SlashCommandContext
 import java.util.concurrent.atomic.AtomicReference
 
 class SlashCommandContextImpl(
-    override val commandClient: SlashCommandClient,
     override val event: SlashCommandInteractionEvent
 ) : SlashCommandContext {
 

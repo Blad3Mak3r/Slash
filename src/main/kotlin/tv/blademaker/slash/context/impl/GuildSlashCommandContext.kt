@@ -8,7 +8,6 @@ import tv.blademaker.slash.context.SlashCommandContext
 import java.util.concurrent.atomic.AtomicReference
 
 class GuildSlashCommandContext(
-    override val commandClient: SlashCommandClient,
     override val event: SlashCommandInteractionEvent
 ) : SlashCommandContext {
     override var extra: AtomicReference<Any?> = AtomicReference()

@@ -10,7 +10,7 @@ import tv.blademaker.slash.exceptions.PermissionsLackException
 typealias CommandExecutionCheck = suspend (ctx: SlashCommandContext) -> Boolean
 
 internal object Checks {
-    fun commandPermissions(ctx: GuildSlashCommandContext, permissions: Permissions?) {
+    fun handlerPermissions(ctx: GuildSlashCommandContext, permissions: Permissions?) {
         if (!ctx.event.isFromGuild) return
         if (permissions == null || permissions.bot.isEmpty() && permissions.user.isEmpty()) return
 

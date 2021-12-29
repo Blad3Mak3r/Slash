@@ -7,9 +7,16 @@ import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.annotations.AutoComplete
 import tv.blademaker.slash.annotations.InteractionTarget
+import tv.blademaker.slash.annotations.SlashCommand
+import tv.blademaker.slash.internal.AutoCompleteHandler
+import tv.blademaker.slash.internal.CommandHandlers
+import tv.blademaker.slash.internal.SlashCommandHandler
 import java.lang.reflect.Modifier
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.hasAnnotation
 
 object SlashUtils {
 
@@ -80,5 +87,67 @@ object SlashUtils {
         }
 
         return this
+    }
+
+    internal fun compileCommandHandlers(commands: List<BaseSlashCommand>): CommandHandlers {
+        val slashCommandHandlers = commands.map { compileSlashCommandHandlers(it) }.let {
+            if (it.isEmpty()) emptyList()
+            else it.reduce { acc, list -> list + acc }
+        }
+        val autoCompleteHandlers = commands.map { compileAutoCompleteHandlers(it) }.let {
+            if (it.isEmpty()) emptyList()
+            else it.reduce { acc, list -> list + acc }
+        }
+        return CommandHandlers(
+            slashCommandHandlers,
+            autoCompleteHandlers
+        )
+    }
+
+    private fun compileSlashCommandHandlers(command: BaseSlashCommand): List<SlashCommandHandler> {
+        val handlers = command::class.functions
+            .filter { it.hasAnnotation<SlashCommand>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+            .map { SlashCommandHandler(command, it) }
+
+        val finalList = mutableListOf<SlashCommandHandler>()
+
+        for (handler in handlers) {
+            check(!finalList.any { it.path == handler.path }) {
+                "Found more than one InteractionHandler for the same path ${handler.path}"
+            }
+            finalList.add(handler)
+        }
+
+        check(finalList.isNotEmpty()) {
+            "SlashCommand ${command.commandName} does not have registered handlers."
+        }
+
+        checkDefault(command, finalList) {
+            "SlashCommand ${command.commandName} have registered more than 1 handler having a default handler."
+        }
+
+        return finalList
+    }
+
+    private fun checkDefault(command: BaseSlashCommand, list: List<SlashCommandHandler>, lazyMessage: () -> String) {
+        if (list.size <= 1) return
+        if (list.any { it.path == command.commandName }) error(lazyMessage())
+    }
+
+    private fun compileAutoCompleteHandlers(command: BaseSlashCommand): List<AutoCompleteHandler> {
+        val handlers = command::class.functions
+            .filter { it.hasAnnotation<AutoComplete>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+            .map { AutoCompleteHandler(command, it) }
+
+        val finalList = mutableListOf<AutoCompleteHandler>()
+
+        for (handler in handlers) {
+            check(!finalList.any { it.path == handler.path && it.optionName == handler.optionName }) {
+                "Found more than one AutocompleteHandler for the same path (${handler.path}) and option (${handler.optionName})."
+            }
+            finalList.add(handler)
+        }
+
+        return finalList
     }
 }
