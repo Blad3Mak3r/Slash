@@ -51,7 +51,7 @@ class PingCommand : BaseSlashCommand("ping") {
     // SlashCommandContext is used on DM and ALL targets.
     @SlashCommand(target = InteractionTarget.ALL)
     suspend fun default(ctx: SlashCommandContext) {
-        ctx.acknowledge(true).queue()
+        ctx.acknowledge(true)
 
         val restPing = ctx.jda.restPing.await()
         val gatewayPing = ctx.jda.gatewayPing
