@@ -237,10 +237,13 @@ You have 3 seconds to respond or acknowledge an interaction, you can handle this
 suspend fun someCommand(ctx: SlashCommandContext) {
     // If your need to wait before continue the code execution, you can use
     ctx.tryAcknowledge().await()
-    // But if the interaction is already acknowledged this will thow an IllegalStateException.
+    // But if the interaction is already acknowledged this will throw an IllegalStateException.
     
-    // If you dont know if your interaction was acknowledged and dont need to wait use
+    // If you don't know if your interaction was acknowledged and don't need to wait use
     ctx.acknowledge()
+  
+    // If you want to the interaction follow-up messages to be ephemeral, you need to set true when using the function.
+    ctx.acknowledge(true)
 }
 
 ```

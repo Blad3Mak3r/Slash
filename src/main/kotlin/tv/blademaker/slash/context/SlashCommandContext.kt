@@ -14,6 +14,9 @@ import tv.blademaker.slash.context.actions.ContextAction
 import tv.blademaker.slash.context.impl.GuildSlashCommandContextImpl
 import tv.blademaker.slash.context.impl.SlashCommandContextImpl
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 @Suppress("unused")
 interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent> {
@@ -50,8 +53,22 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
         return event.deferReply(ephemeral)
     }
 
-    fun acknowledge(ephemeral: Boolean = false) {
-        if (!isAcknowledged) event.deferReply(ephemeral).queue()
+    /**
+     * Automatically detect if the interaction is already acknowledge and if not
+     * will acknowledge it.
+     *
+     *
+     */
+    suspend fun acknowledge(ephemeral: Boolean = false) = suspendCoroutine<Unit> { cont ->
+        if (isAcknowledged) {
+            cont.resume(Unit)
+        } else {
+            event.deferReply(ephemeral).queue({
+                cont.resume(Unit)
+            }, {
+                cont.resumeWithException(it)
+            })
+        }
     }
 
     fun getOption(name: String) = event.getOption(name)

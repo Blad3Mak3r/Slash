@@ -46,7 +46,7 @@ interface ContextAction<T> {
      * @see ContextAction.reply
      */
     fun queue(ephemeral: Boolean = false) {
-        when (ctx.event.isAcknowledged) {
+        when (ctx.isAcknowledged) {
             true -> send(ephemeral).queue()
             false -> reply(ephemeral).queue()
         }
