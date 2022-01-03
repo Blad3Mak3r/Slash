@@ -25,7 +25,7 @@ Slash is a library that works with JDA for an advanced implementation of Slash C
 - [x] Implement handlers for sub-commands groups.
 - [ ] Synchronize discord published commands with create commands.
 - [ ] Useful docs.
-- [ ] Be a nice a package :).
+- [ ] Be a nice package :).
 
 ## Create commands
 
