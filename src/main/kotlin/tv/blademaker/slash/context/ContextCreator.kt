@@ -4,7 +4,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 interface ContextCreator {
 
-    suspend fun createGuildContext(event: SlashCommandInteractionEvent): GuildSlashCommandContext
+    suspend fun createGuildContext(event: SlashCommandInteractionEvent): GuildSlashCommandContext {
+        return SlashCommandContext.guild(event)
+    }
 
-    suspend fun createContext(event: SlashCommandInteractionEvent): SlashCommandContext
+    suspend fun createContext(event: SlashCommandInteractionEvent): SlashCommandContext {
+        return SlashCommandContext.impl(event)
+    }
 }

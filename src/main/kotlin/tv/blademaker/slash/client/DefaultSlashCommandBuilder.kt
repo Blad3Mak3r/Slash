@@ -3,7 +3,7 @@ package tv.blademaker.slash.client
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.sharding.ShardManager
 import tv.blademaker.slash.context.ContextCreator
-import tv.blademaker.slash.context.ContextCreatorImpl
+import tv.blademaker.slash.context.impl.ContextCreatorImpl
 import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.internal.CommandExecutionCheck

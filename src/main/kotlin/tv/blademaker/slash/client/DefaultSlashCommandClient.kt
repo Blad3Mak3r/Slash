@@ -52,16 +52,16 @@ class DefaultSlashCommandClient internal constructor(
         return commandHandlers.autoComplete.find { it.path == event.commandPath && it.optionName == event.focusedOption.name }
     }
 
-    fun findSlashCommandPaths(command: BaseSlashCommand): List<String> {
-        return commandHandlers.slash.filter { it.parent == command }.map { it.path }
-    }
-
-    fun findAutoCompleteCommandPaths(command: BaseSlashCommand): List<String> {
-        return commandHandlers.slash.filter { it.parent == command }.map { it.path }
-    }
-
     override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
-        val handler = findHandler(event) ?: return
+        val handler = findHandler(event)
+
+        if (handler == null) {
+            log.error("Not found handler for command path ${event.commandPath}")
+            return event.reply("Not found handler for command path ${event.commandPath}," +
+                    "this exceptions is reported to developer automatically.").setEphemeral(true).queue()
+        }
+
+        log.debug("Executing handler ${handler.path} for command path ${event.commandPath}")
 
         executor.execute(event, handler)
     }

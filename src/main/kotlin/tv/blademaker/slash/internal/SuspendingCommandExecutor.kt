@@ -29,7 +29,11 @@ open class SuspendingCommandExecutor(
     private suspend fun creteContext(handler: SlashCommandHandler, event: SlashCommandInteractionEvent): SlashCommandContext {
         return when (handler.target) {
             InteractionTarget.GUILD -> client.contextCreator.createGuildContext(event)
-            else -> client.contextCreator.createContext(event)
+            InteractionTarget.DM -> client.contextCreator.createContext(event)
+            InteractionTarget.ALL -> when (event.isFromGuild) {
+                true -> client.contextCreator.createGuildContext(event)
+                false -> client.contextCreator.createContext(event)
+            }
         }
     }
 
@@ -43,10 +47,15 @@ open class SuspendingCommandExecutor(
             client.metrics?.incHandledCommand(event)
             val ctx = creteContext(handler, event)
 
+            log.debug("Running global checks")
             if (!checkGlobals(ctx)) return@launch
 
+            log.debug("Running handler parent checks")
             if (!handler.parent.doChecks(ctx)) return@launch
-            if (ctx is GuildSlashCommandContext) Checks.handlerPermissions(ctx, handler.permissions)
+            if (ctx is GuildSlashCommandContext) {
+                log.debug("Running Guild checks")
+                Checks.handlerPermissions(ctx, handler.permissions)
+            }
 
 
             logEvent(event)
