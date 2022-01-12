@@ -18,7 +18,7 @@ val coroutinesVersion = "1.6.0"
 val slf4jApi = "1.7.32"
 val prometheusVersion = "0.14.1"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "5.5.0"
+val sentryVersion = "5.5.1"
 
 repositories {
     mavenCentral()
@@ -35,14 +35,14 @@ dependencies {
     implementation("org.reflections:reflections:$reflectionsVersion")
 
     //api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
-    implementation("com.github.DV8FromtheWorld:JDA:82f8ca3") { exclude(module = "opus-java") }
+    implementation("com.github.DV8FromtheWorld:JDA:3b48ecb") { exclude(module = "opus-java") }
     api("org.slf4j:slf4j-api:$slf4jApi")
     api("io.sentry:sentry:$sentryVersion")
 
     api("io.prometheus:simpleclient:$prometheusVersion")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.2.7")
+    testImplementation("ch.qos.logback:logback-classic:1.2.10")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
