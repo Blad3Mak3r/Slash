@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction
+import java.util.*
 
 interface InteractionContext<E : GenericInteractionCreateEvent> {
 
@@ -15,5 +16,11 @@ interface InteractionContext<E : GenericInteractionCreateEvent> {
 
     val jda: JDA
         get() = event.jda
+
+    val userLocale: Locale
+        get() = event.userLocale
+
+    val guildLocale: Locale
+        get() = event.guildLocale
 
 }
