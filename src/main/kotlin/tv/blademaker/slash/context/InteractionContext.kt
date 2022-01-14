@@ -20,7 +20,7 @@ interface InteractionContext<E : GenericInteractionCreateEvent> {
     val userLocale: Locale
         get() = event.userLocale
 
-    val guildLocale: Locale
-        get() = event.guildLocale
+    val guildLocale: Locale?
+        get() = if (event.isFromGuild) event.guildLocale else null
 
 }
