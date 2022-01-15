@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
+import java.awt.Color
 
 interface ContextAction<T> {
 
@@ -59,15 +60,12 @@ interface ContextAction<T> {
         }
 
         internal fun build(ctx: SlashCommandContext, embedBuilder: EmbedBuilder): EmbedContextAction {
-            return EmbedContextAction(ctx, embedBuilder.build())
+            val color = ctx.event.guild?.selfMember?.color ?: Color(44, 47, 51)
+            return EmbedContextAction(ctx, embedBuilder.setColor(color).build())
         }
 
         internal fun build(ctx: SlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
-            return EmbedContextAction(ctx, EmbedBuilder().apply(embedBuilder).build())
-        }
-
-        internal fun build(ctx: GuildSlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
-            return EmbedContextAction(ctx, EmbedBuilder().setColor(ctx.selfMember.color).apply(embedBuilder).build())
+            return build(ctx, EmbedBuilder().apply(embedBuilder))
         }
 
         internal fun build(ctx: SlashCommandContext, message: Message): MessageContextAction {
