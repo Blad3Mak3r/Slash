@@ -35,7 +35,7 @@ dependencies {
     implementation("org.reflections:reflections:$reflectionsVersion")
 
     //api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
-    implementation("com.github.DV8FromtheWorld:JDA:daaef75be1") { exclude(module = "opus-java") }
+    implementation("com.github.DV8FromtheWorld:JDA:bc75db1cb2") { exclude(module = "opus-java") }
     api("org.slf4j:slf4j-api:$slf4jApi")
     api("io.sentry:sentry:$sentryVersion")
 
