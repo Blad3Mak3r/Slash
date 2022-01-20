@@ -3,6 +3,9 @@ name: Publish Dokka Docs
 on:
   push:
     branches: [ main ]
+    paths:
+      - "src/**"
+      - ".github/workflows/dokka-docs-publish.yml"
 
 jobs:
   publish:
