@@ -1,20 +1,18 @@
 package tv.blademaker.slash.client
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.api.*
-import tv.blademaker.slash.api.Metrics
-import tv.blademaker.slash.api.exceptions.PermissionsLackException
-import tv.blademaker.slash.api.SlashUtils.toHuman
-import tv.blademaker.slash.internal.CommandExecutionCheck
-import tv.blademaker.slash.internal.newCoroutineDispatcher
-import kotlin.coroutines.CoroutineContext
-import kotlin.system.measureNanoTime
-import kotlin.system.measureTimeMillis
+import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.SlashUtils
+import tv.blademaker.slash.metrics.Metrics
+import tv.blademaker.slash.context.ContextCreator
+import tv.blademaker.slash.exceptions.ExceptionHandler
+import tv.blademaker.slash.internal.*
+import tv.blademaker.slash.internal.AutoCompleteHandler
+import tv.blademaker.slash.internal.CommandHandlers
+import tv.blademaker.slash.metrics.MetricsStrategy
 
 /**
  * Extendable coroutine based SlashCommandClient
@@ -26,107 +24,58 @@ import kotlin.system.measureTimeMillis
  *
  * @see SlashUtils.discoverSlashCommands
  */
-open class DefaultSlashCommandClient(packageName: String) : SlashCommandClient, CoroutineScope {
+class DefaultSlashCommandClient internal constructor(
+    packageName: String,
+    override val exceptionHandler: ExceptionHandler,
+    internal val contextCreator: ContextCreator,
+    internal val checks: MutableSet<CommandExecutionCheck>,
+    strategy: MetricsStrategy?
+) : SlashCommandClient {
 
-    private val dispatcher = newCoroutineDispatcher("slash-commands-worker-%s", 2, 50)
+    internal val metrics: Metrics? = if (strategy != null) Metrics(strategy) else null
 
-    private val globalChecks: MutableList<CommandExecutionCheck> = mutableListOf()
+    private val executor = SuspendingCommandExecutor(this)
 
-    override val coroutineContext: CoroutineContext
-        get() = dispatcher + Job()
+    private val discoveryResult = SlashUtils.discoverSlashCommands(packageName)
 
-    override val registry = SlashUtils.discoverSlashCommands(packageName).let {
-        logger.info("Discovered a total of ${it.count} commands in ${it.elapsedTime}ms.")
+    override val registry = discoveryResult.let {
+        log.info("Discovered a total of ${it.commands.size} commands in ${it.elapsedTime}ms.")
         it.commands
     }
 
-    override fun onSlashCommandEvent(event: SlashCommandEvent) {
-        launch { handleSuspend(event) }
+    private val commandHandlers: CommandHandlers = SlashUtils.compileCommandHandlers(discoveryResult.commands)
+
+    private fun findHandler(event: SlashCommandInteractionEvent): SlashCommandHandler? {
+        return commandHandlers.slash.find { it.path == event.commandPath }
+    }
+    private fun findHandler(event: CommandAutoCompleteInteractionEvent): AutoCompleteHandler? {
+        return commandHandlers.autoComplete.find { it.path == event.commandPath && it.optionName == event.focusedOption.name }
     }
 
-    /**
-     * Executed when a command return an exception
-     *
-     * @param context The current [SlashCommandContext]
-     * @param command The command that throw the exception [BaseSlashCommand]
-     * @param ex The threw exception
-     */
-    open fun onGenericException(context: SlashCommandContext, command: BaseSlashCommand, ex: Exception) {
-        val message = "Exception executing handler for `${context.event.commandPath}` -> **${ex.message}**"
+    override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
+        val handler = findHandler(event)
 
-        logger.error(message, ex)
-
-        if (context.event.isAcknowledged) context.sendMessage(message).setEphemeral(true).queue()
-        else context.replyMessage(message).setEphemeral(true).queue()
-    }
-
-    /**
-     * Executed when an interaction event does not meet the required permissions.
-     *
-     * @param ex The threw exception [PermissionsLackException], this exception includes
-     * the current SlashCommandContext, the permission target (user, bot) and the required permissions.
-     */
-    open fun onPermissionsLackException(ex: PermissionsLackException) {
-        when(ex.target) {
-            PermissionTarget.BOT -> {
-                val perms = ex.permissions.toHuman()
-                logger.warn("Bot doesn't have the required permissions to execute '${ex.context.event.commandString}'.")
-                ex.context.replyMessage("\uD83D\uDEAB The bot does not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-            PermissionTarget.USER -> {
-                val perms = ex.permissions.toHuman()
-                logger.warn("User ${ex.context.author} doesn't have the required permissions to execute '${ex.context.event.commandString}'.")
-                ex.context.replyMessage("\uD83D\uDEAB You do not have the necessary permissions to carry out this action." +
-                        "\nRequired permissions: **${perms}**.")
-            }
-        }.setEphemeral(true).queue()
-    }
-
-    open suspend fun createContext(event: SlashCommandEvent, command: BaseSlashCommand): SlashCommandContext {
-        return SlashCommandContextImpl(this, event)
-    }
-
-    fun addGlobalCheck(check: CommandExecutionCheck) {
-        if (globalChecks.contains(check)) error("Check already registered.")
-        globalChecks.add(check)
-    }
-
-    private suspend fun runChecks(ctx: SlashCommandContext): Boolean {
-        if (globalChecks.isEmpty()) return true
-        return globalChecks.all { it(ctx) }
-    }
-
-    private suspend fun handleSuspend(event: SlashCommandEvent) {
-        if (!event.isFromGuild)
-            return event.reply("This command is not supported outside a guild.").queue()
-
-        val command = getCommand(event.name) ?: return
-        val context = createContext(event, command)
-
-        logCommand(context.guild, "${event.user.asTag} uses command \u001B[33m${event.commandString}\u001B[0m")
-
-        if (!runChecks(context)) return
-
-        try {
-            val start = System.nanoTime()
-            command.execute(context)
-            val end = (System.nanoTime() - start) / 1_000_000
-            Metrics.incSuccessCommand(event, end)
-        } catch (e: PermissionsLackException){
-            onPermissionsLackException(e)
-            Metrics.incFailedCommand(event)
-        } catch (e: Exception) {
-            onGenericException(context, command, e)
-            Metrics.incFailedCommand(event)
-        } finally {
-            Metrics.incHandledCommand(event)
+        if (handler == null) {
+            log.error("Not found handler for command path ${event.commandPath}")
+            return event.reply("Not found handler for command path ${event.commandPath}," +
+                    "this exceptions is reported to developer automatically.").setEphemeral(true).queue()
         }
+
+        log.debug("Executing handler ${handler.path} for command path ${event.commandPath}")
+
+        executor.execute(event, handler)
+    }
+
+    override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
+        findHandler(event)?.run { executor.execute(event, this) }
+    }
+
+    fun addCheck(check: CommandExecutionCheck) {
+        if (checks.contains(check)) error("check already registered.")
+        checks.add(check)
     }
 
     private companion object {
-        private val logger = LoggerFactory.getLogger(DefaultSlashCommandClient::class.java)
-
-        private fun logCommand(guild: Guild, content: String) = logger.info("[\u001b[32m${guild.name}(${guild.id})\u001b[0m] $content")
+        private val log = LoggerFactory.getLogger(DefaultSlashCommandClient::class.java)
     }
 }

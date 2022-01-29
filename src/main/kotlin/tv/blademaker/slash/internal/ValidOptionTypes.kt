@@ -2,13 +2,6 @@ package tv.blademaker.slash.internal
 
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
-import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.internal.converters.*
-import tv.blademaker.slash.internal.converters.BooleanOptionConverter
-import tv.blademaker.slash.internal.converters.LongOptionConverter
-import tv.blademaker.slash.internal.converters.StringOptionConverter
-import tv.blademaker.slash.internal.converters.UserOptionConverter
-import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 
@@ -16,19 +9,19 @@ enum class ValidOptionTypes(
     private val kClass: KClassifier,
     private val converter: OptionConverter<*>
 ) {
-    STRING(String::class, StringOptionConverter),
-    LONG(Long::class, LongOptionConverter),
-    BOOLEAN(Boolean::class, BooleanOptionConverter),
-    MEMBER(Member::class, MemberOptionConverter),
-    USER(User::class, UserOptionConverter),
-    GUILD_CHANNEL(GuildChannel::class, GuildChannelOptionConverter),
-    MESSAGE_CHANNEL(String::class, MessageChannelOptionConverter),
-    ROLE(Role::class, RoleOptionConverter),
-    INTEGER(Int::class, IntOptionConverter),
-    FLOAT(Float::class, FloatOptionConverter),
-    DOUBLE(Double::class, DoubleOptionConverter),
-    TEXT_CHANNEL(TextChannel::class, TextChannelOptionConverter),
-    VOICE_CHANNEL(VoiceChannel::class, VoiceChannelOptionConverter);
+    STRING(String::class, OptionConverter.StringOption),
+    LONG(Long::class, OptionConverter.LongOption),
+    BOOLEAN(Boolean::class, OptionConverter.BooleanOption),
+    MEMBER(Member::class, OptionConverter.MemberOption),
+    USER(User::class, OptionConverter.UserOption),
+    GUILD_CHANNEL(GuildChannel::class, OptionConverter.GuildChannelOption),
+    MESSAGE_CHANNEL(String::class, OptionConverter.MessageChannelOption),
+    ROLE(Role::class, OptionConverter.RoleOption),
+    INTEGER(Int::class, OptionConverter.IntOption),
+    FLOAT(Float::class, OptionConverter.FloatOption),
+    DOUBLE(Double::class, OptionConverter.DoubleOption),
+    TEXT_CHANNEL(TextChannel::class, OptionConverter.TextChannelOption),
+    VOICE_CHANNEL(VoiceChannel::class, OptionConverter.VoiceChannelOption);
 
     fun convert(option: OptionMapping?) = converter.convert(option)
 

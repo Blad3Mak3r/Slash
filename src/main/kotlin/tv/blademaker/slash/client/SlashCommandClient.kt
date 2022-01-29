@@ -1,17 +1,11 @@
 package tv.blademaker.slash.client
 
-import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
-import net.dv8tion.jda.api.sharding.ShardManager
-import org.slf4j.LoggerFactory
-import tv.blademaker.slash.api.BaseSlashCommand
-import tv.blademaker.slash.api.Metrics
-import tv.blademaker.slash.api.PermissionTarget
-import tv.blademaker.slash.api.SlashCommandContext
-import tv.blademaker.slash.api.exceptions.PermissionsLackException
-import tv.blademaker.slash.api.SlashUtils.toHuman
+import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.exceptions.ExceptionHandler
 
 @Suppress("unused")
 interface SlashCommandClient : EventListener {
@@ -21,41 +15,32 @@ interface SlashCommandClient : EventListener {
      */
     val registry: List<BaseSlashCommand>
 
+    val exceptionHandler: ExceptionHandler
+
     override fun onEvent(event: GenericEvent) {
-        if (event is SlashCommandEvent) onSlashCommandEvent(event)
+        when (event) {
+            is SlashCommandInteractionEvent -> onSlashCommandEvent(event)
+            is CommandAutoCompleteInteractionEvent -> onCommandAutoCompleteEvent(event)
+        }
     }
 
     /**
-     * Handled when discord send an [SlashCommandEvent]
+     * Handled when discord send an [SlashCommandInteractionEvent]
      *
-     * @param event The [SlashCommandEvent] sent by Discord.
+     * @param event The [SlashCommandInteractionEvent] sent by Discord.
      */
-    fun onSlashCommandEvent(event: SlashCommandEvent)
+    fun onSlashCommandEvent(event: SlashCommandInteractionEvent)
+
+    /**
+     * Handled when discord send an [CommandAutoCompleteInteractionEvent]
+     *
+     * @param event The [CommandAutoCompleteInteractionEvent] sent by Discord.
+     */
+    fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent)
 
     fun getCommand(name: String) = registry.firstOrNull { it.commandName.equals(name, true) }
 
-    /**
-     * Enable prometheus metrics exporters
-     */
-    fun withMetrics() {
-        Metrics.register()
-    }
-
-    /**
-     * Register the event listener to receive [SlashCommandEvent] from your [ShardManager].
-     *
-     * @param shardManager The [ShardManager]
-     */
-    fun withShardManager(shardManager: ShardManager) {
-        shardManager.addEventListener(this)
-    }
-
-    /**
-     * Register the event listener to receive [SlashCommandEvent] from your [JDA] shard.
-     *
-     * @param jda The [JDA] shard instance.
-     */
-    fun withJDA(jda: JDA) {
-        jda.addEventListener(this)
+    companion object {
+        fun default(packageName: String) = DefaultSlashCommandBuilder(packageName)
     }
 }

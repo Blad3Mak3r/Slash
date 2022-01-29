@@ -10,15 +10,15 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 5, 3)
+val versionObj = Version(0, 6, 0)
 version = versionObj.toString()
 
-val jdaVersion = "4.4.0_350"
-val coroutinesVersion = "1.5.2"
-val slf4jApi = "1.7.32"
-val prometheusVersion = "0.13.0"
+val jdaVersion = "5.0.0-alpha.5"
+val coroutinesVersion = "1.6.0"
+val slf4jApi = "1.7.33"
+val prometheusVersion = "0.14.1"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "5.5.0"
+val sentryVersion = "5.6.0"
 
 repositories {
     mavenCentral()
@@ -32,15 +32,16 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
-    api("org.reflections:reflections:$reflectionsVersion")
+    implementation("org.reflections:reflections:$reflectionsVersion")
 
-    api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
+    implementation("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
     api("org.slf4j:slf4j-api:$slf4jApi")
     api("io.sentry:sentry:$sentryVersion")
 
     api("io.prometheus:simpleclient:$prometheusVersion")
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("ch.qos.logback:logback-classic:1.2.10")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
