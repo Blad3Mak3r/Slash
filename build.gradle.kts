@@ -13,12 +13,12 @@ group = "tv.blademaker"
 val versionObj = Version(0, 6, 0)
 version = versionObj.toString()
 
-val jdaVersion = "4.4.0_350"
+val jdaVersion = "5.0.0-alpha.5"
 val coroutinesVersion = "1.6.0"
-val slf4jApi = "1.7.32"
+val slf4jApi = "1.7.33"
 val prometheusVersion = "0.14.1"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "5.5.1"
+val sentryVersion = "5.6.0"
 
 repositories {
     mavenCentral()
@@ -34,8 +34,7 @@ dependencies {
 
     implementation("org.reflections:reflections:$reflectionsVersion")
 
-    //api("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
-    implementation("com.github.DV8FromtheWorld:JDA:bc75db1cb2") { exclude(module = "opus-java") }
+    implementation("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
     api("org.slf4j:slf4j-api:$slf4jApi")
     api("io.sentry:sentry:$sentryVersion")
 
