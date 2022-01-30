@@ -200,7 +200,7 @@ $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes///PointingToDeclar
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/convert.html
 $dokka.location:tv.blademaker.slash.metrics////PointingToDeclaration/-slash/tv.blademaker.slash.metrics/index.html
 $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy///PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/index.html
-$dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/MetricsStrategy/#kotlin.String#kotlin.Boolean#kotlin.Boolean#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/-metrics-strategy.html
+$dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/MetricsStrategy/#/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/-metrics-strategy.html
 $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/baseName/#/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/base-name.html
 $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/executedCommands/#/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/executed-commands.html
 $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/failedCommands/#/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/failed-commands.html
