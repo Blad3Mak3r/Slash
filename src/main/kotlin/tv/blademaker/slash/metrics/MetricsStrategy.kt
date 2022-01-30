@@ -1,9 +1,9 @@
 package tv.blademaker.slash.metrics
 
-data class MetricsStrategy(
-    val baseName: String = "slash",
-    val executedCommands: Boolean = true,
-    val successfulCommands: Boolean = true,
-    val failedCommands: Boolean = true,
-    val measureTime: Boolean = true
-)
+class MetricsStrategy {
+    var baseName: String = "slash"
+    var executedCommands: Boolean = true
+    var successfulCommands: Boolean = true
+    var failedCommands: Boolean = true
+    var measureTime: Boolean = true
+}
