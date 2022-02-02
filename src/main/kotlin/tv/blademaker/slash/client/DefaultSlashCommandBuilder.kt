@@ -15,15 +15,18 @@ class DefaultSlashCommandBuilder(
 ) {
     private var metrics: MetricsStrategy? = null
 
-    private var executor: SuspendingCommandExecutor? = null
-
     private var contextCreator: ContextCreator? = null
 
     private var exceptionHandler: ExceptionHandler? = null
 
     private val checks = mutableSetOf<CommandExecutionCheck>()
 
-    fun metrics(builder: MetricsStrategy.() -> Unit): DefaultSlashCommandBuilder {
+    fun enableMetrics(): DefaultSlashCommandBuilder {
+        this.metrics = MetricsStrategy()
+        return this
+    }
+
+    fun enableMetrics(builder: MetricsStrategy.() -> Unit): DefaultSlashCommandBuilder {
         this.metrics = MetricsStrategy().apply(builder)
         return this
     }
