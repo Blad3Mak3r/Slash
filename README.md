@@ -7,7 +7,7 @@
 
 # Slash [![Maven Central][maven-central-shield]][maven-central]
 ### 🚧 This project is currently in active development 🚧
-Slash is a library witten 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Slash Commands][slash-commands]** for Discord.
+Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Slash Commands][slash-commands]** for Discord.
 
 
 ## Table of contents
@@ -74,7 +74,7 @@ class Whois : BaseSlashCommand("whois") {
     suspend fun default(ctx: GuildSlashCommandContext, member: Member) {
         ctx.embed {
             setAuthor(/* ... */)
-            setTitle("Whois ${membed.asTag}")
+            setTitle("Whois ${member.asTag}")
             setDescription(/* ... */)
         }.queue()
         // When using queue on a ContextAction will automatically select between
