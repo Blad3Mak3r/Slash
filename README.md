@@ -35,9 +35,11 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 - [ ] Be a nice package :).
 
 ## Requirements
-- This version of **Slash** requires **[JDA Rework Interactions][jda-rework-interactions]** branch to work properly.
-- JDK 11.
-- Kotlin support with coroutines and reflections.
+- **JDA 5.0.0-alpha.5**
+- JDK 11
+- Kotlin 1.6.10
+- Coroutines 1.6.0
+- Reflections 0.10.2
 
 ## Create commands
 
