@@ -9,6 +9,8 @@ import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.internal.CommandExecutionCheck
 import tv.blademaker.slash.internal.SuspendingCommandExecutor
 import tv.blademaker.slash.metrics.MetricsStrategy
+import tv.blademaker.slash.ratelimit.RateLimit
+import tv.blademaker.slash.ratelimit.RateLimitHandler
 
 class DefaultSlashCommandBuilder(
     private val packageName: String
@@ -20,6 +22,8 @@ class DefaultSlashCommandBuilder(
     private var exceptionHandler: ExceptionHandler? = null
 
     private val checks = mutableSetOf<CommandExecutionCheck>()
+
+    private var rateLimitConfiguration: RateLimitHandler.Configuration = RateLimitHandler.Configuration()
 
     fun enableMetrics(): DefaultSlashCommandBuilder {
         this.metrics = MetricsStrategy()
@@ -42,12 +46,18 @@ class DefaultSlashCommandBuilder(
         return this
     }
 
+    fun configureRateLimit(configuration: RateLimitHandler.Configuration.() -> Unit): DefaultSlashCommandBuilder {
+        rateLimitConfiguration = RateLimitHandler.Configuration().apply(configuration)
+        return this
+    }
+
     private fun build(): DefaultSlashCommandClient {
         return DefaultSlashCommandClient(
             packageName,
             exceptionHandler ?: ExceptionHandlerImpl(),
             contextCreator ?: ContextCreatorImpl(),
             checks,
+            rateLimitConfiguration,
             metrics
         )
     }

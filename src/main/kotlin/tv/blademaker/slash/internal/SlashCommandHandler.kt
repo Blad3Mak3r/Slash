@@ -6,6 +6,7 @@ import tv.blademaker.slash.annotations.*
 import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.exceptions.InteractionTargetMismatch
+import tv.blademaker.slash.ratelimit.RateLimit
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
@@ -16,6 +17,7 @@ class SlashCommandHandler(
 ) : Handler {
 
     private val annotation: SlashCommand = function.findAnnotation()!!
+    val rateLimit: RateLimit? = function.findAnnotation()
     val permissions: Permissions? = function.findAnnotation()
 
     override val path = buildString {

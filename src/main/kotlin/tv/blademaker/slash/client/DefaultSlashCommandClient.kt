@@ -13,6 +13,7 @@ import tv.blademaker.slash.internal.*
 import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.CommandHandlers
 import tv.blademaker.slash.metrics.MetricsStrategy
+import tv.blademaker.slash.ratelimit.RateLimitHandler
 
 /**
  * Extendable coroutine based SlashCommandClient
@@ -29,12 +30,15 @@ class DefaultSlashCommandClient internal constructor(
     override val exceptionHandler: ExceptionHandler,
     internal val contextCreator: ContextCreator,
     internal val checks: MutableSet<CommandExecutionCheck>,
+    rateLimitConfiguration: RateLimitHandler.Configuration,
     strategy: MetricsStrategy?
 ) : SlashCommandClient {
 
     internal val metrics: Metrics? = if (strategy != null) Metrics(strategy) else null
 
-    private val executor = SuspendingCommandExecutor(this)
+    internal val rateLimit = RateLimitHandler(rateLimitConfiguration)
+
+    private val executor = SuspendingCommandExecutor(this, rateLimit)
 
     private val discoveryResult = SlashUtils.discoverSlashCommands(packageName)
 
