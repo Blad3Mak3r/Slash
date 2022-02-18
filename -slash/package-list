@@ -31,6 +31,7 @@ $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/DefaultSla
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/addCheck/#kotlin.coroutines.SuspendFunction1[tv.blademaker.slash.context.SlashCommandContext,kotlin.Boolean]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-builder/add-check.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/buildWith/#net.dv8tion.jda.api.JDA/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-builder/build-with.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/buildWith/#net.dv8tion.jda.api.sharding.ShardManager/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-builder/build-with.html
+$dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/configureRateLimit/#kotlin.Function1[tv.blademaker.slash.ratelimit.RateLimitHandler.Configuration,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-builder/configure-rate-limit.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/contextCreator/#tv.blademaker.slash.context.ContextCreator/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-builder/context-creator.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/enableMetrics/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-builder/enable-metrics.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/enableMetrics/#kotlin.Function1[tv.blademaker.slash.metrics.MetricsStrategy,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-builder/enable-metrics.html
@@ -176,10 +177,11 @@ $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler/execute/#tv.bla
 $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/parent.html
 $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler/path/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/path.html
 $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler/permissions/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/permissions.html
+$dokka.location:tv.blademaker.slash.internal/SlashCommandHandler/rateLimit/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/rate-limit.html
 $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler/target/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/target.html
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/-companion/index.html
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/index.html
-$dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor/SuspendingCommandExecutor/#tv.blademaker.slash.client.DefaultSlashCommandClient/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/-suspending-command-executor.html
+$dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor/SuspendingCommandExecutor/#tv.blademaker.slash.client.DefaultSlashCommandClient#tv.blademaker.slash.ratelimit.RateLimitHandler/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/-suspending-command-executor.html
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor/coroutineContext/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/coroutine-context.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.BOOLEAN///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-b-o-o-l-e-a-n/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/index.html
@@ -207,6 +209,35 @@ $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/executedCommands/#/P
 $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/failedCommands/#/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/failed-commands.html
 $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/measureTime/#/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/measure-time.html
 $dokka.location:tv.blademaker.slash.metrics/MetricsStrategy/successfulCommands/#/PointingToDeclaration/-slash/tv.blademaker.slash.metrics/-metrics-strategy/successful-commands.html
+$dokka.location:tv.blademaker.slash.ratelimit////PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/Bucket///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-bucket/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/Bucket/Bucket/#java.util.concurrent.atomic.AtomicInteger#kotlin.Long/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-bucket/-bucket.html
+$dokka.location:tv.blademaker.slash.ratelimit/Bucket/Bucket/#tv.blademaker.slash.ratelimit.RateLimit/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-bucket/-bucket.html
+$dokka.location:tv.blademaker.slash.ratelimit/Bucket/remaining/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-bucket/remaining.html
+$dokka.location:tv.blademaker.slash.ratelimit/Bucket/resetAfter/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-bucket/reset-after.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target.CHANNEL///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/-c-h-a-n-n-e-l/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target.GUILD///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/-g-u-i-l-d/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target.USER///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/-u-s-e-r/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit/RateLimit/#kotlin.Int#kotlin.Long#java.util.concurrent.TimeUnit#tv.blademaker.slash.ratelimit.RateLimit.Target/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-rate-limit.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit/duration/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/duration.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit/quota/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/quota.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit/target/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/target.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit/unit/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/unit.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-companion/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/Configuration/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/-configuration.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/executor/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/executor.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/purgeDelay/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/purge-delay.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/purgeUnit/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/purge-unit.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler/RateLimitHandler/#tv.blademaker.slash.ratelimit.RateLimitHandler.Configuration/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-rate-limit-handler.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler/acquire/#tv.blademaker.slash.ratelimit.RateLimit?#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/acquire.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitThreadFactory.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-thread-factory/-companion/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitThreadFactory///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-thread-factory/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitThreadFactory/RateLimitThreadFactory/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-thread-factory/-rate-limit-thread-factory.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitThreadFactory/newThread/#java.lang.Runnable/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-thread-factory/new-thread.html
 $dokka.location:tv.blademaker.slash////PointingToDeclaration/-slash/tv.blademaker.slash/index.html
 $dokka.location:tv.blademaker.slash/BaseSlashCommand///PointingToDeclaration/-slash/tv.blademaker.slash/-base-slash-command/index.html
 $dokka.location:tv.blademaker.slash/BaseSlashCommand/BaseSlashCommand/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash/-base-slash-command/-base-slash-command.html
@@ -237,4 +268,5 @@ tv.blademaker.slash.exceptions
 tv.blademaker.slash.extensions
 tv.blademaker.slash.internal
 tv.blademaker.slash.metrics
+tv.blademaker.slash.ratelimit
 
