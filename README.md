@@ -20,6 +20,7 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
     - [Registering commands](#registering-commands)
     - [Using Context Actions](#using-context-actions)
     - [Custom Option names](#custom-option-names)
+    - [Rate Limiting Command Execution](#rate-limiting-command-execution)
 - [Download](#download)
 
 **This library does not synchronize the commands created with the commands published on Discord.**
@@ -254,11 +255,44 @@ suspend fun someCommand(ctx: SlashCommandContext) {
 You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/api/annotations/OptionName.kt)
 the set a custom name for an option.
 ```kotlin
-@SlashCommand
+@SlashCommand(target = InteractionTarget.ALL)
 suspend fun customName(ctx: SlashCommandContext, @OptionName("query") option1: String) {
     // the variable option1 will get the content of ctx.getOption("query")!
 }
 ```
+
+### Rate Limiting Command Execution
+Since version **0.6.3** you can rate limit the execution of slash commands based on 3 different targets:
+- User
+- Channel
+- Guild
+
+Configure the rate limited (is not necessary):
+```kotlin
+
+val commandHandler = SlashCommandClient.default("com.example.commands")
+    .configureRateLimit {
+        purgeUnit = TimeUnit.MINUTES
+        purgeDelay = 5
+        onRateLimitHit = { ctx, rateLimit ->
+            // Override default with your implementation.
+        }
+    }
+```
+
+Rate Limiting a SlashCommand:
+```kotlin
+@RateLimit(quota = 5, duration = 20, unit = TimeUnit.SECONDS, target = RateLimit.Target.GUILD)
+@SlashCommand(target = InteractionTarget.GUILD)
+fun rateLimitedCommand(ctx: GuildSlashCommand) {
+    ctx.message {
+        append("This is an example of a rate limited Slash Command, ")
+        append("If you hit the limit you will be notified.")
+    }.queue()
+}
+```
+
+[@RateLimit annotation documentation](https://blad3mak3r.github.io/Slash/-slash/tv.blademaker.slash.ratelimit/-rate-limit/index.html)
 
 ## Download
 [![Maven Central][maven-central-shield]][maven-central]
