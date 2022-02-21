@@ -2,11 +2,8 @@ package tv.blademaker.slash.internal
 
 import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.annotations.AutoComplete
-import tv.blademaker.slash.annotations.Handler
-import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.annotations.OptionName
 import tv.blademaker.slash.context.AutoCompleteContext
-import tv.blademaker.slash.context.SlashCommandContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation

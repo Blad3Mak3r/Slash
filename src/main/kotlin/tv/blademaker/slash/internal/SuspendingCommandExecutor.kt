@@ -52,9 +52,7 @@ open class SuspendingCommandExecutor(
             val rateLimited = rateLimit.acquire(handler.rateLimit, event)
 
             if (rateLimited != null) {
-                ctx.replyMessage("⚠️ You are being rate limited, wait **${rateLimited / 1000}** seconds.")
-                    .setEphemeral(true)
-                    .queue()
+                rateLimit.onRateLimitHit(ctx, handler.rateLimit)
                 return@launch
             }
 

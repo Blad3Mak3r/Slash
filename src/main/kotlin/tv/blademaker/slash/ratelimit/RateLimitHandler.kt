@@ -2,6 +2,7 @@ package tv.blademaker.slash.ratelimit
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
+import tv.blademaker.slash.context.SlashCommandContext
 import java.io.Closeable
 import java.util.concurrent.*
 
@@ -13,6 +14,27 @@ class RateLimitHandler(configuration: Configuration) {
         var purgeUnit: TimeUnit = TimeUnit.MINUTES
         var purgeDelay: Long = 10L
         var executor: ScheduledExecutorService? = null
+        var onRateLimitHit: (ctx: SlashCommandContext, rateLimit: RateLimit?) -> Unit = { ctx, rateLimit ->
+            if (rateLimit != null) {
+                when (rateLimit.target) {
+                    RateLimit.Target.CHANNEL -> ctx.message {
+                        append("**Rate Limited**")
+                        append("\n\n")
+                        append("You can't use this command for **${rateLimit.unit.toSeconds(rateLimit.duration)} seconds**.")
+                    }.queue()
+                    RateLimit.Target.USER -> ctx.message {
+                        append("**Rate Limited**")
+                        append("\n\n")
+                        append("You can't use this command in this channel for **${rateLimit.unit.toSeconds(rateLimit.duration)} seconds**.")
+                    }.queue(true)
+                    RateLimit.Target.GUILD -> ctx.message {
+                        append("**Rate Limited**")
+                        append("\n\n")
+                        append("You can't use this command in this guild for **${rateLimit.unit.toSeconds(rateLimit.duration)} seconds**.")
+                    }.queue()
+                }
+            }
+        }
     }
 
     companion object {
@@ -21,10 +43,12 @@ class RateLimitHandler(configuration: Configuration) {
 
     private val registry = ConcurrentHashMap<String, Bucket>()
     private val executor = configuration.executor ?: Executors.newSingleThreadScheduledExecutor(RateLimitThreadFactory())
+    internal val onRateLimitHit: (ctx: SlashCommandContext, rateLimit: RateLimit?) -> Unit
 
     init {
         log.info("Initializing RateLimitHandler...")
         task = executor.scheduleAtFixedRate(purgeExpired(), configuration.purgeDelay, configuration.purgeDelay, configuration.purgeUnit)
+        onRateLimitHit = configuration.onRateLimitHit
     }
 
     private fun purgeExpired() = Runnable {

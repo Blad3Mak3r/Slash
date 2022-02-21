@@ -1,4 +1,4 @@
-package tv.blademaker.slash.annotations
+package tv.blademaker.slash.internal
 
 import tv.blademaker.slash.BaseSlashCommand
 
