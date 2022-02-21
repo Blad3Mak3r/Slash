@@ -6,9 +6,6 @@ $dokka.location:tv.blademaker.slash.annotations/AutoComplete/AutoComplete/#kotli
 $dokka.location:tv.blademaker.slash.annotations/AutoComplete/group/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-auto-complete/group.html
 $dokka.location:tv.blademaker.slash.annotations/AutoComplete/name/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-auto-complete/name.html
 $dokka.location:tv.blademaker.slash.annotations/AutoComplete/optionName/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-auto-complete/option-name.html
-$dokka.location:tv.blademaker.slash.annotations/Handler///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-handler/index.html
-$dokka.location:tv.blademaker.slash.annotations/Handler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-handler/parent.html
-$dokka.location:tv.blademaker.slash.annotations/Handler/path/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-handler/path.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.ALL///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-interaction-target/-a-l-l/index.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.DM///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-interaction-target/-d-m/index.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.GUILD///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-interaction-target/-g-u-i-l-d/index.html
@@ -170,6 +167,9 @@ $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/execute/#tv.bla
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/optionName/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/option-name.html
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/parent.html
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/path/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/path.html
+$dokka.location:tv.blademaker.slash.internal/Handler///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-handler/index.html
+$dokka.location:tv.blademaker.slash.internal/Handler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-handler/parent.html
+$dokka.location:tv.blademaker.slash.internal/Handler/path/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-handler/path.html
 $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/-companion/index.html
 $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/index.html
 $dokka.location:tv.blademaker.slash.internal/SlashCommandHandler/SlashCommandHandler/#tv.blademaker.slash.BaseSlashCommand#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-slash-command-handler/-slash-command-handler.html
@@ -229,6 +229,7 @@ $dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Companion///Point
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/index.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/Configuration/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/-configuration.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/executor/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/executor.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/onRateLimitHit/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/on-rate-limit-hit.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/purgeDelay/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/purge-delay.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler.Configuration/purgeUnit/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/-configuration/purge-unit.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitHandler///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-handler/index.html
