@@ -35,7 +35,7 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 - [ ] Be a nice package :).
 
 ## Requirements
-- **[JDA 5.0.0-alpha.5](https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-alpha.5)**
+- **[JDA 5.0.0-alpha.6](https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-alpha.6)**
 - JDK 11
 - Kotlin 1.6.10
 - Coroutines 1.6.0
