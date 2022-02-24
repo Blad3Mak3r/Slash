@@ -59,7 +59,7 @@ class PingCommand : BaseSlashCommand("ping") {
         val restPing = ctx.jda.restPing.await()
         val gatewayPing = ctx.jda.gatewayPing
 
-        ctx.sendEmbed {
+        ctx.embed {
             setTitle("Pong!")
             addField("Rest", "${restPing}ms", true)
             addField("Gateway", "${gatewayPing}ms", true)
@@ -304,7 +304,7 @@ repositories {
 }
 
 dependencies {
-    implementation("tv.blademaker:slash:VERSION")
+    implementation("tv.blademaker:slash:x.y.z")
 }
 ```
 
@@ -313,7 +313,7 @@ dependencies {
 <dependency>
     <groupId>tv.blademaker</groupId>
     <artifactId>slash</artifactId>
-    <version>VERSION</version>
+    <version>x.y.z</version>
 </dependency>
         
 ```
