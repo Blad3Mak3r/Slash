@@ -12,15 +12,15 @@ class MessageContextAction(override val ctx: SlashCommandContext, override val o
 
     override fun send(): WebhookMessageAction<Message> {
         return ctx.hook.sendMessage(original).apply {
-            setEphemeral(configuration.ephemeral)
-            configuration.actionRows?.let { setActionRows(it) }
+            this.setEphemeral(configuration.ephemeral)
+            configuration.actionRows?.let { this.addActionRows(it) }
         }
     }
 
     override fun reply(): ReplyCallbackAction {
         return ctx.event.reply(original).apply {
-            setEphemeral(configuration.ephemeral)
-            configuration.actionRows?.let { setActionRows(it) }
+            this.setEphemeral(configuration.ephemeral)
+            configuration.actionRows?.let { this.addActionRows(it) }
         }
     }
 

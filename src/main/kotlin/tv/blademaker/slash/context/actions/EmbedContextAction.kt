@@ -13,15 +13,15 @@ class EmbedContextAction(override val ctx: SlashCommandContext, override val ori
 
     override fun send(): WebhookMessageAction<Message> {
         return ctx.hook.sendMessageEmbeds(original).apply {
-            setEphemeral(configuration.ephemeral)
-            configuration.actionRows?.let { setActionRows(it) }
+            this.setEphemeral(configuration.ephemeral)
+            configuration.actionRows?.let { this.addActionRows(it) }
         }
     }
 
     override fun reply(): ReplyCallbackAction {
         return ctx.event.replyEmbeds(original).apply {
-            setEphemeral(configuration.ephemeral)
-            configuration.actionRows?.let { setActionRows(it) }
+            this.setEphemeral(configuration.ephemeral)
+            configuration.actionRows?.let { this.addActionRows(it) }
         }
     }
 
