@@ -26,7 +26,7 @@ class RateLimitHandler(configuration: Configuration) {
                         append("**Rate Limited**")
                         append("\n\n")
                         append("You can't use this command in this channel for **${rateLimit.unit.toSeconds(rateLimit.duration)} seconds**.")
-                    }.queue(true)
+                    }.setEphemeral(true).queue()
                     RateLimit.Target.GUILD -> ctx.message {
                         append("**Rate Limited**")
                         append("\n\n")
