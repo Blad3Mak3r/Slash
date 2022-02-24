@@ -195,6 +195,7 @@ $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor.Companion
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/index.html
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor/SuspendingCommandExecutor/#tv.blademaker.slash.client.DefaultSlashCommandClient#tv.blademaker.slash.ratelimit.RateLimitHandler/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/-suspending-command-executor.html
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor/coroutineContext/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/coroutine-context.html
+$dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.ATTACHMENT///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-a-t-t-a-c-h-m-e-n-t/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.BOOLEAN///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-b-o-o-l-e-a-n/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion/get/#kotlin.reflect.KType/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/get.html
