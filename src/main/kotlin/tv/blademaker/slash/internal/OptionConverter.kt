@@ -7,6 +7,12 @@ internal sealed interface OptionConverter <T : Any> {
 
     fun convert(optionMapping: OptionMapping?): T?
 
+    object AttachmentOption : OptionConverter<Message.Attachment> {
+        override fun convert(optionMapping: OptionMapping?): Message.Attachment? {
+            return optionMapping?.asAttachment
+        }
+    }
+
     object BooleanOption : OptionConverter<Boolean> {
         override fun convert(optionMapping: OptionMapping?): Boolean? {
             return optionMapping?.asBoolean

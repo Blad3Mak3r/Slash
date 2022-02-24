@@ -9,6 +9,7 @@ enum class ValidOptionTypes(
     private val kClass: KClassifier,
     private val converter: OptionConverter<*>
 ) {
+    ATTACHMENT(Message.Attachment::class, OptionConverter.AttachmentOption),
     STRING(String::class, OptionConverter.StringOption),
     LONG(Long::class, OptionConverter.LongOption),
     BOOLEAN(Boolean::class, OptionConverter.BooleanOption),
