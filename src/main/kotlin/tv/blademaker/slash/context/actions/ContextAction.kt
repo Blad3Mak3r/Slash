@@ -60,12 +60,12 @@ interface ContextAction<T> {
         }
 
         internal fun build(ctx: SlashCommandContext, embedBuilder: EmbedBuilder): EmbedContextAction {
-            val color = ctx.event.guild?.selfMember?.color ?: Color(44, 47, 51)
-            return EmbedContextAction(ctx, embedBuilder.setColor(color).build())
+            return EmbedContextAction(ctx, embedBuilder.build())
         }
 
         internal fun build(ctx: SlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
-            return build(ctx, EmbedBuilder().apply(embedBuilder))
+            val color = ctx.event.guild?.selfMember?.color ?: Color(44, 47, 51)
+            return build(ctx, EmbedBuilder().setColor(color).apply(embedBuilder))
         }
 
         internal fun build(ctx: SlashCommandContext, message: Message): MessageContextAction {
