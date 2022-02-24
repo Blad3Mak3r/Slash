@@ -9,12 +9,20 @@ import tv.blademaker.slash.context.SlashCommandContext
 @Suppress("unused")
 class EmbedContextAction(override val ctx: SlashCommandContext, override val original: MessageEmbed) : ContextAction<MessageEmbed> {
 
-    override fun send(ephemeral: Boolean): WebhookMessageAction<Message> {
-        return ctx.hook.sendMessageEmbeds(original).setEphemeral(ephemeral)
+    override val configuration: ContextAction.Configuration = ContextAction.Configuration()
+
+    override fun send(): WebhookMessageAction<Message> {
+        return ctx.hook.sendMessageEmbeds(original).apply {
+            setEphemeral(configuration.ephemeral)
+            configuration.actionRows?.let { setActionRows(it) }
+        }
     }
 
-    override fun reply(ephemeral: Boolean): ReplyCallbackAction {
-        return ctx.event.replyEmbeds(original).setEphemeral(ephemeral)
+    override fun reply(): ReplyCallbackAction {
+        return ctx.event.replyEmbeds(original).apply {
+            setEphemeral(configuration.ephemeral)
+            configuration.actionRows?.let { setActionRows(it) }
+        }
     }
 
     fun editOriginal() = ctx.hook.editOriginalEmbeds(original)

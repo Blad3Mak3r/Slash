@@ -4,16 +4,43 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
-import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
 import java.awt.Color
 
 interface ContextAction<T> {
 
+    class Configuration {
+        var ephemeral: Boolean = false
+        var actionRows: Collection<ActionRow>? = null
+    }
+
     val ctx: SlashCommandContext
     val original: T
+
+    val configuration: Configuration
+
+    fun applyConfiguration(configuration: Configuration.() -> Unit): ContextAction<T> {
+        this.configuration.apply(configuration)
+        return this
+    }
+
+    fun setEphemeral(ephemeral: Boolean): ContextAction<T> {
+        this.configuration.ephemeral = ephemeral
+        return this
+    }
+
+    fun setActionRows(rows: Collection<ActionRow>): ContextAction<T> {
+        this.configuration.actionRows = rows
+        return this
+    }
+
+    fun setActionRows(vararg rows: ActionRow): ContextAction<T> {
+        this.configuration.actionRows = rows.toSet()
+        return this
+    }
 
     /**
      * Send a followup message to the interaction.
@@ -22,7 +49,7 @@ interface ContextAction<T> {
      *
      * @see net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
      */
-    fun send(ephemeral: Boolean = false): WebhookMessageAction<Message>
+    fun send(): WebhookMessageAction<Message>
 
     /**
      * Send a reply message to the interaction.
@@ -31,7 +58,7 @@ interface ContextAction<T> {
      *
      * @see net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
      */
-    fun reply(ephemeral: Boolean = false): ReplyCallbackAction
+    fun reply(): ReplyCallbackAction
 
     /**
      * Queue the request and don't wait for the response.
@@ -46,14 +73,15 @@ interface ContextAction<T> {
      * @see ContextAction.send
      * @see ContextAction.reply
      */
-    fun queue(ephemeral: Boolean = false) {
+    fun queue() {
         when (ctx.isAcknowledged) {
-            true -> send(ephemeral).queue()
-            false -> reply(ephemeral).queue()
+            true -> send().queue()
+            false -> reply().queue()
         }
     }
 
-    @Suppress
+
+
     companion object {
         internal fun build(ctx: SlashCommandContext, embed: MessageEmbed): EmbedContextAction {
             return EmbedContextAction(ctx, embed)

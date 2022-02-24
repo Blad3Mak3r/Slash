@@ -8,6 +8,8 @@ import tv.blademaker.slash.context.SlashCommandContext
 @Suppress("unused")
 class MessageContextAction(override val ctx: SlashCommandContext, override val original: Message) : ContextAction<Message> {
 
+    override val configuration: ContextAction.Configuration = ContextAction.Configuration()
+
     override fun send(ephemeral: Boolean): WebhookMessageAction<Message> {
         return ctx.hook.sendMessage(original).setEphemeral(ephemeral)
     }
