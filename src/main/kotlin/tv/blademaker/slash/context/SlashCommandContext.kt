@@ -1,5 +1,7 @@
 package tv.blademaker.slash.context
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.*
@@ -70,6 +72,8 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
             })
         }
     }
+
+    suspend fun acknowledgeAsync(ephemeral: Boolean) = coroutineScope { async { acknowledge(ephemeral) } }
 
     fun getOption(name: String) = event.getOption(name)
 
