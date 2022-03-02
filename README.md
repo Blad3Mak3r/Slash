@@ -6,6 +6,7 @@
 [slash-commands]: https://discord.com/developers/docs/interactions/application-commands
 
 # Slash [![Maven Central][maven-central-shield]][maven-central]
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash?ref=badge_shield)
 ### 🚧 This project is currently in active development 🚧
 Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Slash Commands][slash-commands]** for Discord.
 
@@ -317,3 +318,7 @@ dependencies {
 </dependency>
         
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash?ref=badge_large)
