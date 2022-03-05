@@ -11,6 +11,8 @@ import tv.blademaker.slash.internal.SuspendingCommandExecutor
 import tv.blademaker.slash.metrics.MetricsStrategy
 import tv.blademaker.slash.ratelimit.RateLimit
 import tv.blademaker.slash.ratelimit.RateLimitHandler
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 class DefaultSlashCommandBuilder(
     private val packageName: String
@@ -24,6 +26,8 @@ class DefaultSlashCommandBuilder(
     private val checks = mutableSetOf<CommandExecutionCheck>()
 
     private var rateLimitConfiguration: RateLimitHandler.Configuration = RateLimitHandler.Configuration()
+
+    private var duration: Duration = 1.minutes
 
     fun enableMetrics(): DefaultSlashCommandBuilder {
         this.metrics = MetricsStrategy()
@@ -51,12 +55,18 @@ class DefaultSlashCommandBuilder(
         return this
     }
 
+    fun withTimeout(duration: Duration): DefaultSlashCommandBuilder {
+        this.duration = duration
+        return this
+    }
+
     private fun build(): DefaultSlashCommandClient {
         return DefaultSlashCommandClient(
             packageName,
             exceptionHandler ?: ExceptionHandlerImpl(),
             contextCreator ?: ContextCreatorImpl(),
             checks,
+            duration,
             rateLimitConfiguration,
             metrics
         )

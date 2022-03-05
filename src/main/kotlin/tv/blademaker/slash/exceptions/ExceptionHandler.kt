@@ -1,8 +1,10 @@
 package tv.blademaker.slash.exceptions
 
+import kotlinx.coroutines.TimeoutCancellationException
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import tv.blademaker.slash.BaseSlashCommand
+import kotlin.time.Duration
 
 interface ExceptionHandler {
 
@@ -25,4 +27,6 @@ interface ExceptionHandler {
     fun onPermissionLackException(ex: PermissionsLackException)
 
     fun onInteractionTargetMismatch(ex: InteractionTargetMismatch)
+
+    fun onTimeoutCancellationException(ex: TimeoutCancellationException, event: SlashCommandInteractionEvent, timeout: Duration)
 }

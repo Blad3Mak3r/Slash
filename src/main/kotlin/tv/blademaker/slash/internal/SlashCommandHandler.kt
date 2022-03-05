@@ -1,5 +1,6 @@
 package tv.blademaker.slash.internal
 
+import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.annotations.*
@@ -10,6 +11,7 @@ import tv.blademaker.slash.ratelimit.RateLimit
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
+import kotlin.time.Duration
 
 class SlashCommandHandler(
     override val parent: BaseSlashCommand,
@@ -40,9 +42,11 @@ class SlashCommandHandler(
         if (!result) throw InteractionTargetMismatch(ctx, path, annotation.target)
     }
 
-    suspend fun execute(ctx: SlashCommandContext) {
+    suspend fun execute(ctx: SlashCommandContext, timeout: Duration) {
         checkTarget(ctx)
-        function.callSuspend(parent, ctx, *options.map { it.compile(ctx) }.toTypedArray())
+        withTimeout(timeout) {
+            function.callSuspend(parent, ctx, *options.map { it.compile(ctx) }.toTypedArray())
+        }
     }
 
     companion object {

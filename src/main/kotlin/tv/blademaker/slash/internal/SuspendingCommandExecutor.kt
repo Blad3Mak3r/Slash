@@ -2,6 +2,7 @@ package tv.blademaker.slash.internal
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.User
@@ -69,10 +70,13 @@ open class SuspendingCommandExecutor(
 
             logEvent(event)
             val startTime = System.nanoTime()
-            handler.execute(ctx)
+            handler.execute(ctx, client.timeout)
             val time = (System.nanoTime() - startTime) / 1_000_000
 
             client.metrics?.incSuccessCommand(event, time)
+        } catch (timeout: TimeoutCancellationException){
+            client.exceptionHandler.onTimeoutCancellationException(timeout, event, client.timeout)
+            client.metrics?.incFailedCommand(event)
         } catch (expected: Exception) {
             client.exceptionHandler.wrap(expected, handler.parent, event)
             client.metrics?.incFailedCommand(event)

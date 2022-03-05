@@ -14,6 +14,8 @@ import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.CommandHandlers
 import tv.blademaker.slash.metrics.MetricsStrategy
 import tv.blademaker.slash.ratelimit.RateLimitHandler
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Extendable coroutine based SlashCommandClient
@@ -30,6 +32,7 @@ class DefaultSlashCommandClient internal constructor(
     override val exceptionHandler: ExceptionHandler,
     internal val contextCreator: ContextCreator,
     internal val checks: MutableSet<CommandExecutionCheck>,
+    internal val timeout: Duration,
     rateLimitConfiguration: RateLimitHandler.Configuration,
     strategy: MetricsStrategy?
 ) : SlashCommandClient {
