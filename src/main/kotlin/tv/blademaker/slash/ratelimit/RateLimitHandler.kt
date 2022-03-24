@@ -52,7 +52,8 @@ class RateLimitHandler(configuration: Configuration) {
     }
 
     private fun purgeExpired() = Runnable {
-        log.info("Purging expired RateLimit Buckets...")
+        if (registry.isEmpty()) return@Runnable
+        log.debug("Purging expired RateLimit Buckets...")
         var count = 0
         val now = System.currentTimeMillis()
         for (bucket in registry) {
@@ -63,7 +64,7 @@ class RateLimitHandler(configuration: Configuration) {
                 count++
             }
         }
-        log.info("Purge task done with a total of $count buckets expired.")
+        log.debug("Purge task done with a total of $count buckets expired.")
     }
 
     private fun createKey(annotation: RateLimit, event: SlashCommandInteractionEvent): String {
