@@ -101,6 +101,7 @@ $dokka.location:tv.blademaker.slash.context/ContextCreator///PointingToDeclarati
 $dokka.location:tv.blademaker.slash.context/ContextCreator/createContext/#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.context/-context-creator/create-context.html
 $dokka.location:tv.blademaker.slash.context/ContextCreator/createGuildContext/#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.context/-context-creator/create-guild-context.html
 $dokka.location:tv.blademaker.slash.context/GuildSlashCommandContext///PointingToDeclaration/-slash/tv.blademaker.slash.context/-guild-slash-command-context/index.html
+$dokka.location:tv.blademaker.slash.context/GuildSlashCommandContext/channel/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-guild-slash-command-context/channel.html
 $dokka.location:tv.blademaker.slash.context/GuildSlashCommandContext/guild/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-guild-slash-command-context/guild.html
 $dokka.location:tv.blademaker.slash.context/GuildSlashCommandContext/member/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-guild-slash-command-context/member.html
 $dokka.location:tv.blademaker.slash.context/GuildSlashCommandContext/selfMember/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-guild-slash-command-context/self-member.html
