@@ -38,8 +38,8 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
     val options: List<OptionMapping>
         get() = event.options
 
-    val channel: TextChannel
-        get() = event.channel as TextChannel
+    val channel: MessageChannel
+        get() = event.channel
 
     val user: User
         get() = event.user
