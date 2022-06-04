@@ -4,13 +4,11 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.sharding.ShardManager
 import tv.blademaker.slash.context.ContextCreator
 import tv.blademaker.slash.context.impl.ContextCreatorImpl
-import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
+import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.internal.CommandExecutionCheck
-import tv.blademaker.slash.internal.SuspendingCommandExecutor
 import tv.blademaker.slash.metrics.MetricsStrategy
-import tv.blademaker.slash.ratelimit.RateLimit
-import tv.blademaker.slash.ratelimit.RateLimitHandler
+import tv.blademaker.slash.ratelimit.RateLimitClient
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -25,7 +23,7 @@ class DefaultSlashCommandBuilder(
 
     private val checks = mutableSetOf<CommandExecutionCheck>()
 
-    private var rateLimitConfiguration: RateLimitHandler.Configuration = RateLimitHandler.Configuration()
+    private var rateLimitClient: RateLimitClient? = null
 
     private var duration: Duration = 1.minutes
 
@@ -50,8 +48,8 @@ class DefaultSlashCommandBuilder(
         return this
     }
 
-    fun configureRateLimit(configuration: RateLimitHandler.Configuration.() -> Unit): DefaultSlashCommandBuilder {
-        rateLimitConfiguration = RateLimitHandler.Configuration().apply(configuration)
+    fun setRateLimitClient(client: RateLimitClient?): DefaultSlashCommandBuilder {
+        rateLimitClient = client
         return this
     }
 
@@ -67,7 +65,7 @@ class DefaultSlashCommandBuilder(
             contextCreator ?: ContextCreatorImpl(),
             checks,
             duration,
-            rateLimitConfiguration,
+            rateLimitClient,
             metrics
         )
     }

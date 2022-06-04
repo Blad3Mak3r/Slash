@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.metrics.Metrics
 import tv.blademaker.slash.context.ContextCreator
@@ -13,9 +12,8 @@ import tv.blademaker.slash.internal.*
 import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.CommandHandlers
 import tv.blademaker.slash.metrics.MetricsStrategy
-import tv.blademaker.slash.ratelimit.RateLimitHandler
+import tv.blademaker.slash.ratelimit.RateLimitClient
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 
 /**
  * Extendable coroutine based SlashCommandClient
@@ -33,13 +31,11 @@ class DefaultSlashCommandClient internal constructor(
     internal val contextCreator: ContextCreator,
     internal val checks: MutableSet<CommandExecutionCheck>,
     internal val timeout: Duration,
-    rateLimitConfiguration: RateLimitHandler.Configuration,
+    internal val rateLimit: RateLimitClient?,
     strategy: MetricsStrategy?
 ) : SlashCommandClient {
 
     internal val metrics: Metrics? = if (strategy != null) Metrics(strategy) else null
-
-    internal val rateLimit = RateLimitHandler(rateLimitConfiguration)
 
     private val executor = SuspendingCommandExecutor(this, rateLimit)
 

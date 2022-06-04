@@ -17,12 +17,12 @@ import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
-import tv.blademaker.slash.ratelimit.RateLimitHandler
+import tv.blademaker.slash.ratelimit.RateLimitClient
 import kotlin.coroutines.CoroutineContext
 
 open class SuspendingCommandExecutor(
     private val client: DefaultSlashCommandClient,
-    private val rateLimit: RateLimitHandler
+    private val rateLimit: RateLimitClient?
 ) : CoroutineScope {
 
     private val dispatcher = newCoroutineDispatcher("slash-commands-worker-%s", 2, 50)
@@ -51,11 +51,13 @@ open class SuspendingCommandExecutor(
             client.metrics?.incHandledCommand(event)
             val ctx = creteContext(handler, event)
 
-            val rateLimited = rateLimit.acquire(handler.rateLimit, event)
+            if (handler.rateLimit != null && rateLimit != null) {
+                val waitFor = rateLimit.acquire(handler.rateLimit, event)
 
-            if (rateLimited != null) {
-                rateLimit.onRateLimitHit(ctx, handler.rateLimit)
-                return@launch
+                if (waitFor != null) {
+                    rateLimit.onRateLimitHit(ctx, handler.rateLimit, waitFor)
+                    return@launch
+                }
             }
 
             log.debug("Running global checks")
