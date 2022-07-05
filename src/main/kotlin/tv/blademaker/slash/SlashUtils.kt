@@ -6,25 +6,17 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
-import org.slf4j.LoggerFactory
 import tv.blademaker.slash.annotations.AutoComplete
-import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.annotations.SlashCommand
 import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.CommandHandlers
 import tv.blademaker.slash.internal.SlashCommandHandler
 import java.lang.reflect.Modifier
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
 object SlashUtils {
-
-    internal var DEFAULT_INTERACTION_TARGET = InteractionTarget.ALL
-
-    val log = LoggerFactory.getLogger("Slash")
 
     /**
      * Convert an [Array] of [Permission] in a readable list.
