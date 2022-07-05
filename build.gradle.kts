@@ -13,7 +13,7 @@ group = "tv.blademaker"
 val versionObj = Version(0, 8, 0)
 version = versionObj.toString()
 
-val jdaVersion = "5.0.0-alpha.11"
+val jdaVersion = "5.0.0-alpha.12"
 val coroutinesVersion = "1.6.0"
 val slf4jApi = "1.7.36"
 val prometheusVersion = "0.15.0"
