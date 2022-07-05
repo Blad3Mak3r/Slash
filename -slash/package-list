@@ -263,7 +263,6 @@ $dokka.location:tv.blademaker.slash/PermissionTarget///PointingToDeclaration/-s
 $dokka.location:tv.blademaker.slash/SlashUtils///PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/index.html
 $dokka.location:tv.blademaker.slash/SlashUtils/asEphemeral/net.dv8tion.jda.api.requests.RestAction[*]#/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/as-ephemeral.html
 $dokka.location:tv.blademaker.slash/SlashUtils/discoverSlashCommands/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/discover-slash-commands.html
-$dokka.location:tv.blademaker.slash/SlashUtils/log/#/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/log.html
 $dokka.location:tv.blademaker.slash/SlashUtils/toHuman/kotlin.Array[net.dv8tion.jda.api.Permission]#kotlin.Boolean/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/to-human.html
 tv.blademaker.slash
 tv.blademaker.slash.annotations
