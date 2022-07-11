@@ -3,8 +3,6 @@ package tv.blademaker.slash.context
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.GuildMessageChannel
 import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.MessageChannel
-import net.dv8tion.jda.api.entities.TextChannel
 
 interface GuildSlashCommandContext : SlashCommandContext {
     override val guild: Guild
@@ -17,5 +15,5 @@ interface GuildSlashCommandContext : SlashCommandContext {
         get() = guild.selfMember
 
     override val channel: GuildMessageChannel
-        get() = super.channel as GuildMessageChannel
+        get() = event.guildChannel
 }

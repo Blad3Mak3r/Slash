@@ -31,9 +31,15 @@ internal sealed interface OptionConverter <T : Any> {
         }
     }
 
-    object GuildChannelOption : OptionConverter<GuildChannel> {
-        override fun convert(optionMapping: OptionMapping?): GuildChannel? {
-            return optionMapping?.asGuildChannel
+    object StandardGuildChannelOption : OptionConverter<StandardGuildChannel> {
+        override fun convert(optionMapping: OptionMapping?): StandardGuildChannel? {
+            return optionMapping?.asChannel?.let { if (it is StandardGuildChannel) it else null }
+        }
+    }
+
+    object AudioChannelOption : OptionConverter<AudioChannel> {
+        override fun convert(optionMapping: OptionMapping?): AudioChannel? {
+            return optionMapping?.asChannel?.let { if (it is AudioChannel) it else null }
         }
     }
 
@@ -55,12 +61,6 @@ internal sealed interface OptionConverter <T : Any> {
         }
     }
 
-    object MessageChannelOption : OptionConverter<MessageChannel> {
-        override fun convert(optionMapping: OptionMapping?): MessageChannel? {
-            return optionMapping?.asMessageChannel
-        }
-    }
-
     object RoleOption : OptionConverter<Role> {
         override fun convert(optionMapping: OptionMapping?): Role? {
             return optionMapping?.asRole
@@ -75,7 +75,7 @@ internal sealed interface OptionConverter <T : Any> {
 
     object TextChannelOption : OptionConverter<TextChannel> {
         override fun convert(optionMapping: OptionMapping?): TextChannel? {
-            return optionMapping?.asGuildChannel?.let { if (it is TextChannel) it else null }
+            return optionMapping?.asChannel?.let { if (it is TextChannel) it else null }
         }
     }
 
@@ -87,7 +87,14 @@ internal sealed interface OptionConverter <T : Any> {
 
     object VoiceChannelOption : OptionConverter<VoiceChannel> {
         override fun convert(optionMapping: OptionMapping?): VoiceChannel? {
-            return optionMapping?.asGuildChannel?.let { if (it is VoiceChannel) it else null }
+            return optionMapping?.asChannel?.let { if (it is VoiceChannel) it else null }
         }
+    }
+
+    object StageChannelOption : OptionConverter<StageChannel> {
+        override fun convert(optionMapping: OptionMapping?): StageChannel? {
+            return optionMapping?.asChannel?.let { if (it is StageChannel) it else null }
+        }
+
     }
 }

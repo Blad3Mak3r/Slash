@@ -15,13 +15,14 @@ enum class ValidOptionTypes(
     BOOLEAN(Boolean::class, OptionConverter.BooleanOption),
     MEMBER(Member::class, OptionConverter.MemberOption),
     USER(User::class, OptionConverter.UserOption),
-    GUILD_CHANNEL(GuildChannel::class, OptionConverter.GuildChannelOption),
-    MESSAGE_CHANNEL(String::class, OptionConverter.MessageChannelOption),
+    GUILD_CHANNEL(GuildChannel::class, OptionConverter.StandardGuildChannelOption),
     ROLE(Role::class, OptionConverter.RoleOption),
     INTEGER(Int::class, OptionConverter.IntOption),
     FLOAT(Float::class, OptionConverter.FloatOption),
     DOUBLE(Double::class, OptionConverter.DoubleOption),
     TEXT_CHANNEL(TextChannel::class, OptionConverter.TextChannelOption),
+    AUDIO_CHANNEL(AudioChannel::class, OptionConverter.AudioChannelOption),
+    STAGE_CHANNEL(StageChannel::class, OptionConverter.StageChannelOption),
     VOICE_CHANNEL(VoiceChannel::class, OptionConverter.VoiceChannelOption);
 
     fun convert(option: OptionMapping?) = converter.convert(option)
