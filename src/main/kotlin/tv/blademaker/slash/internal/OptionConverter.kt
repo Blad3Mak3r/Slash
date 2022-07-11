@@ -79,6 +79,12 @@ internal sealed interface OptionConverter <T : Any> {
         }
     }
 
+    object GuildMessageChannelOption : OptionConverter<GuildMessageChannel> {
+        override fun convert(optionMapping: OptionMapping?): GuildMessageChannel? {
+            return optionMapping?.asChannel?.let { if (it is GuildMessageChannel) it else null }
+        }
+    }
+
     object UserOption : OptionConverter<User> {
         override fun convert(optionMapping: OptionMapping?): User? {
             return optionMapping?.asUser
@@ -95,6 +101,11 @@ internal sealed interface OptionConverter <T : Any> {
         override fun convert(optionMapping: OptionMapping?): StageChannel? {
             return optionMapping?.asChannel?.let { if (it is StageChannel) it else null }
         }
+    }
 
+    object GuildCategoryOption : OptionConverter<Category> {
+        override fun convert(optionMapping: OptionMapping?): Category? {
+            return optionMapping?.asChannel?.let { if (it is Category) it else null }
+        }
     }
 }
