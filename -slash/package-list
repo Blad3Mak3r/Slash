@@ -200,6 +200,7 @@ $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor///Pointin
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor/SuspendingCommandExecutor/#tv.blademaker.slash.client.DefaultSlashCommandClient#tv.blademaker.slash.ratelimit.RateLimitClient?/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/-suspending-command-executor.html
 $dokka.location:tv.blademaker.slash.internal/SuspendingCommandExecutor/coroutineContext/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-suspending-command-executor/coroutine-context.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.ATTACHMENT///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-a-t-t-a-c-h-m-e-n-t/index.html
+$dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.AUDIO_CHANNEL///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-a-u-d-i-o_-c-h-a-n-n-e-l/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.BOOLEAN///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-b-o-o-l-e-a-n/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.Companion/get/#kotlin.reflect.KType/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-companion/get.html
@@ -210,8 +211,8 @@ $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.GUILD_CHANNEL///Po
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.INTEGER///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-i-n-t-e-g-e-r/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.LONG///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-l-o-n-g/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.MEMBER///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-m-e-m-b-e-r/index.html
-$dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.MESSAGE_CHANNEL///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-m-e-s-s-a-g-e_-c-h-a-n-n-e-l/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.ROLE///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-r-o-l-e/index.html
+$dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.STAGE_CHANNEL///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-s-t-a-g-e_-c-h-a-n-n-e-l/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.STRING///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-s-t-r-i-n-g/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.TEXT_CHANNEL///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-t-e-x-t_-c-h-a-n-n-e-l/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.USER///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/-u-s-e-r/index.html
