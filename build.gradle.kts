@@ -13,7 +13,7 @@ group = "tv.blademaker"
 val versionObj = Version(0, 9, 0)
 version = versionObj.toString()
 
-val jdaVersion = "5.0.0-alpha.12"
+val jdaVersion = "5.0.0-alpha.15"
 val coroutinesVersion = "1.6.0"
 val slf4jApi = "1.7.36"
 val prometheusVersion = "0.15.0"
@@ -34,8 +34,7 @@ dependencies {
 
     implementation("org.reflections:reflections:$reflectionsVersion")
 
-    //implementation("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
-    implementation("com.github.DV8FromTheWorld:JDA:07e8166fc5") { exclude(module = "opus-java") }
+    implementation("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
     api("org.slf4j:slf4j-api:$slf4jApi")
     api("io.sentry:sentry:$sentryVersion")
 

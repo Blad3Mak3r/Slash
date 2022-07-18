@@ -37,7 +37,7 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 - [ ] Be a nice package :).
 
 ## Requirements
-- **[JDA 5.0.0-alpha.8](https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-alpha.12)**
+- **[JDA 5.0.0-alpha.15](https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-alpha.15)**
 - JDK 11
 - Kotlin 1.6.10
 - Coroutines 1.6.0
@@ -253,7 +253,7 @@ suspend fun someCommand(ctx: SlashCommandContext) {
 ```
 
 ### Custom Option names
-You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/api/annotations/OptionName.kt)
+You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/annotations/OptionName.kt)
 the set a custom name for an option.
 ```kotlin
 @SlashCommand(target = InteractionTarget.ALL)
