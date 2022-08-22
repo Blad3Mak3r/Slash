@@ -1,12 +1,13 @@
 package tv.blademaker.slash.context.actions
 
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.interactions.components.ActionRow
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import tv.blademaker.slash.context.SlashCommandContext
 import java.awt.Color
 
@@ -47,9 +48,9 @@ interface ContextAction<T> {
      *
      * This requires the interaction to be acknowledged.
      *
-     * @see net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
+     * @see net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
      */
-    fun send(): WebhookMessageAction<Message>
+    fun send(): WebhookMessageCreateAction<Message>
 
     /**
      * Send a reply message to the interaction.
@@ -96,20 +97,20 @@ interface ContextAction<T> {
             return build(ctx, EmbedBuilder().setColor(color).apply(embedBuilder))
         }
 
-        internal fun build(ctx: SlashCommandContext, message: Message): MessageContextAction {
+        internal fun build(ctx: SlashCommandContext, message: MessageCreateData): MessageContextAction {
             return MessageContextAction(ctx, message)
         }
 
         internal fun build(ctx: SlashCommandContext, message: String): MessageContextAction {
-            return MessageContextAction(ctx, MessageBuilder().append(message).build())
+            return MessageContextAction(ctx, MessageCreateData.fromContent(message))
         }
 
-        internal fun build(ctx: SlashCommandContext, messageBuilder: MessageBuilder): MessageContextAction {
+        internal fun build(ctx: SlashCommandContext, messageBuilder: MessageCreateBuilder): MessageContextAction {
             return MessageContextAction(ctx, messageBuilder.build())
         }
 
-        internal fun build(ctx: SlashCommandContext, messageBuilder: MessageBuilder.() -> Unit): MessageContextAction {
-            return MessageContextAction(ctx, MessageBuilder().apply(messageBuilder).build())
+        internal fun build(ctx: SlashCommandContext, messageBuilder: MessageCreateBuilder.() -> Unit): MessageContextAction {
+            return MessageContextAction(ctx, MessageCreateBuilder().apply(messageBuilder).build())
         }
     }
 }

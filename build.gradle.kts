@@ -10,15 +10,15 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 9, 1)
+val versionObj = Version(0, 9, 2)
 version = versionObj.toString()
 
-val jdaVersion = "5.0.0-alpha.16"
-val coroutinesVersion = "1.6.0"
+val jdaVersion = "5.0.0-alpha.18"
+val coroutinesVersion = "1.6.4"
 val slf4jApi = "1.7.36"
-val prometheusVersion = "0.15.0"
+val prometheusVersion = "0.16.0"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "5.6.2"
+val sentryVersion = "6.4.0"
 
 repositories {
     mavenCentral()

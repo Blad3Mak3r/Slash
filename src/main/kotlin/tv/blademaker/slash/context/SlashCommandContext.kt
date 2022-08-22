@@ -3,15 +3,15 @@ package tv.blademaker.slash.context
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.sharding.ShardManager
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import tv.blademaker.slash.context.actions.ContextAction
 import tv.blademaker.slash.context.impl.GuildSlashCommandContextImpl
 import tv.blademaker.slash.context.impl.SlashCommandContextImpl
@@ -95,7 +95,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @return A [WebhookMessageAction]
      */
-    fun replyMessage(message: Message) = ContextAction.build(this, message).reply()
+    fun replyMessage(message: Message) = ContextAction.build(this, MessageCreateData.fromMessage(message)).reply()
 
     /**
      * Reply to the event with the given content.
@@ -104,7 +104,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @return A [WebhookMessageAction]
      */
-    fun replyMessage(builder: MessageBuilder) = ContextAction.build(this, builder).reply()
+    fun replyMessage(builder: MessageCreateBuilder) = ContextAction.build(this, builder).reply()
 
     /**
      * SReply to the event with the given content.
@@ -113,7 +113,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @return A [WebhookMessageAction]
      */
-    fun replyMessage(builder: MessageBuilder.() -> Unit) = ContextAction.build(this, builder).reply()
+    fun replyMessage(builder: MessageCreateBuilder.() -> Unit) = ContextAction.build(this, builder).reply()
 
     // Embed actions
 
@@ -162,7 +162,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @return A [WebhookMessageAction]
      */
-    fun sendMessage(message: Message) = ContextAction.build(this, message).send()
+    fun sendMessage(message: Message) = ContextAction.build(this, MessageCreateData.fromMessage(message)).send()
 
     /**
      * Send a follow-up message with the given content.
@@ -171,7 +171,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @return A [WebhookMessageAction]
      */
-    fun sendMessage(builder: MessageBuilder) = ContextAction.build(this, builder).send()
+    fun sendMessage(builder: MessageCreateBuilder) = ContextAction.build(this, builder).send()
 
     /**
      * Send a follow-up message with the given content.
@@ -180,7 +180,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @return A [WebhookMessageAction]
      */
-    fun sendMessage(builder: MessageBuilder.() -> Unit) = ContextAction.build(this, builder).send()
+    fun sendMessage(builder: MessageCreateBuilder.() -> Unit) = ContextAction.build(this, builder).send()
 
     // Embed actions
 
@@ -229,7 +229,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @return The context action for the message.
      */
-    fun message(builder: MessageBuilder.() -> Unit) = ContextAction.build(this, builder)
+    fun message(builder: MessageCreateBuilder.() -> Unit) = ContextAction.build(this, builder)
 
     /**
      * An extra object (reference) the set what you want.

@@ -2,7 +2,7 @@ package tv.blademaker.slash
 
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.requests.RestAction
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
@@ -77,7 +77,7 @@ object SlashUtils {
     fun RestAction<*>.asEphemeral(): RestAction<*> {
         when(this) {
             is ReplyCallbackAction -> this.setEphemeral(true)
-            is WebhookMessageAction<*> -> this.setEphemeral(true)
+            is WebhookMessageCreateAction -> this.setEphemeral(true)
         }
 
         return this
