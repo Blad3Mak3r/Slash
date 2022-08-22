@@ -74,7 +74,7 @@ $dokka.location:tv.blademaker.slash.context.actions/EmbedContextAction/original/
 $dokka.location:tv.blademaker.slash.context.actions/EmbedContextAction/reply/#/PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-embed-context-action/reply.html
 $dokka.location:tv.blademaker.slash.context.actions/EmbedContextAction/send/#/PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-embed-context-action/send.html
 $dokka.location:tv.blademaker.slash.context.actions/MessageContextAction///PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-message-context-action/index.html
-$dokka.location:tv.blademaker.slash.context.actions/MessageContextAction/MessageContextAction/#tv.blademaker.slash.context.SlashCommandContext#net.dv8tion.jda.api.entities.Message/PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-message-context-action/-message-context-action.html
+$dokka.location:tv.blademaker.slash.context.actions/MessageContextAction/MessageContextAction/#tv.blademaker.slash.context.SlashCommandContext#net.dv8tion.jda.api.utils.messages.MessageCreateData/PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-message-context-action/-message-context-action.html
 $dokka.location:tv.blademaker.slash.context.actions/MessageContextAction/configuration/#/PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-message-context-action/configuration.html
 $dokka.location:tv.blademaker.slash.context.actions/MessageContextAction/ctx/#/PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-message-context-action/ctx.html
 $dokka.location:tv.blademaker.slash.context.actions/MessageContextAction/editOriginal/#/PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-message-context-action/edit-original.html
@@ -126,22 +126,22 @@ $dokka.location:tv.blademaker.slash.context/SlashCommandContext/hook/#/PointingT
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/interaction/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/interaction.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/isAcknowledged/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/is-acknowledged.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/member/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/member.html
-$dokka.location:tv.blademaker.slash.context/SlashCommandContext/message/#kotlin.Function1[net.dv8tion.jda.api.MessageBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/message.html
+$dokka.location:tv.blademaker.slash.context/SlashCommandContext/message/#kotlin.Function1[net.dv8tion.jda.api.utils.messages.MessageCreateBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/message.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/options/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/options.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyEmbed/#kotlin.Function1[net.dv8tion.jda.api.EmbedBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-embed.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyEmbed/#net.dv8tion.jda.api.EmbedBuilder/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-embed.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyEmbed/#net.dv8tion.jda.api.entities.MessageEmbed/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-embed.html
-$dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyMessage/#kotlin.Function1[net.dv8tion.jda.api.MessageBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-message.html
+$dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyMessage/#kotlin.Function1[net.dv8tion.jda.api.utils.messages.MessageCreateBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-message.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyMessage/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-message.html
-$dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyMessage/#net.dv8tion.jda.api.MessageBuilder/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-message.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyMessage/#net.dv8tion.jda.api.entities.Message/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-message.html
+$dokka.location:tv.blademaker.slash.context/SlashCommandContext/replyMessage/#net.dv8tion.jda.api.utils.messages.MessageCreateBuilder/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/reply-message.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendEmbed/#kotlin.Function1[net.dv8tion.jda.api.EmbedBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-embed.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendEmbed/#net.dv8tion.jda.api.EmbedBuilder/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-embed.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendEmbed/#net.dv8tion.jda.api.entities.MessageEmbed/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-embed.html
-$dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendMessage/#kotlin.Function1[net.dv8tion.jda.api.MessageBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-message.html
+$dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendMessage/#kotlin.Function1[net.dv8tion.jda.api.utils.messages.MessageCreateBuilder,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-message.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendMessage/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-message.html
-$dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendMessage/#net.dv8tion.jda.api.MessageBuilder/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-message.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendMessage/#net.dv8tion.jda.api.entities.Message/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-message.html
+$dokka.location:tv.blademaker.slash.context/SlashCommandContext/sendMessage/#net.dv8tion.jda.api.utils.messages.MessageCreateBuilder/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/send-message.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/shardManager/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/shard-manager.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/tryAcknowledge/#kotlin.Boolean/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/try-acknowledge.html
 $dokka.location:tv.blademaker.slash.context/SlashCommandContext/user/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-slash-command-context/user.html
@@ -248,6 +248,11 @@ $dokka.location:tv.blademaker.slash.ratelimit/RateLimitClient///PointingToDeclar
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitClient/acquire/#tv.blademaker.slash.ratelimit.RateLimit#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-client/acquire.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitClient/createBucketKey/#tv.blademaker.slash.ratelimit.RateLimit#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-client/create-bucket-key.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimitClient/onRateLimitHit/#tv.blademaker.slash.context.SlashCommandContext#tv.blademaker.slash.ratelimit.RateLimit#kotlin.Long/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit-client/on-rate-limit-hit.html
+$dokka.location:tv.blademaker.slash.utils////PointingToDeclaration/-slash/tv.blademaker.slash.utils/index.html
+$dokka.location:tv.blademaker.slash.utils//append/net.dv8tion.jda.api.utils.messages.MessageCreateBuilder#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.utils/append.html
+$dokka.location:tv.blademaker.slash.utils//appendCodeBlock/net.dv8tion.jda.api.utils.messages.MessageCreateBuilder#kotlin.String#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.utils/append-code-block.html
+$dokka.location:tv.blademaker.slash.utils//appendLine/net.dv8tion.jda.api.utils.messages.MessageCreateBuilder#/PointingToDeclaration/-slash/tv.blademaker.slash.utils/append-line.html
+$dokka.location:tv.blademaker.slash.utils//appendLine/net.dv8tion.jda.api.utils.messages.MessageCreateBuilder#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.utils/append-line.html
 $dokka.location:tv.blademaker.slash////PointingToDeclaration/-slash/tv.blademaker.slash/index.html
 $dokka.location:tv.blademaker.slash/BaseSlashCommand///PointingToDeclaration/-slash/tv.blademaker.slash/-base-slash-command/index.html
 $dokka.location:tv.blademaker.slash/BaseSlashCommand/BaseSlashCommand/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash/-base-slash-command/-base-slash-command.html
@@ -278,4 +283,5 @@ tv.blademaker.slash.extensions
 tv.blademaker.slash.internal
 tv.blademaker.slash.metrics
 tv.blademaker.slash.ratelimit
+tv.blademaker.slash.utils
 
