@@ -10,10 +10,10 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 9, 2)
+val versionObj = Version(0, 10, 0)
 version = versionObj.toString()
 
-val jdaVersion = "5.0.0-alpha.18"
+val jdaVersion = "5.0.0-alpha.19"
 val coroutinesVersion = "1.6.4"
 val slf4jApi = "1.7.36"
 val prometheusVersion = "0.16.0"

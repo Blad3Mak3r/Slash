@@ -4,6 +4,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction
@@ -84,7 +85,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param content The content for the message.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun replyMessage(content: String) = ContextAction.build(this, content).reply()
 
@@ -93,7 +94,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param message The message to reply with.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun replyMessage(message: Message) = ContextAction.build(this, MessageCreateData.fromMessage(message)).reply()
 
@@ -102,7 +103,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The message builder.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun replyMessage(builder: MessageCreateBuilder) = ContextAction.build(this, builder).reply()
 
@@ -111,7 +112,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The message builder function.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun replyMessage(builder: MessageCreateBuilder.() -> Unit) = ContextAction.build(this, builder).reply()
 
@@ -122,7 +123,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param embed The embed.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun replyEmbed(embed: MessageEmbed) = ContextAction.build(this, embed).reply()
 
@@ -131,7 +132,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The embed builder.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun replyEmbed(builder: EmbedBuilder) = ContextAction.build(this, builder).reply()
 
@@ -140,7 +141,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The embed builder function.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun replyEmbed(builder: EmbedBuilder.() -> Unit) = ContextAction.build(this, builder).reply()
 
@@ -151,7 +152,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param content The content for the message.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [ReplyCallbackAction]
      */
     fun sendMessage(content: String) = ContextAction.build(this, content).send()
 
@@ -160,7 +161,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param message The message to send.
      *
-     * @return A [WebhookMessageAction]
+     * @return [net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction]
      */
     fun sendMessage(message: Message) = ContextAction.build(this, MessageCreateData.fromMessage(message)).send()
 
@@ -169,7 +170,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The message builder.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction]
      */
     fun sendMessage(builder: MessageCreateBuilder) = ContextAction.build(this, builder).send()
 
@@ -178,7 +179,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The message builder function.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction]
      */
     fun sendMessage(builder: MessageCreateBuilder.() -> Unit) = ContextAction.build(this, builder).send()
 
@@ -189,7 +190,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param embed The embed.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction]
      */
     fun sendEmbed(embed: MessageEmbed) = ContextAction.build(this, embed).send()
 
@@ -198,7 +199,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The embed builder.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction]
      */
     fun sendEmbed(builder: EmbedBuilder) = ContextAction.build(this, builder).send()
 
@@ -207,7 +208,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      *
      * @param builder The embed builder function.
      *
-     * @return A [WebhookMessageAction]
+     * @return A [net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction]
      */
     fun sendEmbed(builder: EmbedBuilder.() -> Unit) = ContextAction.build(this, builder).send()
 

@@ -1,7 +1,7 @@
 package tv.blademaker.slash.context
 
 import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.GuildMessageChannel
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import net.dv8tion.jda.api.entities.Member
 
 interface GuildSlashCommandContext : SlashCommandContext {
