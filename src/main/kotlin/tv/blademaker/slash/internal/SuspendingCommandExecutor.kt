@@ -29,11 +29,11 @@ open class SuspendingCommandExecutor(
 
     private suspend fun creteContext(handler: SlashCommandHandler, event: SlashCommandInteractionEvent): SlashCommandContext {
         return when (handler.target) {
-            InteractionTarget.GUILD -> client.contextCreator.createGuildContext(event)
-            InteractionTarget.DM -> client.contextCreator.createContext(event)
+            InteractionTarget.GUILD -> client.contextCreator.createGuildContext(event, handler.function)
+            InteractionTarget.DM -> client.contextCreator.createContext(event, handler.function)
             InteractionTarget.ALL -> when (event.isFromGuild) {
-                true -> client.contextCreator.createGuildContext(event)
-                false -> client.contextCreator.createContext(event)
+                true -> client.contextCreator.createGuildContext(event, handler.function)
+                false -> client.contextCreator.createContext(event, handler.function)
             }
         }
     }

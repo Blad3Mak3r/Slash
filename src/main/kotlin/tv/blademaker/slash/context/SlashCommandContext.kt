@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.reflect.KFunction
 
 @Suppress("unused")
 interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent> {
@@ -238,12 +239,12 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
     var extra: AtomicReference<Any?>
 
     companion object {
-        fun impl(event: SlashCommandInteractionEvent): SlashCommandContext {
-            return SlashCommandContextImpl(event)
+        fun impl(event: SlashCommandInteractionEvent, function: KFunction<*>): SlashCommandContext {
+            return SlashCommandContextImpl(event, function)
         }
 
-        fun guild(event: SlashCommandInteractionEvent): GuildSlashCommandContext {
-            return GuildSlashCommandContextImpl(event)
+        fun guild(event: SlashCommandInteractionEvent, function: KFunction<*>): GuildSlashCommandContext {
+            return GuildSlashCommandContextImpl(event, function)
         }
     }
 }
