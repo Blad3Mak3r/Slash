@@ -176,6 +176,8 @@ $dokka.location:tv.blademaker.slash.exceptions/PermissionsLackException/permissi
 $dokka.location:tv.blademaker.slash.exceptions/PermissionsLackException/target/#/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-permissions-lack-exception/target.html
 $dokka.location:tv.blademaker.slash.extensions////PointingToDeclaration/-slash/tv.blademaker.slash.extensions/index.html
 $dokka.location:tv.blademaker.slash.extensions//asEphemeral/net.dv8tion.jda.api.requests.RestAction[*]#/PointingToDeclaration/-slash/tv.blademaker.slash.extensions/as-ephemeral.html
+$dokka.location:tv.blademaker.slash.extensions//commandPath/net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent#/PointingToDeclaration/-slash/tv.blademaker.slash.extensions/command-path.html
+$dokka.location:tv.blademaker.slash.extensions//commandPath/net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent#/PointingToDeclaration/-slash/tv.blademaker.slash.extensions/command-path.html
 $dokka.location:tv.blademaker.slash.extensions/UncaughtExceptionHandler///PointingToDeclaration/-slash/tv.blademaker.slash.extensions/-uncaught-exception-handler/index.html
 $dokka.location:tv.blademaker.slash.extensions/UncaughtExceptionHandler/uncaughtException/#java.lang.Thread#kotlin.Throwable/PointingToDeclaration/-slash/tv.blademaker.slash.extensions/-uncaught-exception-handler/uncaught-exception.html
 $dokka.location:tv.blademaker.slash.internal////PointingToDeclaration/-slash/tv.blademaker.slash.internal/index.html
