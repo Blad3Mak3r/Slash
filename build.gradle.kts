@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin("jvm") version "1.6.0"
@@ -10,8 +11,34 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 11, 0)
-version = versionObj.toString()
+
+val gitTag: String? by lazy {
+    try {
+        val stdout = ByteArrayOutputStream()
+        rootProject.exec {
+            commandLine("git", "describe", "--tags", "--abbrev=0")
+            standardOutput = stdout
+        }
+
+        stdout.toString().trim()
+    } catch(e: Throwable) {
+        null
+    }
+}
+
+val gitHash: String by lazy {
+    val stdout = ByteArrayOutputStream()
+    rootProject.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        standardOutput = stdout
+    }
+
+    stdout.toString().trim()
+}
+
+val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
+
+version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
 val jdaVersion = "5.0.0-beta.1"
 val coroutinesVersion = "1.6.4"
@@ -70,7 +97,7 @@ java {
     withSourcesJar()
 }
 
-val mavenCentralRepository = if (versionObj.isSnapshot)
+val mavenCentralRepository = if (isSnapshot)
     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 else
     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -124,18 +151,6 @@ publishing {
                 }
             }
         }
-    }
-}
-
-class Version(
-    private val major: Int,
-    private val minor: Int,
-    private val revision: Int
-) {
-    val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
-
-    override fun toString(): String {
-        return "$major.$minor.$revision" + if (isSnapshot) "-SNAPSHOT" else ""
     }
 }
 
