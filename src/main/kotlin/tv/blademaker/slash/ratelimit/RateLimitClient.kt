@@ -2,6 +2,7 @@ package tv.blademaker.slash.ratelimit
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.extensions.commandPath
 import tv.blademaker.slash.utils.appendCodeBlock
 import tv.blademaker.slash.utils.appendLine
 

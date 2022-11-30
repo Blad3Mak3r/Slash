@@ -8,6 +8,7 @@ import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.metrics.Metrics
 import tv.blademaker.slash.context.ContextCreator
 import tv.blademaker.slash.exceptions.ExceptionHandler
+import tv.blademaker.slash.extensions.commandPath
 import tv.blademaker.slash.internal.*
 import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.CommandHandlers
@@ -31,7 +32,7 @@ class DefaultSlashCommandClient internal constructor(
     internal val contextCreator: ContextCreator,
     internal val checks: MutableSet<CommandExecutionCheck>,
     internal val timeout: Duration,
-    internal val rateLimit: RateLimitClient?,
+    rateLimit: RateLimitClient?,
     strategy: MetricsStrategy?
 ) : SlashCommandClient {
 

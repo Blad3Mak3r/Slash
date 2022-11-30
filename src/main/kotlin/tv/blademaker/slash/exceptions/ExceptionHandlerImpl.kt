@@ -8,7 +8,7 @@ import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.PermissionTarget
 import tv.blademaker.slash.SlashUtils.toHuman
 import tv.blademaker.slash.annotations.InteractionTarget
-import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.extensions.commandPath
 import kotlin.time.Duration
 
 class ExceptionHandlerImpl : ExceptionHandler {

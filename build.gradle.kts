@@ -13,12 +13,12 @@ group = "tv.blademaker"
 val versionObj = Version(0, 11, 0)
 version = versionObj.toString()
 
-val jdaVersion = "5.0.0-alpha.20"
+val jdaVersion = "5.0.0-beta.1"
 val coroutinesVersion = "1.6.4"
-val slf4jApi = "1.7.36"
+val slf4jApi = "2.0.4"
 val prometheusVersion = "0.16.0"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "6.4.0"
+val sentryVersion = "6.8.0"
 
 repositories {
     mavenCentral()
@@ -41,7 +41,7 @@ dependencies {
     api("io.prometheus:simpleclient:$prometheusVersion")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.2.11")
+    testImplementation("ch.qos.logback:logback-classic:1.4.5")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
