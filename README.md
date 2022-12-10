@@ -8,7 +8,7 @@
 # Slash [![Maven Central][maven-central-shield]][maven-central]
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash?ref=badge_shield)
 ### 🚧 This project is currently in active development 🚧
-Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Slash Commands][slash-commands]** for Discord.
+Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA 5.0.0-beta.2 (Java Discord API)][jda]** for an advanced implementation of **[Slash Commands][slash-commands]** for Discord.
 
 
 ## Table of contents
@@ -37,7 +37,7 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 - [ ] Be a nice package :).
 
 ## Requirements
-- **[JDA 5.0.0-alpha.19](https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-alpha.19)**
+- **[JDA 5.0.0-beta.2](https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-beta.2)**
 - JDK 11
 - Kotlin 1.6.10
 - Coroutines 1.6.4

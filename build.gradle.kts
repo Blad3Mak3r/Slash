@@ -2,8 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.6.0"
-    id("org.jetbrains.dokka") version "1.6.0"
+    kotlin("jvm") version "1.7.21"
+    id("org.jetbrains.dokka") version "1.7.20"
+    id("com.github.ben-manes.versions") version "0.44.0"
 
     `maven-publish`
     `java-library`
@@ -40,12 +41,12 @@ val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
 
 version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
-val jdaVersion = "5.0.0-beta.1"
+val jdaVersion = "5.0.0-beta.2"
 val coroutinesVersion = "1.6.4"
-val slf4jApi = "2.0.4"
+val slf4jApi = "2.0.5"
 val prometheusVersion = "0.16.0"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "6.8.0"
+val sentryVersion = "6.9.2"
 
 repositories {
     mavenCentral()
@@ -54,8 +55,8 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib", "1.6.0"))
-    implementation(kotlin("reflect", "1.6.0"))
+    implementation(kotlin("stdlib", "1.7.21"))
+    implementation(kotlin("reflect", "1.7.21"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
