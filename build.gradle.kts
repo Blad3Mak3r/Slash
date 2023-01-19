@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.8.0"
     id("org.jetbrains.dokka") version "1.7.20"
     id("com.github.ben-manes.versions") version "0.44.0"
 
@@ -41,12 +41,12 @@ val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
 
 version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
-val jdaVersion = "5.0.0-beta.2"
+val jdaVersion = "5.0.0-beta.3"
 val coroutinesVersion = "1.6.4"
-val slf4jApi = "2.0.5"
+val slf4jApi = "2.0.6"
 val prometheusVersion = "0.16.0"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "6.9.2"
+val sentryVersion = "6.12.1"
 
 repositories {
     mavenCentral()
@@ -95,6 +95,8 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
 }
 
 java {
+    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_11
     withSourcesJar()
 }
 
