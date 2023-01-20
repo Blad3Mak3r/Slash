@@ -1,13 +1,13 @@
 [maven-central-shield]: https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue
 [maven-central]: https://search.maven.org/artifact/tv.blademaker/slash
 [kotlin]: https://kotlinlang.org/
-[jda]: https://github.com/DV8FromTheWorld/JDA
+[jda]: https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-beta.3
 [jda-rework-interactions]: https://github.com/DV8FromTheWorld/JDA/tree/rework/interactions
 [slash-commands]: https://discord.com/developers/docs/interactions/application-commands
 
 # Slash [![Maven Central][maven-central-shield]][maven-central]
 ### 🚧 This project is currently in active development 🚧
-Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA 5.0.0-beta.2 (Java Discord API)][jda]** for an advanced implementation of **[Slash Commands][slash-commands]** for Discord.
+Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA 5.0.0-beta.3 (Java Discord API)][jda]** for an advanced implementation of **[Application Commands][slash-commands]** for Discord.
 
 
 ## Table of contents
@@ -20,7 +20,9 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
     - [Registering commands](#registering-commands)
     - [Using Context Actions](#using-context-actions)
     - [Custom Option names](#custom-option-names)
-    - [Rate Limiting Command Execution](#rate-limiting-command-execution)
+    - [Auto complete commands options](#slash-commands-option-auto-complete)
+    - [Modals](#modals)
+    - [Rate Limiting Command Execution](#rate-limiting)
 - [Download](#download)
 
 **This library does not synchronize the commands created with the commands published on Discord.**
@@ -30,13 +32,15 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 - [x] Implement handlers for sub-commands.
 - [x] Implement handlers for sub-commands groups.
 - [x] Add support for **Auto Complete** command interactions.
+- [x] Add support for **Modals** command interactions.
 - [x] Add support for non-guild commands (DM commands).
 - [ ] Synchronize discord published commands with create commands.
 - [ ] Useful docs.
 - [ ] Be a nice package :).
+- [ ] Generate commands at build time.
 
 ## Requirements
-- **[JDA 5.0.0-beta.3](https://github.com/DV8FromTheWorld/JDA/releases/tag/v5.0.0-beta.3)**
+- **[JDA 5.0.0-beta.3][jda]**
 - JDK 11
 - Kotlin 1.8.0
 - Coroutines 1.6.4
@@ -52,7 +56,7 @@ class PingCommand : BaseSlashCommand("ping") {
 
     // This command can be used on guilds and direct messages.
     // SlashCommandContext is used on DM and ALL targets.
-    @SlashCommand(target = InteractionTarget.ALL)
+    @OnSlashCommand(target = InteractionTarget.ALL)
     suspend fun default(ctx: SlashCommandContext) {
         ctx.acknowledge(true)
 
@@ -73,7 +77,7 @@ class Whois : BaseSlashCommand("whois") {
     // This command only can be used on guilds.
     // If you try to use it with SlashCommandContext instead of GuildSlashCommandContext
     // the library will report warms about this.
-    @SlashCommand(target = InteractionTarget.GUILD)
+    @OnSlashCommand(target = InteractionTarget.GUILD)
     suspend fun default(ctx: GuildSlashCommandContext, member: Member) {
         ctx.embed {
             setAuthor(/* ... */)
@@ -94,7 +98,7 @@ class RoleCommand : BaseSlashCommand("role") {
     
     // The parsed path is role/add
     // This handler required MANAGE_ROLES permission fot both, bot and user who execute the command.
-    @SlashCommand("add", target = InteractionTarget.GUILD)
+    @OnSlashCommand("add", target = InteractionTarget.GUILD)
     @Permissions(bot = [Permission.MANAGE_ROLES], user = [Permission.MANAGE_ROLES])
     suspend fun addRole(ctx: GuildSlashCommandContext, member: Member) {
         // This handler will add a role to the member.
@@ -102,21 +106,21 @@ class RoleCommand : BaseSlashCommand("role") {
 
     // The parsed path is role/remove
     // This handler required MANAGE_ROLES permission fot both, bot and user who execute the command.
-    @SlashCommand("remove", target = InteractionTarget.GUILD)
+    @OnSlashCommand("remove", target = InteractionTarget.GUILD)
     @Permissions(bot = [Permission.MANAGE_ROLES], user = [Permission.MANAGE_ROLES])
     suspend fun removeRole(ctx: GuildSlashCommandContext, member: Member) {
         // This handler will remove a role to a member if the member have the role.
     }
 
     // The parsed path is role/list
-    @SlashCommand("list", target = InteractionTarget.GUILD)
+    @OnSlashCommand("list", target = InteractionTarget.GUILD)
     suspend fun listRoles(ctx: GuildSlashCommandContext, member: Member?) {
         // This handler has a nullable param, that means the option on the command event
         // can be null.
     }
 
     // The parsed path is role/compare
-    @SlashCommand("compare", target = InteractionTarget.GUILD)
+    @OnSlashCommand("compare", target = InteractionTarget.GUILD)
     suspend fun compareRoles(ctx: GuildSlashCommandContext, member1: Member, member2: Member) {
         // This handler will compare the roles between two members from the guild.
     }
@@ -136,14 +140,14 @@ Create a command inside package ``net.example.commands`` called ``TwitchCommand.
 class TwitchCommand : BaseSlashCommand("twitch") {
 
     // The parsed path is twitch/clips/top
-    @SlashCommand(group = "clips", name = "top", target = InteractionTarget.ALL)
+    @OnSlashCommand(group = "clips", name = "top", target = InteractionTarget.ALL)
     @Permissions(bot = [Permission.MESSAGE_EMBED_LINKS])
     suspend fun clipTop(ctx: SlashCommandContext, channel: String?) {
         
     }
 
     // The parsed path is twitch/clips/random
-    @SlashCommand(group = "clips", name = "random", target = InteractionTarget.ALL)
+    @OnSlashCommand(group = "clips", name = "random", target = InteractionTarget.ALL)
     @Permissions(bot = [Permission.MESSAGE_EMBED_LINKS])
     suspend fun clipRandom(ctx: SlashCommandContext, channel: String?) {
         
@@ -195,7 +199,7 @@ val commandClient = SlashCommandClient.default("com.example.commands")
 ### Using context actions
 You can build context actions inside SlashCommands so easy.
 ```kotlin
-@SlashCommand(target = InteractionTarget.ALL)
+@OnSlashCommand(target = InteractionTarget.ALL)
 suspend fun contextActions(ctx: SlashCommandContext) {
     
     // This is a context action
@@ -236,7 +240,7 @@ suspend fun contextActions(ctx: SlashCommandContext) {
 You have 3 seconds to respond or acknowledge an interaction, you can handle this so easy with the following code.
 ```kotlin
 
-@SlashCommand(target = InteractionTarget.ALL)
+@OnSlashCommand(target = InteractionTarget.ALL)
 suspend fun someCommand(ctx: SlashCommandContext) {
     // If your need to wait before continue the code execution, you can use
     ctx.tryAcknowledge().await()
@@ -255,7 +259,7 @@ suspend fun someCommand(ctx: SlashCommandContext) {
 You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/annotations/OptionName.kt)
 the set a custom name for an option.
 ```kotlin
-@SlashCommand(target = InteractionTarget.ALL)
+@OnSlashCommand(target = InteractionTarget.ALL)
 suspend fun customName(ctx: SlashCommandContext, @OptionName("query") option1: String) {
     // the variable option1 will get the content of ctx.getOption("query")!
 }
@@ -280,10 +284,30 @@ val commandHandler = SlashCommandClient.default("com.example.commands")
     }
 ```
 
-Rate Limiting a SlashCommand:
+### Slash Commands option auto complete
+**AutoCompleteContext** extends **CommandAutoCompleteInteraction**.
+```kotlin
+@OnAutoComplete("commands", "search", optionName = "query")
+suspend fun commandSearchAutocomplete(ctx: AutoCompleteContext) {
+    
+}
+```
+
+### Modals
+**ModalContext** extends **ModalInteraction**
+
+**@OnModal** supports RegEx.
+```kotlin
+@OnModal("feature-request:(.+?)")
+suspend fun testModal(ctx: ModalContext) {
+    
+}
+```
+
+### Rate Limiting
 ```kotlin
 @RateLimit(quota = 5, duration = 20, unit = TimeUnit.SECONDS, target = RateLimit.Target.GUILD)
-@SlashCommand(target = InteractionTarget.GUILD)
+@OnSlashCommand(target = InteractionTarget.GUILD)
 fun rateLimitedCommand(ctx: GuildSlashCommand) {
     ctx.message {
         append("This is an example of a rate limited Slash Command, ")
@@ -317,7 +341,3 @@ dependencies {
 </dependency>
         
 ```
-
-
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FBlad3Mak3r%2FSlash?ref=badge_large)

@@ -1,7 +1,5 @@
 package tv.blademaker.slash.context
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
@@ -11,7 +9,6 @@ import net.dv8tion.jda.api.interactions.commands.CommandInteraction
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.modals.Modal
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
-import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import tv.blademaker.slash.context.actions.ContextAction
@@ -24,13 +21,19 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KFunction
 
 @Suppress("unused")
-interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent> {
+interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashCommandInteractionEvent> {
+
+    val isAcknowledged: Boolean
+        get() = event.isAcknowledged
+
+    val isFromGuild: Boolean
+        get() = event.isFromGuild
+
+    val guild: Guild?
+        get() = event.guild
 
     override val interaction: CommandInteraction
         get() = event.interaction
-
-    val shardManager: ShardManager?
-        get() = jda.shardManager
 
     val hook: InteractionHook
         get() = event.hook
@@ -47,18 +50,7 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
     val member: Member?
         get() = event.member
 
-    fun tryAcknowledge(ephemeral: Boolean = false): ReplyCallbackAction {
-        if (isAcknowledged) throw IllegalStateException("Current command is already ack.")
-        return event.deferReply(ephemeral)
-    }
-
-    /**
-     * Automatically detect if the interaction is already acknowledge and if not
-     * will acknowledge it.
-     *
-     *
-     */
-    suspend fun acknowledge(ephemeral: Boolean = false) = suspendCoroutine<Unit> { cont ->
+    override suspend fun acknowledge(ephemeral: Boolean) = suspendCoroutine<Unit> { cont ->
         if (isAcknowledged) {
             cont.resume(Unit)
         } else {
@@ -69,8 +61,6 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
             })
         }
     }
-
-    suspend fun acknowledgeAsync(ephemeral: Boolean) = coroutineScope { async { acknowledge(ephemeral) } }
 
     fun getOption(name: String) = event.getOption(name)
 
