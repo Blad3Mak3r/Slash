@@ -1,31 +1,29 @@
 package tv.blademaker.slash.context.actions
 
 import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
-import tv.blademaker.slash.context.SlashCommandContext
+import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import net.dv8tion.jda.api.utils.messages.MessageEditData
+import tv.blademaker.slash.context.ModalContext
 
-@Suppress("unused")
-class EmbedContextAction(val ctx: SlashCommandContext, override val original: MessageEmbed) : ContextAction<MessageEmbed> {
-
+class ModalContextAction(val ctx: ModalContext, override val original: MessageCreateData) : ContextAction<MessageCreateData> {
     override val configuration: ContextAction.Configuration = ContextAction.Configuration()
     override val interaction: Interaction = ctx.interaction
-
     override fun send(): WebhookMessageCreateAction<Message> {
-        return ctx.hook.sendMessageEmbeds(original).apply {
+        return ctx.hook.sendMessage(original).apply {
             this.setEphemeral(configuration.ephemeral)
             configuration.actionRows?.let { this.addComponents(it) }
         }
     }
 
     override fun reply(): ReplyCallbackAction {
-        return ctx.event.replyEmbeds(original).apply {
+        return ctx.event.reply(original).apply {
             this.setEphemeral(configuration.ephemeral)
             configuration.actionRows?.let { this.addComponents(it) }
         }
     }
 
-    fun editOriginal() = ctx.hook.editOriginalEmbeds(original)
+    fun editOriginal() = ctx.hook.editOriginal(MessageEditData.fromCreateData(original))
 }

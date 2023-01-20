@@ -1,7 +1,7 @@
 package tv.blademaker.slash.internal
 
 import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.annotations.AutoComplete
+import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.OptionName
 import tv.blademaker.slash.context.AutoCompleteContext
 import kotlin.reflect.KFunction
@@ -10,10 +10,10 @@ import kotlin.reflect.full.findAnnotation
 
 class AutoCompleteHandler(
     override val parent: BaseSlashCommand,
-    private val function: KFunction<*>
+    internal val function: KFunction<*>
 ) : Handler {
 
-    private val annotation: AutoComplete = function.findAnnotation()!!
+    private val annotation: OnAutoComplete = function.findAnnotation()!!
 
     val optionName: String
         get() = annotation.optionName

@@ -6,10 +6,12 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
-import tv.blademaker.slash.annotations.AutoComplete
-import tv.blademaker.slash.annotations.SlashCommand
+import tv.blademaker.slash.annotations.OnAutoComplete
+import tv.blademaker.slash.annotations.OnModal
+import tv.blademaker.slash.annotations.OnSlashCommand
 import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.CommandHandlers
+import tv.blademaker.slash.internal.ModalHandler
 import tv.blademaker.slash.internal.SlashCommandHandler
 import java.lang.reflect.Modifier
 import kotlin.reflect.KVisibility
@@ -92,15 +94,20 @@ object SlashUtils {
             if (it.isEmpty()) emptyList()
             else it.reduce { acc, list -> list + acc }
         }
+        val modalHandlers = commands.map { compileModalHandlers(it) }.let {
+            if (it.isEmpty()) emptyList()
+            else it.reduce { acc, list -> list + acc  }
+        }
         return CommandHandlers(
             slashCommandHandlers,
-            autoCompleteHandlers
+            autoCompleteHandlers,
+            modalHandlers
         )
     }
 
     private fun compileSlashCommandHandlers(command: BaseSlashCommand): List<SlashCommandHandler> {
         val handlers = command::class.functions
-            .filter { it.hasAnnotation<SlashCommand>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+            .filter { it.hasAnnotation<OnSlashCommand>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
             .map { SlashCommandHandler(command, it) }
 
         val finalList = mutableListOf<SlashCommandHandler>()
@@ -130,7 +137,7 @@ object SlashUtils {
 
     private fun compileAutoCompleteHandlers(command: BaseSlashCommand): List<AutoCompleteHandler> {
         val handlers = command::class.functions
-            .filter { it.hasAnnotation<AutoComplete>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+            .filter { it.hasAnnotation<OnAutoComplete>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
             .map { AutoCompleteHandler(command, it) }
 
         val finalList = mutableListOf<AutoCompleteHandler>()
@@ -138,6 +145,23 @@ object SlashUtils {
         for (handler in handlers) {
             check(!finalList.any { it.path == handler.path && it.optionName == handler.optionName }) {
                 "Found more than one AutocompleteHandler for the same path (${handler.path}) and option (${handler.optionName})."
+            }
+            finalList.add(handler)
+        }
+
+        return finalList
+    }
+
+    private fun compileModalHandlers(command: BaseSlashCommand): List<ModalHandler> {
+        val handlers = command::class.functions
+            .filter { it.hasAnnotation<OnModal>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+            .map { ModalHandler(command, it) }
+
+        val finalList = mutableListOf<ModalHandler>()
+
+        for (handler in handlers) {
+            check(!finalList.any { it.path == handler.path }) {
+                "Found more than one ModalHandler for the same path (${handler.path})"
             }
             finalList.add(handler)
         }

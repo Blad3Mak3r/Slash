@@ -5,6 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
@@ -12,9 +13,11 @@ import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.client.DefaultSlashCommandClient
 import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.context.GuildSlashCommandContext
+import tv.blademaker.slash.context.ModalContext
 import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
 import tv.blademaker.slash.ratelimit.RateLimitClient
+import java.util.regex.Matcher
 import kotlin.coroutines.CoroutineContext
 
 open class SuspendingCommandExecutor(
@@ -85,12 +88,23 @@ open class SuspendingCommandExecutor(
 
     internal fun execute(event: CommandAutoCompleteInteractionEvent, handler: AutoCompleteHandler) = launch {
         try {
-            val ctx = AutoCompleteContext(event)
+            val ctx = AutoCompleteContext(event, handler.function)
 
             logEvent(event)
             handler.execute(ctx)
         } catch (e: Exception) {
             client.exceptionHandler.wrap(e, handler.parent, event)
+        }
+    }
+
+    internal fun execute(event: ModalInteractionEvent, handler: ModalHandler, matcher: Matcher) = launch {
+        try {
+            val ctx = ModalContext(event, matcher, handler.function)
+
+            logEvent(event)
+            handler.execute(ctx)
+        } catch (e: Throwable) {
+            client.exceptionHandler.onException(e, handler.parent, event)
         }
     }
 
@@ -103,6 +117,10 @@ open class SuspendingCommandExecutor(
 
         private fun logEvent(event: CommandAutoCompleteInteractionEvent) {
             log.info("${getEventLogPrefix(event)} [Auto Complete] --> ${event.commandString}")
+        }
+
+        private fun logEvent(event: ModalInteractionEvent) {
+            log.info("${getEventLogPrefix(event)} [Modal] --> ${event.modalId}")
         }
 
         private fun getEventLogPrefix(event: GenericInteractionCreateEvent) = when (event.isFromGuild) {

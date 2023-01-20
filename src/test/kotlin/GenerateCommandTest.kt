@@ -1,15 +1,16 @@
 @file:Suppress("UNUSED_PARAMETER", "unused")
 
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.annotations.AutoComplete
+import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.client.SlashCommandClient
 import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.annotations.OptionName
-import tv.blademaker.slash.annotations.SlashCommand
+import tv.blademaker.slash.annotations.OnSlashCommand
 import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
@@ -29,16 +30,19 @@ class GenerateCommandTest {
 
         override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
         }
+
+        override fun onModalInteractionEvent(event: ModalInteractionEvent) {
+        }
     }
 
     object BasicCommand : BaseSlashCommand("basic") {
 
-        @SlashCommand(target = InteractionTarget.ALL)
+        @OnSlashCommand(target = InteractionTarget.ALL)
         fun handle(ctx: SlashCommandContext) {
 
         }
 
-        @AutoComplete(optionName = "name")
+        @OnAutoComplete(optionName = "name")
         fun handleNext(ctx: AutoCompleteContext, @OptionName("name") option: String) {
         }
 
@@ -47,28 +51,28 @@ class GenerateCommandTest {
     @Suppress("UNUSED_PARAMETER", "unused")
     object AdvancedCommand : BaseSlashCommand("advanced") {
 
-        @SlashCommand(group = "group1", name = "option1", target = InteractionTarget.GUILD)
+        @OnSlashCommand(group = "group1", name = "option1", target = InteractionTarget.GUILD)
         fun group1Option1(ctx: SlashCommandContext, @OptionName("channel") voiceChannel: VoiceChannel?) {
             // We are using @OptionName with custom name channel
             // this means voiceChannel will be equal to ctx.getOption("channel")
         }
 
-        @SlashCommand(group = "group1", name = "option2", target = InteractionTarget.ALL)
+        @OnSlashCommand(group = "group1", name = "option2", target = InteractionTarget.ALL)
         fun group1Option2(ctx: SlashCommandContext) {
 
         }
 
-        @SlashCommand(group = "group2", name = "option1", target = InteractionTarget.ALL)
+        @OnSlashCommand(group = "group2", name = "option1", target = InteractionTarget.ALL)
         fun group2Option1(ctx: SlashCommandContext) {
 
         }
 
-        @SlashCommand(group = "group2", name = "option2", target = InteractionTarget.ALL)
+        @OnSlashCommand(group = "group2", name = "option2", target = InteractionTarget.ALL)
         fun group2Option2(ctx: SlashCommandContext) {
 
         }
 
-        @SlashCommand(name = "optionNoGroup", target = InteractionTarget.ALL)
+        @OnSlashCommand(name = "optionNoGroup", target = InteractionTarget.ALL)
         fun optionNoGroup(ctx: SlashCommandContext) {
 
         }

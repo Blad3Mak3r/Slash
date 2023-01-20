@@ -1,6 +1,7 @@
 package tv.blademaker.slash.exceptions
 
 import kotlinx.coroutines.TimeoutCancellationException
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
@@ -12,7 +13,17 @@ import tv.blademaker.slash.extensions.commandPath
 import kotlin.time.Duration
 
 class ExceptionHandlerImpl : ExceptionHandler {
-    override fun onException(ex: Exception, command: BaseSlashCommand, event: SlashCommandInteractionEvent) {
+
+    override fun onException(ex: Throwable, command: BaseSlashCommand, event: ModalInteractionEvent) {
+        val message = "Exception executing handler for modal `${event.modalId}`:\n```\n${ex.message}\n```"
+
+        log.error(message, ex)
+
+        if (event.isAcknowledged) event.hook.sendMessage(message).setEphemeral(true).queue()
+        else event.reply(message).setEphemeral(true).queue()
+    }
+
+    override fun onException(ex: Throwable, command: BaseSlashCommand, event: SlashCommandInteractionEvent) {
         val message = "Exception executing handler for slash command `${event.commandPath}`:\n```\n${ex.message}\n```"
 
         log.error(message, ex)
@@ -21,7 +32,7 @@ class ExceptionHandlerImpl : ExceptionHandler {
         else event.reply(message).setEphemeral(true).queue()
     }
 
-    override fun onException(ex: Exception, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent) {
+    override fun onException(ex: Throwable, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent) {
         val message = "Exception executing handler for auto-complete interaction `${event.commandPath}`:\n```\n${ex.message}\n```"
 
         log.error(message, ex)

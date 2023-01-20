@@ -2,7 +2,7 @@ package tv.blademaker.slash.annotations
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class SlashCommand(
+annotation class OnSlashCommand(
 
     /**
      * Sub-command name.
@@ -14,7 +14,7 @@ annotation class SlashCommand(
      */
     val group: String = "",
     /**
-     * The [InteractionTarget] of the [SlashCommand] (default is InteractionTarget.GUILD)
+     * The [InteractionTarget] of the [OnSlashCommand] (default is InteractionTarget.GUILD)
      */
     val target: InteractionTarget = InteractionTarget.GUILD
 )

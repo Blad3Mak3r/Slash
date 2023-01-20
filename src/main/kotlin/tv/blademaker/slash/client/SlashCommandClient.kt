@@ -1,6 +1,7 @@
 package tv.blademaker.slash.client
 
 import net.dv8tion.jda.api.events.GenericEvent
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
@@ -21,6 +22,7 @@ interface SlashCommandClient : EventListener {
         when (event) {
             is SlashCommandInteractionEvent -> onSlashCommandEvent(event)
             is CommandAutoCompleteInteractionEvent -> onCommandAutoCompleteEvent(event)
+            is ModalInteractionEvent -> onModalInteractionEvent(event)
         }
     }
 
@@ -37,6 +39,8 @@ interface SlashCommandClient : EventListener {
      * @param event The [CommandAutoCompleteInteractionEvent] sent by Discord.
      */
     fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent)
+
+    fun onModalInteractionEvent(event: ModalInteractionEvent)
 
     fun getCommand(name: String) = registry.firstOrNull { it.commandName.equals(name, true) }
 

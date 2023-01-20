@@ -1,6 +1,7 @@
 package tv.blademaker.slash.client
 
 import kotlinx.coroutines.CoroutineScope
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import org.slf4j.LoggerFactory
@@ -14,6 +15,7 @@ import tv.blademaker.slash.internal.AutoCompleteHandler
 import tv.blademaker.slash.internal.CommandHandlers
 import tv.blademaker.slash.metrics.MetricsStrategy
 import tv.blademaker.slash.ratelimit.RateLimitClient
+import java.util.regex.Matcher
 import kotlin.time.Duration
 
 /**
@@ -56,6 +58,12 @@ class DefaultSlashCommandClient internal constructor(
         return commandHandlers.autoComplete.find { it.path == event.commandPath && it.optionName == event.focusedOption.name }
     }
 
+    private fun findHandler(event: ModalInteractionEvent): Pair<Matcher, ModalHandler>? {
+        return commandHandlers.modalHandlers.find { it.matches(event.modalId) }?.let {
+            Pair(it.matcher(event.modalId), it)
+        }
+    }
+
     override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
         val handler = findHandler(event)
 
@@ -72,6 +80,10 @@ class DefaultSlashCommandClient internal constructor(
 
     override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
         findHandler(event)?.run { executor.execute(event, this) }
+    }
+
+    override fun onModalInteractionEvent(event: ModalInteractionEvent) {
+        findHandler(event)?.run { executor.execute(event, this.second, this.first) }
     }
 
     fun addCheck(check: CommandExecutionCheck) {

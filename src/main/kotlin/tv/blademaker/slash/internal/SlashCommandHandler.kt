@@ -18,7 +18,7 @@ class SlashCommandHandler(
     val function: KFunction<*>
 ) : Handler {
 
-    private val annotation: SlashCommand = function.findAnnotation()!!
+    private val annotation: OnSlashCommand = function.findAnnotation()!!
     val rateLimit: RateLimit? = function.findAnnotation()
     val permissions: Permissions? = function.findAnnotation()
 

@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import net.dv8tion.jda.api.interactions.modals.Modal
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
@@ -28,9 +29,6 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
     override val interaction: CommandInteraction
         get() = event.interaction
 
-    val isAcknowledged: Boolean
-        get() = event.isAcknowledged
-
     val shardManager: ShardManager?
         get() = jda.shardManager
 
@@ -45,9 +43,6 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
 
     val user: User
         get() = event.user
-
-    val guild: Guild?
-        get() = event.guild
 
     val member: Member?
         get() = event.member
@@ -232,6 +227,9 @@ interface SlashCommandContext : InteractionContext<SlashCommandInteractionEvent>
      * @return The context action for the message.
      */
     fun message(builder: MessageCreateBuilder.() -> Unit) = ContextAction.build(this, builder)
+
+    fun replyModal(customId: String, title: String, builder: Modal.Builder.() -> Unit) =
+        event.replyModal(Modal.create(customId, title).apply(builder).build())
 
     /**
      * An extra object (reference) the set what you want.

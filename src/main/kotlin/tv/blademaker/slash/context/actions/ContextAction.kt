@@ -3,6 +3,7 @@ package tv.blademaker.slash.context.actions
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
@@ -18,7 +19,7 @@ interface ContextAction<T> {
         var actionRows: Collection<ActionRow>? = null
     }
 
-    val ctx: SlashCommandContext
+    val interaction: Interaction
     val original: T
 
     val configuration: Configuration
@@ -75,7 +76,7 @@ interface ContextAction<T> {
      * @see ContextAction.reply
      */
     fun queue() {
-        when (ctx.isAcknowledged) {
+        when (interaction.isAcknowledged) {
             true -> send().queue()
             false -> reply().queue()
         }

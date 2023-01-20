@@ -1,6 +1,7 @@
 package tv.blademaker.slash.context.actions
 
 import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
@@ -8,9 +9,11 @@ import net.dv8tion.jda.api.utils.messages.MessageEditData
 import tv.blademaker.slash.context.SlashCommandContext
 
 @Suppress("unused")
-class MessageContextAction(override val ctx: SlashCommandContext, override val original: MessageCreateData) : ContextAction<MessageCreateData> {
+class MessageContextAction(val ctx: SlashCommandContext, override val original: MessageCreateData) : ContextAction<MessageCreateData> {
 
     override val configuration: ContextAction.Configuration = ContextAction.Configuration()
+
+    override val interaction: Interaction = ctx.interaction
 
     override fun send(): WebhookMessageCreateAction<Message> {
         return ctx.hook.sendMessage(original).apply {
