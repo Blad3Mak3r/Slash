@@ -24,6 +24,7 @@ interface SlashCommandClient : EventListener {
             is SlashCommandInteractionEvent -> onSlashCommandEvent(event)
             is CommandAutoCompleteInteractionEvent -> onCommandAutoCompleteEvent(event)
             is ModalInteractionEvent -> onModalInteractionEvent(event)
+            is ButtonInteractionEvent -> onButtonInteractionEvent(event)
         }
     }
 
