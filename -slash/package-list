@@ -1,6 +1,7 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 $dokka.location:tv.blademaker.slash.annotations////PointingToDeclaration/-slash/tv.blademaker.slash.annotations/index.html
+$dokka.location:tv.blademaker.slash.annotations//matcher/tv.blademaker.slash.annotations.OnButton#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/matcher.html
 $dokka.location:tv.blademaker.slash.annotations//matcher/tv.blademaker.slash.annotations.OnModal#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/matcher.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.ALL///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash.annotations/-interaction-target/-a-l-l/index.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.DM///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash.annotations/-interaction-target/-d-m/index.html
@@ -12,6 +13,8 @@ $dokka.location:tv.blademaker.slash.annotations/OnAutoComplete///PointingToDecla
 $dokka.location:tv.blademaker.slash.annotations/OnAutoComplete/group/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-auto-complete/group.html
 $dokka.location:tv.blademaker.slash.annotations/OnAutoComplete/name/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-auto-complete/name.html
 $dokka.location:tv.blademaker.slash.annotations/OnAutoComplete/optionName/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-auto-complete/option-name.html
+$dokka.location:tv.blademaker.slash.annotations/OnButton///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-button/index.html
+$dokka.location:tv.blademaker.slash.annotations/OnButton/buttonId/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-button/button-id.html
 $dokka.location:tv.blademaker.slash.annotations/OnModal///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-modal/index.html
 $dokka.location:tv.blademaker.slash.annotations/OnModal/modalId/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-modal/modal-id.html
 $dokka.location:tv.blademaker.slash.annotations/OnSlashCommand///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-slash-command/index.html
@@ -37,6 +40,7 @@ $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandBuilder/withTimeou
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandClient///PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-client/index.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandClient/addCheck/#kotlin.coroutines.SuspendFunction1[tv.blademaker.slash.context.SlashCommandContext,kotlin.Boolean]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-client/add-check.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandClient/exceptionHandler/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-client/exception-handler.html
+$dokka.location:tv.blademaker.slash.client/DefaultSlashCommandClient/onButtonInteractionEvent/#net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-client/on-button-interaction-event.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandClient/onCommandAutoCompleteEvent/#net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-client/on-command-auto-complete-event.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandClient/onModalInteractionEvent/#net.dv8tion.jda.api.events.interaction.ModalInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-client/on-modal-interaction-event.html
 $dokka.location:tv.blademaker.slash.client/DefaultSlashCommandClient/onSlashCommandEvent/#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-default-slash-command-client/on-slash-command-event.html
@@ -46,6 +50,7 @@ $dokka.location:tv.blademaker.slash.client/SlashCommandClient.Companion/default/
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient///PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/index.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient/exceptionHandler/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/exception-handler.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient/getCommand/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/get-command.html
+$dokka.location:tv.blademaker.slash.client/SlashCommandClient/onButtonInteractionEvent/#net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/on-button-interaction-event.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient/onCommandAutoCompleteEvent/#net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/on-command-auto-complete-event.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient/onEvent/#net.dv8tion.jda.api.events.GenericEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/on-event.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient/onModalInteractionEvent/#net.dv8tion.jda.api.events.interaction.ModalInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/on-modal-interaction-event.html
@@ -113,6 +118,11 @@ $dokka.location:tv.blademaker.slash.context/AutoCompleteContext///PointingToDecl
 $dokka.location:tv.blademaker.slash.context/AutoCompleteContext/AutoCompleteContext/#net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-auto-complete-context/-auto-complete-context.html
 $dokka.location:tv.blademaker.slash.context/AutoCompleteContext/event/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-auto-complete-context/event.html
 $dokka.location:tv.blademaker.slash.context/AutoCompleteContext/function/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-auto-complete-context/function.html
+$dokka.location:tv.blademaker.slash.context/ButtonContext///PointingToDeclaration/-slash/tv.blademaker.slash.context/-button-context/index.html
+$dokka.location:tv.blademaker.slash.context/ButtonContext/ButtonContext/#net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent#java.util.regex.Matcher#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-button-context/-button-context.html
+$dokka.location:tv.blademaker.slash.context/ButtonContext/event/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-button-context/event.html
+$dokka.location:tv.blademaker.slash.context/ButtonContext/function/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-button-context/function.html
+$dokka.location:tv.blademaker.slash.context/ButtonContext/matcher/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-button-context/matcher.html
 $dokka.location:tv.blademaker.slash.context/ContextCreator///PointingToDeclaration/-slash/tv.blademaker.slash.context/-context-creator/index.html
 $dokka.location:tv.blademaker.slash.context/ContextCreator/createContext/#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-context-creator/create-context.html
 $dokka.location:tv.blademaker.slash.context/ContextCreator/createGuildContext/#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.context/-context-creator/create-guild-context.html
@@ -173,6 +183,7 @@ $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler///PointingToDecl
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.ModalInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler/on-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler/on-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler/on-exception.html
+$dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler/on-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler/onInteractionTargetMismatch/#tv.blademaker.slash.exceptions.InteractionTargetMismatch/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler/on-interaction-target-mismatch.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler/onPermissionLackException/#tv.blademaker.slash.exceptions.PermissionsLackException/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler/on-permission-lack-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandler/onTimeoutCancellationException/#kotlinx.coroutines.TimeoutCancellationException#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent#kotlin.time.Duration/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler/on-timeout-cancellation-exception.html
@@ -183,6 +194,7 @@ $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/ExceptionHan
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.ModalInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler-impl/on-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler-impl/on-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler-impl/on-exception.html
+$dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/onException/#kotlin.Throwable#tv.blademaker.slash.BaseSlashCommand#net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler-impl/on-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/onInteractionTargetMismatch/#tv.blademaker.slash.exceptions.InteractionTargetMismatch/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler-impl/on-interaction-target-mismatch.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/onPermissionLackException/#tv.blademaker.slash.exceptions.PermissionsLackException/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler-impl/on-permission-lack-exception.html
 $dokka.location:tv.blademaker.slash.exceptions/ExceptionHandlerImpl/onTimeoutCancellationException/#kotlinx.coroutines.TimeoutCancellationException#net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent#kotlin.time.Duration/PointingToDeclaration/-slash/tv.blademaker.slash.exceptions/-exception-handler-impl/on-timeout-cancellation-exception.html
@@ -207,15 +219,26 @@ $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler.Companion///Poi
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/index.html
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/AutoCompleteHandler/#tv.blademaker.slash.BaseSlashCommand#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/-auto-complete-handler.html
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/execute/#tv.blademaker.slash.context.AutoCompleteContext/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/execute.html
+$dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/function/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/function.html
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/optionName/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/option-name.html
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/parent.html
 $dokka.location:tv.blademaker.slash.internal/AutoCompleteHandler/path/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-auto-complete-handler/path.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/index.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler/ButtonHandler/#tv.blademaker.slash.BaseSlashCommand#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/-button-handler.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler/execute/#tv.blademaker.slash.context.ButtonContext/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/execute.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler/function/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/function.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler/matcher/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/matcher.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler/matches/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/matches.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/parent.html
+$dokka.location:tv.blademaker.slash.internal/ButtonHandler/path/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-button-handler/path.html
 $dokka.location:tv.blademaker.slash.internal/Handler///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-handler/index.html
+$dokka.location:tv.blademaker.slash.internal/Handler/function/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-handler/function.html
 $dokka.location:tv.blademaker.slash.internal/Handler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-handler/parent.html
 $dokka.location:tv.blademaker.slash.internal/Handler/path/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-handler/path.html
 $dokka.location:tv.blademaker.slash.internal/ModalHandler///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-modal-handler/index.html
 $dokka.location:tv.blademaker.slash.internal/ModalHandler/ModalHandler/#tv.blademaker.slash.BaseSlashCommand#kotlin.reflect.KFunction[*]/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-modal-handler/-modal-handler.html
 $dokka.location:tv.blademaker.slash.internal/ModalHandler/execute/#tv.blademaker.slash.context.ModalContext/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-modal-handler/execute.html
+$dokka.location:tv.blademaker.slash.internal/ModalHandler/function/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-modal-handler/function.html
 $dokka.location:tv.blademaker.slash.internal/ModalHandler/matcher/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-modal-handler/matcher.html
 $dokka.location:tv.blademaker.slash.internal/ModalHandler/matches/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-modal-handler/matches.html
 $dokka.location:tv.blademaker.slash.internal/ModalHandler/parent/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-modal-handler/parent.html
