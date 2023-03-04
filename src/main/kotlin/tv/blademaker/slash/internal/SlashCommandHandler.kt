@@ -15,7 +15,7 @@ import kotlin.time.Duration
 
 class SlashCommandHandler(
     override val parent: BaseSlashCommand,
-    val function: KFunction<*>
+    override val function: KFunction<*>
 ) : Handler {
 
     private val annotation: OnSlashCommand = function.findAnnotation()!!

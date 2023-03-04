@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
 import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.exceptions.ExceptionHandler
@@ -41,6 +42,8 @@ interface SlashCommandClient : EventListener {
     fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent)
 
     fun onModalInteractionEvent(event: ModalInteractionEvent)
+
+    fun onButtonInteractionEvent(event: ButtonInteractionEvent)
 
     fun getCommand(name: String) = registry.firstOrNull { it.commandName.equals(name, true) }
 

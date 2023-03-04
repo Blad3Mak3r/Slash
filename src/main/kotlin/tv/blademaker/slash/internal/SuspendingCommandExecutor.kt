@@ -8,13 +8,11 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.client.DefaultSlashCommandClient
-import tv.blademaker.slash.context.AutoCompleteContext
-import tv.blademaker.slash.context.GuildSlashCommandContext
-import tv.blademaker.slash.context.ModalContext
-import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.context.*
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
 import tv.blademaker.slash.ratelimit.RateLimitClient
 import java.util.regex.Matcher
@@ -108,6 +106,17 @@ open class SuspendingCommandExecutor(
         }
     }
 
+    internal fun execute(event: ButtonInteractionEvent, handler: ButtonHandler, matcher: Matcher) = launch {
+        try {
+            val ctx = ButtonContext(event, matcher, handler.function)
+
+            logEvent(event)
+            handler.execute(ctx)
+        } catch (e: Throwable) {
+            client.exceptionHandler.onException(e, handler.parent, event)
+        }
+    }
+
     companion object {
         private val log = LoggerFactory.getLogger(SuspendingCommandExecutor::class.java)
 
@@ -121,6 +130,10 @@ open class SuspendingCommandExecutor(
 
         private fun logEvent(event: ModalInteractionEvent) {
             log.info("${getEventLogPrefix(event)} [Modal] --> ${event.modalId}")
+        }
+
+        private fun logEvent(event: ButtonInteractionEvent) {
+            log.info("${getEventLogPrefix(event)} [Button] --> ${event.button.id}")
         }
 
         private fun getEventLogPrefix(event: GenericInteractionCreateEvent) = when (event.isFromGuild) {

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.metrics.Metrics
@@ -64,6 +65,13 @@ class DefaultSlashCommandClient internal constructor(
         }
     }
 
+    private fun findHandler(event: ButtonInteractionEvent): Pair<Matcher, ButtonHandler>? {
+        val buttonId = event.button.id ?: return null
+        return commandHandlers.buttonHandlers.find { it.matches(buttonId) }?.let {
+            Pair(it.matcher(buttonId), it)
+        }
+    }
+
     override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
         val handler = findHandler(event)
 
@@ -83,6 +91,10 @@ class DefaultSlashCommandClient internal constructor(
     }
 
     override fun onModalInteractionEvent(event: ModalInteractionEvent) {
+        findHandler(event)?.run { executor.execute(event, this.second, this.first) }
+    }
+
+    override fun onButtonInteractionEvent(event: ButtonInteractionEvent) {
         findHandler(event)?.run { executor.execute(event, this.second, this.first) }
     }
 

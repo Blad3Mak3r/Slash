@@ -4,6 +4,7 @@ import kotlinx.coroutines.TimeoutCancellationException
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.PermissionTarget
@@ -34,6 +35,12 @@ class ExceptionHandlerImpl : ExceptionHandler {
 
     override fun onException(ex: Throwable, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent) {
         val message = "Exception executing handler for auto-complete interaction `${event.commandPath}`:\n```\n${ex.message}\n```"
+
+        log.error(message, ex)
+    }
+
+    override fun onException(ex: Throwable, command: BaseSlashCommand, event: ButtonInteractionEvent) {
+        val message = "Exception executing handler for button interaction `${event.button.id}`:\n```\n${ex.message}\n```"
 
         log.error(message, ex)
     }

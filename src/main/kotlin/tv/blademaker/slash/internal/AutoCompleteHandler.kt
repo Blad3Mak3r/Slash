@@ -10,7 +10,7 @@ import kotlin.reflect.full.findAnnotation
 
 class AutoCompleteHandler(
     override val parent: BaseSlashCommand,
-    internal val function: KFunction<*>
+    override val function: KFunction<*>
 ) : Handler {
 
     private val annotation: OnAutoComplete = function.findAnnotation()!!

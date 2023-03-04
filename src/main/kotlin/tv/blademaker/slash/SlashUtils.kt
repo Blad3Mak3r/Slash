@@ -7,12 +7,10 @@ import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import tv.blademaker.slash.annotations.OnAutoComplete
+import tv.blademaker.slash.annotations.OnButton
 import tv.blademaker.slash.annotations.OnModal
 import tv.blademaker.slash.annotations.OnSlashCommand
-import tv.blademaker.slash.internal.AutoCompleteHandler
-import tv.blademaker.slash.internal.CommandHandlers
-import tv.blademaker.slash.internal.ModalHandler
-import tv.blademaker.slash.internal.SlashCommandHandler
+import tv.blademaker.slash.internal.*
 import java.lang.reflect.Modifier
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.functions
@@ -86,22 +84,27 @@ object SlashUtils {
     }
 
     internal fun compileCommandHandlers(commands: List<BaseSlashCommand>): CommandHandlers {
-        val slashCommandHandlers = commands.map { compileSlashCommandHandlers(it) }.let {
-            if (it.isEmpty()) emptyList()
-            else it.reduce { acc, list -> list + acc }
-        }
-        val autoCompleteHandlers = commands.map { compileAutoCompleteHandlers(it) }.let {
-            if (it.isEmpty()) emptyList()
-            else it.reduce { acc, list -> list + acc }
-        }
-        val modalHandlers = commands.map { compileModalHandlers(it) }.let {
-            if (it.isEmpty()) emptyList()
-            else it.reduce { acc, list -> list + acc  }
-        }
+        val slashCommandHandlers = commands
+            .map { compileSlashCommandHandlers(it) }
+            .reduceOrNull { acc, list -> list + acc }
+
+        val autoCompleteHandlers = commands
+            .map { compileAutoCompleteHandlers(it) }
+            .reduceOrNull { acc, list -> list + acc }
+
+        val modalHandlers = commands
+            .map { compileHandler<OnModal, ModalHandler>(it) }
+            .reduceOrNull { acc, list -> list + acc }
+
+        val buttonHandlers = commands
+            .map { compileHandler<OnButton, ButtonHandler>(it) }
+            .reduceOrNull { acc, list -> list + acc }
+
         return CommandHandlers(
-            slashCommandHandlers,
-            autoCompleteHandlers,
-            modalHandlers
+            slashCommandHandlers ?: emptyList(),
+            autoCompleteHandlers ?: emptyList(),
+            modalHandlers ?: emptyList(),
+            buttonHandlers ?: emptyList()
         )
     }
 
@@ -152,20 +155,19 @@ object SlashUtils {
         return finalList
     }
 
-    private fun compileModalHandlers(command: BaseSlashCommand): List<ModalHandler> {
+    private inline fun <reified A : Annotation, reified H : Handler> compileHandler(command: BaseSlashCommand): List<H> {
         val handlers = command::class.functions
-            .filter { it.hasAnnotation<OnModal>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
-            .map { ModalHandler(command, it) }
+            .filter { it.hasAnnotation<A>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
+            .map { H::class.java.getDeclaredConstructor(BaseSlashCommand::class.java, H::class.java).newInstance(command, it) }
 
-        val finalList = mutableListOf<ModalHandler>()
-
-        for (handler in handlers) {
-            check(!finalList.any { it.path == handler.path }) {
-                "Found more than one ModalHandler for the same path (${handler.path})"
+        for (i in handlers.indices) {
+            for (j in i + 1 until handlers.size) {
+                if (handlers[i].path == handlers[j].path) {
+                    error("Duplicated ${H::class.java.canonicalName} path ${handlers[i].path}: ${handlers[i].function.name} -> ${handlers[j].function.name}")
+                }
             }
-            finalList.add(handler)
         }
 
-        return finalList
+        return handlers
     }
 }
