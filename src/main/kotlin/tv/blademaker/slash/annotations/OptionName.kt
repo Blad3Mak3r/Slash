@@ -9,5 +9,5 @@ package tv.blademaker.slash.annotations
  * @since 0.4.2
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 annotation class OptionName(val value: String)

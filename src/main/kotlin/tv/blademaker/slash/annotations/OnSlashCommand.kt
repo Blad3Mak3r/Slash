@@ -1,7 +1,7 @@
 package tv.blademaker.slash.annotations
 
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 annotation class OnSlashCommand(
 
     /**

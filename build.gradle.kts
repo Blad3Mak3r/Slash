@@ -5,10 +5,17 @@ plugins {
     kotlin("jvm") version "1.8.0"
     id("org.jetbrains.dokka") version "1.7.20"
     id("com.github.ben-manes.versions") version "0.44.0"
+    id("com.google.devtools.ksp") version "1.8.0-1.0.8"
 
     `maven-publish`
     `java-library`
     signing
+}
+
+buildscript {
+    dependencies {
+        classpath(kotlin("gradle-plugin", version = "1.8.0"))
+    }
 }
 
 group = "tv.blademaker"
@@ -67,6 +74,8 @@ dependencies {
     api("io.sentry:sentry:$sentryVersion")
 
     api("io.prometheus:simpleclient:$prometheusVersion")
+
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.0-1.0.8")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("ch.qos.logback:logback-classic:1.4.5")

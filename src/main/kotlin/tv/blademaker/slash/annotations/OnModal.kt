@@ -3,7 +3,7 @@ package tv.blademaker.slash.annotations
 import java.util.regex.Pattern
 
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.SOURCE)
 annotation class OnModal(
     val modalId: String
 )
