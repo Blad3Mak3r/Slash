@@ -12,6 +12,7 @@ import tv.blademaker.slash.annotations.OnModal
 import tv.blademaker.slash.annotations.OnSlashCommand
 import tv.blademaker.slash.internal.*
 import java.lang.reflect.Modifier
+import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
@@ -93,11 +94,11 @@ object SlashUtils {
             .reduceOrNull { acc, list -> list + acc }
 
         val modalHandlers = commands
-            .map { compileHandler<OnModal, ModalHandler>(it) }
+            .map { compileHandler<OnModal, ModalHandler>(it) { ModalHandler(it, this) } }
             .reduceOrNull { acc, list -> list + acc }
 
         val buttonHandlers = commands
-            .map { compileHandler<OnButton, ButtonHandler>(it) }
+            .map { compileHandler<OnButton, ButtonHandler>(it) { ButtonHandler(it, this) } }
             .reduceOrNull { acc, list -> list + acc }
 
         return CommandHandlers(
@@ -155,10 +156,10 @@ object SlashUtils {
         return finalList
     }
 
-    private inline fun <reified A : Annotation, reified H : Handler> compileHandler(command: BaseSlashCommand): List<H> {
+    private inline fun <reified A : Annotation, reified H : Handler> compileHandler(command: BaseSlashCommand, transform: KFunction<*>.() -> H): List<H> {
         val handlers = command::class.functions
             .filter { it.hasAnnotation<A>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
-            .map { H::class.java.getDeclaredConstructor(BaseSlashCommand::class.java, H::class.java).newInstance(command, it) }
+            .map(transform)
 
         for (i in handlers.indices) {
             for (j in i + 1 until handlers.size) {
