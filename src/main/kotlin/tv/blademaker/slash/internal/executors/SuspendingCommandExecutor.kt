@@ -1,4 +1,4 @@
-package tv.blademaker.slash.internal
+package tv.blademaker.slash.internal.executors
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -8,15 +8,19 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.client.DefaultSlashCommandClient
 import tv.blademaker.slash.context.*
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
+import tv.blademaker.slash.internal.Checks
+import tv.blademaker.slash.internal.handlers.*
 import tv.blademaker.slash.ratelimit.RateLimitClient
 import java.util.regex.Matcher
 import kotlin.coroutines.CoroutineContext
+import kotlin.reflect.full.callSuspend
 
 open class SuspendingCommandExecutor(
     private val client: DefaultSlashCommandClient,
@@ -112,6 +116,16 @@ open class SuspendingCommandExecutor(
 
             logEvent(event)
             handler.execute(ctx)
+        } catch (e: Throwable) {
+            client.exceptionHandler.onException(e, handler.parent, event)
+        }
+    }
+
+    internal fun execute(event: UserContextInteractionEvent, handler: UserContextHandler) = launch {
+        try {
+            val ctx = UserContext(event, handler.function)
+
+            handler.function.callSuspend(handler.parent, ctx)
         } catch (e: Throwable) {
             client.exceptionHandler.onException(e, handler.parent, event)
         }

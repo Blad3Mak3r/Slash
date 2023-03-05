@@ -6,11 +6,10 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
-import tv.blademaker.slash.annotations.OnAutoComplete
-import tv.blademaker.slash.annotations.OnButton
-import tv.blademaker.slash.annotations.OnModal
-import tv.blademaker.slash.annotations.OnSlashCommand
+import tv.blademaker.slash.annotations.*
 import tv.blademaker.slash.internal.*
+import tv.blademaker.slash.internal.handlers.*
+import tv.blademaker.slash.internal.handlers.CommandHandlers
 import java.lang.reflect.Modifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
@@ -101,11 +100,16 @@ object SlashUtils {
             .map { compileHandler<OnButton, ButtonHandler>(it) { ButtonHandler(it, this) } }
             .reduceOrNull { acc, list -> list + acc }
 
+        val userContextHandlers = commands
+            .map { compileHandler<OnUserContext, UserContextHandler>(it) { UserContextHandler(it, this) } }
+            .reduceOrNull { acc, list -> list + acc }
+
         return CommandHandlers(
             slashCommandHandlers ?: emptyList(),
             autoCompleteHandlers ?: emptyList(),
             modalHandlers ?: emptyList(),
-            buttonHandlers ?: emptyList()
+            buttonHandlers ?: emptyList(),
+            userContextHandlers = userContextHandlers ?: emptyList()
         )
     }
 

@@ -3,7 +3,9 @@ package tv.blademaker.slash.client
 import kotlinx.coroutines.CoroutineScope
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.SlashUtils
@@ -12,8 +14,9 @@ import tv.blademaker.slash.context.ContextCreator
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.extensions.commandPath
 import tv.blademaker.slash.internal.*
-import tv.blademaker.slash.internal.AutoCompleteHandler
-import tv.blademaker.slash.internal.CommandHandlers
+import tv.blademaker.slash.internal.executors.SuspendingCommandExecutor
+import tv.blademaker.slash.internal.handlers.*
+import tv.blademaker.slash.internal.handlers.CommandHandlers
 import tv.blademaker.slash.metrics.MetricsStrategy
 import tv.blademaker.slash.ratelimit.RateLimitClient
 import java.util.regex.Matcher
@@ -72,6 +75,10 @@ class DefaultSlashCommandClient internal constructor(
         }
     }
 
+    private fun findHandler(event: UserContextInteractionEvent): UserContextHandler? {
+        return commandHandlers.userContextHandlers.find { it.path == event.commandPath }
+    }
+
     override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
         val handler = findHandler(event)
 
@@ -96,6 +103,14 @@ class DefaultSlashCommandClient internal constructor(
 
     override fun onButtonInteractionEvent(event: ButtonInteractionEvent) {
         findHandler(event)?.run { executor.execute(event, this.second, this.first) }
+    }
+
+    override fun onUserContextInteractionEvent(event: UserContextInteractionEvent) {
+        findHandler(event)?. run { executor.execute(event, this) }
+    }
+
+    override fun onMessageContextInteractionEvent(event: MessageContextInteractionEvent) {
+        TODO("Not yet implemented")
     }
 
     fun addCheck(check: CommandExecutionCheck) {
