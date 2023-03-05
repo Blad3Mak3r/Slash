@@ -4,6 +4,7 @@ import kotlinx.coroutines.TimeoutCancellationException
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import tv.blademaker.slash.BaseSlashCommand
 import kotlin.time.Duration
@@ -29,6 +30,8 @@ interface ExceptionHandler {
     fun onException(ex: Throwable, command: BaseSlashCommand, event: ModalInteractionEvent)
 
     fun onException(ex: Throwable, command: BaseSlashCommand, event: ButtonInteractionEvent)
+
+    fun onException(ex: Throwable, command: BaseSlashCommand, event: UserContextInteractionEvent)
 
     fun onPermissionLackException(ex: PermissionsLackException)
 

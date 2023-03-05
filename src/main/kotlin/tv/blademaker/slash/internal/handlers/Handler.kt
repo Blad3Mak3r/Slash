@@ -1,4 +1,4 @@
-package tv.blademaker.slash.internal
+package tv.blademaker.slash.internal.handlers
 
 import tv.blademaker.slash.BaseSlashCommand
 import kotlin.reflect.KFunction

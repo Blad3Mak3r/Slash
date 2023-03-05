@@ -1,4 +1,4 @@
-package tv.blademaker.slash.internal
+package tv.blademaker.slash.internal.handlers
 
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
@@ -7,6 +7,8 @@ import tv.blademaker.slash.annotations.*
 import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.exceptions.InteractionTargetMismatch
+import tv.blademaker.slash.internal.FunctionParameter
+import tv.blademaker.slash.internal.ValidOptionTypes
 import tv.blademaker.slash.ratelimit.RateLimit
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
