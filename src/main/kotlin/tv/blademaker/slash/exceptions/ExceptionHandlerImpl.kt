@@ -6,16 +6,19 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.PermissionTarget
 import tv.blademaker.slash.SlashUtils.toHuman
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.extensions.commandPath
+import tv.blademaker.slash.internal.AutoCompleteHandler
+import tv.blademaker.slash.internal.ButtonHandler
+import tv.blademaker.slash.internal.ModalHandler
+import tv.blademaker.slash.internal.SlashCommandHandler
 import kotlin.time.Duration
 
 class ExceptionHandlerImpl : ExceptionHandler {
 
-    override fun onException(ex: Throwable, command: BaseSlashCommand, event: ModalInteractionEvent) {
+    override fun onException(ex: Throwable, handler: ModalHandler, event: ModalInteractionEvent) {
         val message = "Exception executing handler for modal `${event.modalId}`:\n```\n${ex.message}\n```"
 
         log.error(message, ex)
@@ -24,7 +27,7 @@ class ExceptionHandlerImpl : ExceptionHandler {
         else event.reply(message).setEphemeral(true).queue()
     }
 
-    override fun onException(ex: Throwable, command: BaseSlashCommand, event: SlashCommandInteractionEvent) {
+    override fun onException(ex: Throwable, handler: SlashCommandHandler, event: SlashCommandInteractionEvent) {
         val message = "Exception executing handler for slash command `${event.commandPath}`:\n```\n${ex.message}\n```"
 
         log.error(message, ex)
@@ -33,13 +36,13 @@ class ExceptionHandlerImpl : ExceptionHandler {
         else event.reply(message).setEphemeral(true).queue()
     }
 
-    override fun onException(ex: Throwable, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent) {
+    override fun onException(ex: Throwable, handler: AutoCompleteHandler, event: CommandAutoCompleteInteractionEvent) {
         val message = "Exception executing handler for auto-complete interaction `${event.commandPath}`:\n```\n${ex.message}\n```"
 
         log.error(message, ex)
     }
 
-    override fun onException(ex: Throwable, command: BaseSlashCommand, event: ButtonInteractionEvent) {
+    override fun onException(ex: Throwable, handler: ButtonHandler, event: ButtonInteractionEvent) {
         val message = "Exception executing handler for button interaction `${event.button.id}`:\n```\n${ex.message}\n```"
 
         log.error(message, ex)
