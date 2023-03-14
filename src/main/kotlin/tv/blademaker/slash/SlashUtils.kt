@@ -6,18 +6,21 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
+import org.slf4j.LoggerFactory
 import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.OnButton
 import tv.blademaker.slash.annotations.OnModal
 import tv.blademaker.slash.annotations.OnSlashCommand
 import tv.blademaker.slash.internal.*
-import java.lang.reflect.Modifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.*
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.kotlinFunction
 
 object SlashUtils {
+
+    internal val log = LoggerFactory.getLogger("Slash")
 
     /**
      * Convert an [Array] of [Permission] in a readable list.
@@ -30,8 +33,24 @@ object SlashUtils {
         return this.joinToString(if (jump) "\n" else ", ") { it.getName() }
     }
 
+    private inline fun <reified A : Annotation> Reflections.getKotlinFunctionsAnnotatedWith(annotation: Class<A>): Map<A, KFunction<*>> {
+        return getMethodsAnnotatedWith(annotation)
+            .mapNotNull { it.kotlinFunction }
+            .associateBy { it.findAnnotation<A>()!! }
+    }
+
+    private inline fun <reified A : Annotation> Map<A, KFunction<*>>.runFilters(): Map<A, KFunction<*>> {
+        for (item in this) {
+            check(!item.value.isAbstract)
+            check(item.value.visibility == KVisibility.PUBLIC)
+            check(!item.value.isInline)
+            check(item.value.isAccessible)
+        }
+        return this
+    }
+
     /**
-     * Discover the [BaseSlashCommand] inside the package.
+     * Discover the [Handler] functions inside the package.
      *
      * @param packageName The package to lookup.
      *
@@ -44,33 +63,41 @@ object SlashUtils {
      *
      * @see java.lang.Class.getDeclaredConstructor
      * @see java.lang.reflect.Constructor.newInstance
-     * @see tv.blademaker.slash.BaseSlashCommand
      *
      * @return A [DiscoveryResult] with the elapsed time to discover commands, the count of commands
      * discovered and the commands itself.
      */
     fun discoverSlashCommands(packageName: String): DiscoveryResult {
         val start = System.nanoTime()
-        val classes = Reflections(packageName, Scanners.SubTypes)
-            .getSubTypesOf(BaseSlashCommand::class.java)
-            .filter { !Modifier.isAbstract(it.modifiers) && BaseSlashCommand::class.java.isAssignableFrom(it) }
 
-        val commands = mutableListOf<BaseSlashCommand>()
+        val init = Reflections(packageName, Scanners.MethodsAnnotated)
 
-        for (clazz in classes) {
-            val instance = clazz.getDeclaredConstructor().newInstance()
-            val commandName = instance.commandName.lowercase()
+        val onAutoCompleteHandlers = init.getKotlinFunctionsAnnotatedWith(OnAutoComplete::class.java)
+            .runFilters()
+            .compileAutoCompleteHandlers()
 
-            if (commands.any { it.commandName.equals(commandName, true) }) {
-                error("Command with name $commandName is already registered.")
-            }
+        val onSlashCommandsHandlers = init.getKotlinFunctionsAnnotatedWith(OnSlashCommand::class.java)
+            .runFilters()
+            .compileSlashCommands()
 
-            commands.add(instance)
-        }
+        val onButtonsHandlers = init.getKotlinFunctionsAnnotatedWith(OnButton::class.java)
+            .runFilters()
+
+        val onModalsHandlers = init.getKotlinFunctionsAnnotatedWith(OnModal::class.java)
+            .runFilters()
+
+        val elapsedTime = (System.nanoTime() - start) / 1_000_000
+        log.info("Slash discovery results (${elapsedTime}ms):")
+        log.info("@OnAutoComplete   : ${onAutoCompleteHandlers.size}")
+        log.info("@OnButton         : ${onButtonsHandlers.size}")
+        log.info("@OnModal          : ${onModalsHandlers.size}")
+        log.info("@OnSlashCommand   : ${onSlashCommandsHandlers.size}")
 
         return DiscoveryResult(
-            elapsedTime = (System.nanoTime() - start) / 1_000_000,
-            commands = commands
+            onAutoComplete = onAutoCompleteHandlers,
+            onButton = emptyList(),
+            onModal = emptyList(),
+            onSlashCommand = onSlashCommandsHandlers
         )
     }
 
@@ -84,91 +111,47 @@ object SlashUtils {
         return this
     }
 
-    internal fun compileCommandHandlers(commands: List<BaseSlashCommand>): CommandHandlers {
-        val slashCommandHandlers = commands
-            .map { compileSlashCommandHandlers(it) }
-            .reduceOrNull { acc, list -> list + acc }
+    private fun Map<OnSlashCommand, KFunction<*>>.compileSlashCommands(): List<SlashCommandHandler> {
 
-        val autoCompleteHandlers = commands
-            .map { compileAutoCompleteHandlers(it) }
-            .reduceOrNull { acc, list -> list + acc }
+        val handlers = mutableListOf<SlashCommandHandler>()
 
-        val modalHandlers = commands
-            .map { compileHandler<OnModal, ModalHandler>(it) { ModalHandler(it, this) } }
-            .reduceOrNull { acc, list -> list + acc }
-
-        val buttonHandlers = commands
-            .map { compileHandler<OnButton, ButtonHandler>(it) { ButtonHandler(it, this) } }
-            .reduceOrNull { acc, list -> list + acc }
-
-        return CommandHandlers(
-            slashCommandHandlers ?: emptyList(),
-            autoCompleteHandlers ?: emptyList(),
-            modalHandlers ?: emptyList(),
-            buttonHandlers ?: emptyList()
-        )
-    }
-
-    private fun compileSlashCommandHandlers(command: BaseSlashCommand): List<SlashCommandHandler> {
-        val handlers = command::class.functions
-            .filter { it.hasAnnotation<OnSlashCommand>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
-            .map { SlashCommandHandler(command, it) }
-
-        val finalList = mutableListOf<SlashCommandHandler>()
-
-        for (handler in handlers) {
-            check(!finalList.any { it.path == handler.path }) {
-                "Found more than one InteractionHandler for the same path ${handler.path}"
+        for (item in this) {
+            check(!handlers.any { it.annotation.fullName.equals(item.key.fullName, true) }) {
+                "Found more than one SlashCommandHandler for the same command ${item.key.fullName} (${item.value})"
             }
-            finalList.add(handler)
-        }
-
-        check(finalList.isNotEmpty()) {
-            "SlashCommand ${command.commandName} does not have registered handlers."
-        }
-
-        checkDefault(command, finalList) {
-            "SlashCommand ${command.commandName} have registered more than 1 handler having a default handler."
-        }
-
-        return finalList
-    }
-
-    private fun checkDefault(command: BaseSlashCommand, list: List<SlashCommandHandler>, lazyMessage: () -> String) {
-        if (list.size <= 1) return
-        if (list.any { it.path == command.commandName }) error(lazyMessage())
-    }
-
-    private fun compileAutoCompleteHandlers(command: BaseSlashCommand): List<AutoCompleteHandler> {
-        val handlers = command::class.functions
-            .filter { it.hasAnnotation<OnAutoComplete>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
-            .map { AutoCompleteHandler(command, it) }
-
-        val finalList = mutableListOf<AutoCompleteHandler>()
-
-        for (handler in handlers) {
-            check(!finalList.any { it.path == handler.path && it.optionName == handler.optionName }) {
-                "Found more than one AutocompleteHandler for the same path (${handler.path}) and option (${handler.optionName})."
-            }
-            finalList.add(handler)
-        }
-
-        return finalList
-    }
-
-    private inline fun <reified A : Annotation, reified H : Handler> compileHandler(command: BaseSlashCommand, transform: KFunction<*>.() -> H): List<H> {
-        val handlers = command::class.functions
-            .filter { it.hasAnnotation<A>() && it.visibility == KVisibility.PUBLIC && !it.isAbstract }
-            .map(transform)
-
-        for (i in handlers.indices) {
-            for (j in i + 1 until handlers.size) {
-                if (handlers[i].path == handlers[j].path) {
-                    error("Duplicated ${H::class.java.canonicalName} path ${handlers[i].path}: ${handlers[i].function.name} -> ${handlers[j].function.name}")
-                }
-            }
+            handlers.add(SlashCommandHandler(item))
         }
 
         return handlers
+    }
+
+    private fun Map<OnAutoComplete, KFunction<*>>.compileAutoCompleteHandlers(): List<AutoCompleteHandler> {
+        val handlers = mutableListOf<AutoCompleteHandler>()
+
+        for (item in this) {
+            check(!handlers.any { it.annotation.fullName == item.key.fullName && it.optionName == item.key.optionName }) {
+                "Found more than one AutocompleteHandler for the same command (${item.key.fullName}) and option (${item.key.optionName})."
+            }
+            handlers.add(AutoCompleteHandler(item))
+        }
+
+        return handlers
+    }
+
+
+
+    internal fun handlerToString(handler: Handler<*, *>) = buildString {
+        append("@")
+        append(handler.annotation::class.java.simpleName)
+        append("[")
+        append(handler.function.name)
+        append("(")
+        append(handler.function.valueParameters.joinToString(", ") {
+            "${if (it.isVararg) "vararg" else ""} ${it.name}: ${it.type}${if (it.isOptional) "?" else ""}".trim()
+        })
+        append("): ")
+        append(handler.function.returnType)
+        if (handler.function.returnType.isMarkedNullable) append("?")
+        append("]")
     }
 }

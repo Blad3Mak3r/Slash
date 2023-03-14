@@ -5,14 +5,12 @@ package tv.blademaker.slash.annotations
 annotation class OnSlashCommand(
 
     /**
-     * Sub-command name.
+     * The command full name.
+     *
+     * /ban -> ban
+     * /mod bad -> mod ban
      */
-    val name: String = "",
-
-    /**
-     * Sub-command group name.
-     */
-    val group: String = "",
+    val fullName: String,
     /**
      * The [InteractionTarget] of the [OnSlashCommand] (default is InteractionTarget.GUILD)
      */
