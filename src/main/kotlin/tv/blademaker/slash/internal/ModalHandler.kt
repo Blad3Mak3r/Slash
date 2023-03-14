@@ -1,29 +1,24 @@
 package tv.blademaker.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.annotations.OnModal
 import tv.blademaker.slash.annotations.matcher
 import tv.blademaker.slash.context.ModalContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
-import kotlin.reflect.full.findAnnotation
 
 class ModalHandler(
-    override val parent: BaseSlashCommand,
+    override val annotation: OnModal,
     override val function: KFunction<*>
-) : Handler {
-
-    private val annotation: OnModal = function.findAnnotation()!!
-
-    override val path = buildString {
-        append(annotation.modalId)
-    }
+) : Handler<OnModal, ModalContext> {
 
     fun matcher(input: String) = annotation.matcher(input)
 
     fun matches(input: String) = matcher(input).matches()
 
-    suspend fun execute(ctx: ModalContext) {
-        function.callSuspend(parent, ctx)
+    override suspend fun execute(ctx: ModalContext) {
+        function.callSuspend(this, ctx)
     }
+
+    override fun toString() = SlashUtils.handlerToString(this)
 }
