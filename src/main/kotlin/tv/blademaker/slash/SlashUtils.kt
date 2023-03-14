@@ -50,9 +50,6 @@ object SlashUtils {
             require(!item.value.isInline) {
                 "${item.value.name} is inline"
             }
-            require(item.value.isAccessible) {
-                "${item.value.name} is not accesible"
-            }
         }
         return this
     }
