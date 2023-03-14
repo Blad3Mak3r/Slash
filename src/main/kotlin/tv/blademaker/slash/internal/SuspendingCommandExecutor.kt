@@ -1,9 +1,6 @@
 package tv.blademaker.slash.internal
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
@@ -39,7 +36,7 @@ open class SuspendingCommandExecutor(
         }
     }
 
-    private suspend fun checkGlobals(ctx: SlashCommandContext): Boolean {
+    private suspend fun runInterceptors(ctx: SlashCommandContext): Boolean {
         if (client.checks.isEmpty()) return true
         return client.checks.all { it(ctx) }
     }
@@ -59,19 +56,20 @@ open class SuspendingCommandExecutor(
             }
 
             log.debug("Running global checks")
-            if (!checkGlobals(ctx)) return@launch
+            if (!runInterceptors(ctx)) return@launch
 
             log.debug("Running handler parent checks")
-            if (!handler.parent.doChecks(ctx)) return@launch
             if (ctx is GuildSlashCommandContext) {
                 log.debug("Running Guild checks")
-                Checks.handlerPermissions(ctx, handler.permissions)
+                Interceptors.handlerPermissions(ctx, handler.permissions)
             }
 
 
             logEvent(event)
             val startTime = System.nanoTime()
-            handler.execute(ctx, client.timeout)
+            withTimeout(client.timeout) {
+                handler.execute(ctx)
+            }
             val time = (System.nanoTime() - startTime) / 1_000_000
 
             client.metrics?.incSuccessCommand(event, time)
@@ -79,7 +77,7 @@ open class SuspendingCommandExecutor(
             client.exceptionHandler.onTimeoutCancellationException(timeout, event, client.timeout)
             client.metrics?.incFailedCommand(event)
         } catch (expected: Exception) {
-            client.exceptionHandler.wrap(expected, handler.parent, event)
+            client.exceptionHandler.wrap(expected, handler, event)
             client.metrics?.incFailedCommand(event)
         }
     }
@@ -91,7 +89,7 @@ open class SuspendingCommandExecutor(
             logEvent(event)
             handler.execute(ctx)
         } catch (e: Exception) {
-            client.exceptionHandler.wrap(e, handler.parent, event)
+            client.exceptionHandler.wrap(e, handler, event)
         }
     }
 
@@ -102,7 +100,7 @@ open class SuspendingCommandExecutor(
             logEvent(event)
             handler.execute(ctx)
         } catch (e: Throwable) {
-            client.exceptionHandler.onException(e, handler.parent, event)
+            client.exceptionHandler.onException(e, handler, event)
         }
     }
 
@@ -113,7 +111,7 @@ open class SuspendingCommandExecutor(
             logEvent(event)
             handler.execute(ctx)
         } catch (e: Throwable) {
-            client.exceptionHandler.onException(e, handler.parent, event)
+            client.exceptionHandler.onException(e, handler, event)
         }
     }
 

@@ -36,7 +36,7 @@ object SlashUtils {
     private inline fun <reified A : Annotation> Reflections.getKotlinFunctionsAnnotatedWith(annotation: Class<A>): Map<A, KFunction<*>> {
         return getMethodsAnnotatedWith(annotation)
             .mapNotNull { it.kotlinFunction }
-            .associateBy { it.findAnnotation<A>()!! }
+            .associateBy { it.findAnnotation()!! }
     }
 
     private inline fun <reified A : Annotation> Map<A, KFunction<*>>.runFilters(): Map<A, KFunction<*>> {

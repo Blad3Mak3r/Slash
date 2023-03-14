@@ -7,13 +7,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.SlashUtils
-import tv.blademaker.slash.metrics.Metrics
 import tv.blademaker.slash.context.ContextCreator
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.extensions.commandPath
 import tv.blademaker.slash.internal.*
-import tv.blademaker.slash.internal.AutoCompleteHandler
-import tv.blademaker.slash.internal.CommandHandlers
+import tv.blademaker.slash.metrics.Metrics
 import tv.blademaker.slash.metrics.MetricsStrategy
 import tv.blademaker.slash.ratelimit.RateLimitClient
 import java.util.regex.Matcher
@@ -33,7 +31,7 @@ class DefaultSlashCommandClient internal constructor(
     packageName: String,
     override val exceptionHandler: ExceptionHandler,
     internal val contextCreator: ContextCreator,
-    internal val checks: MutableSet<CommandExecutionCheck>,
+    internal val checks: MutableSet<Interceptor>,
     internal val timeout: Duration,
     rateLimit: RateLimitClient?,
     strategy: MetricsStrategy?
@@ -43,31 +41,24 @@ class DefaultSlashCommandClient internal constructor(
 
     private val executor = SuspendingCommandExecutor(this, rateLimit)
 
-    private val discoveryResult = SlashUtils.discoverSlashCommands(packageName)
-
-    override val registry = discoveryResult.let {
-        log.info("Discovered a total of ${it.commands.size} commands in ${it.elapsedTime}ms.")
-        it.commands
-    }
-
-    private val commandHandlers: CommandHandlers = SlashUtils.compileCommandHandlers(discoveryResult.commands)
+    override val handlers = SlashUtils.discoverSlashCommands(packageName)
 
     private fun findHandler(event: SlashCommandInteractionEvent): SlashCommandHandler? {
-        return commandHandlers.slash.find { it.path == event.commandPath }
+        return handlers.onSlashCommand.find { it.annotation.fullName == event.fullCommandName }
     }
     private fun findHandler(event: CommandAutoCompleteInteractionEvent): AutoCompleteHandler? {
-        return commandHandlers.autoComplete.find { it.path == event.commandPath && it.optionName == event.focusedOption.name }
+        return handlers.onAutoComplete.find { it.annotation.fullName == event.fullCommandName && it.optionName == event.focusedOption.name }
     }
 
     private fun findHandler(event: ModalInteractionEvent): Pair<Matcher, ModalHandler>? {
-        return commandHandlers.modalHandlers.find { it.matches(event.modalId) }?.let {
+        return handlers.onModal.find { it.matches(event.modalId) }?.let {
             Pair(it.matcher(event.modalId), it)
         }
     }
 
     private fun findHandler(event: ButtonInteractionEvent): Pair<Matcher, ButtonHandler>? {
         val buttonId = event.button.id ?: return null
-        return commandHandlers.buttonHandlers.find { it.matches(buttonId) }?.let {
+        return handlers.onButton.find { it.matches(buttonId) }?.let {
             Pair(it.matcher(buttonId), it)
         }
     }
@@ -81,7 +72,7 @@ class DefaultSlashCommandClient internal constructor(
                     "this exceptions is reported to developer automatically.").setEphemeral(true).queue()
         }
 
-        log.debug("Executing handler ${handler.path} for command path ${event.commandPath}")
+        log.debug("Executing handler ${handler.annotation.fullName} for command path ${event.commandPath}")
 
         executor.execute(event, handler)
     }
@@ -98,9 +89,9 @@ class DefaultSlashCommandClient internal constructor(
         findHandler(event)?.run { executor.execute(event, this.second, this.first) }
     }
 
-    fun addCheck(check: CommandExecutionCheck) {
-        if (checks.contains(check)) error("check already registered.")
-        checks.add(check)
+    fun addInterceptor(interceptor: Interceptor) {
+        if (checks.contains(interceptor)) error("interceptor already registered.")
+        checks.add(interceptor)
     }
 
     private companion object {
