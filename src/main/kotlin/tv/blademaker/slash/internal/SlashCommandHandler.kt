@@ -1,8 +1,7 @@
 package tv.blademaker.slash.internal
 
-import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.annotations.*
 import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.context.SlashCommandContext
@@ -11,26 +10,24 @@ import tv.blademaker.slash.ratelimit.RateLimit
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
-import kotlin.time.Duration
+import kotlin.reflect.full.valueParameters
 
 class SlashCommandHandler(
-    override val parent: BaseSlashCommand,
+    override val annotation: OnSlashCommand,
     override val function: KFunction<*>
-) : Handler {
+) : Handler<OnSlashCommand, SlashCommandContext> {
 
-    private val annotation: OnSlashCommand = function.findAnnotation()!!
+    constructor(entry: Map.Entry<OnSlashCommand, KFunction<*>>) : this(
+        annotation = entry.key,
+        function = entry.value
+    )
+
     val rateLimit: RateLimit? = function.findAnnotation()
     val permissions: Permissions? = function.findAnnotation()
 
-    override val path = buildString {
-        append(parent.commandName)
-        if (annotation.group.isNotBlank()) append("/${annotation.group}")
-        if (annotation.name.isNotBlank()) append("/${annotation.name}")
-    }
-
     val target = annotation.target
 
-    private val options: List<FunctionParameter> = buildHandlerParameters(parent, function, annotation.target)
+    private val options: List<FunctionParameter> = buildHandlerParameters(this, annotation.target)
 
     private fun checkTarget(ctx: SlashCommandContext) {
         val result = when (annotation.target) {
@@ -39,67 +36,63 @@ class SlashCommandHandler(
             InteractionTarget.DM -> !ctx.event.isFromGuild
         }
 
-        if (!result) throw InteractionTargetMismatch(ctx, path, annotation.target)
+        if (!result) throw InteractionTargetMismatch(ctx, annotation.fullName, annotation.target)
     }
 
-    suspend fun execute(ctx: SlashCommandContext, timeout: Duration) {
+    override suspend fun execute(ctx: SlashCommandContext) {
         checkTarget(ctx)
-        withTimeout(timeout) {
-            function.callSuspend(parent, ctx, *options.map { it.compile(ctx) }.toTypedArray())
-        }
+        function.callSuspend(this, ctx, *options.map { it.compile(ctx) }.toTypedArray())
     }
+
+    override fun toString() = SlashUtils.handlerToString(this)
 
     companion object {
         private val log = LoggerFactory.getLogger("InteractionHandler")
 
-        private fun printName(command: BaseSlashCommand, function: KFunction<*>) : String {
-            return "${command::class.simpleName}#${function.name}()"
-        }
-
-        private fun buildHandlerParameters(command: BaseSlashCommand, function: KFunction<*>, target: InteractionTarget): List<FunctionParameter> {
-            check(!function.parameters.any { it.isVararg }) {
-                "SlashCommand cannot have varargs parameters: ${function.name}"
+        private fun buildHandlerParameters(handler: SlashCommandHandler, target: InteractionTarget): List<FunctionParameter> {
+            require(!handler.function.parameters.any { it.isVararg }) {
+                "SlashCommand cannot have varargs parameters: $handler"
             }
 
             val parametersList = mutableListOf<FunctionParameter>()
 
-            check(function.parameters.size >= 2) {
-                "Not enough parameters: ${command.commandName} -> ${function.name}"
+            val valueParameters = handler.function.valueParameters
+
+            require(valueParameters.isNotEmpty()) {
+                "Not enough parameters: $handler"
             }
 
-            val contextClassifier = function.parameters[1].type.classifier
+            val contextClassifier = valueParameters.first().type.classifier
 
-            val classFunctionName = printName(command, function)
-
-            check(contextClassifier !is SlashCommandContext) {
-                "The first parameter of a SlashCommand have to be SlashCommandContext -> $classFunctionName : ${function.parameters.first().type.classifier}"
+            require(contextClassifier is SlashCommandContext) {
+                "The first parameter of a SlashCommand have to be SlashCommandContext and is $contextClassifier -> $handler"
             }
 
             when (target) {
                 InteractionTarget.ALL, InteractionTarget.DM -> {
-                    check(contextClassifier != GuildSlashCommandContext::class) {
-                        "Do not use GuildSlashCommandContext with a non-guild InteractionTarget, use SlashCommandContext instead -> $classFunctionName"
+                    check(contextClassifier !is GuildSlashCommandContext) {
+                        "Do not use GuildSlashCommandContext with a non-guild InteractionTarget, use SlashCommandContext instead -> $handler"
                     }
                 }
                 InteractionTarget.GUILD -> {
-                    if (contextClassifier != GuildSlashCommandContext::class) {
-                        log.warn("You are not using GuildSlashCommandContext on a guild InteractionTarget -> $classFunctionName")
+                    if (contextClassifier !is GuildSlashCommandContext) {
+                        log.warn("You are not using GuildSlashCommandContext on a guild InteractionTarget -> $handler")
                     }
                 }
             }
 
-            if (function.parameters.size <= 2) return parametersList
+            if (valueParameters.size <= 1) return parametersList
 
-            val validParams = function.parameters.subList(2, function.parameters.size)
+            val validParams = valueParameters.subList(1, valueParameters.size)
 
             for (param in validParams) {
                 val name = param.findAnnotation<OptionName>()?.value ?: param.name!!
                 val kType = param.type
                 check(ValidOptionTypes.isValidType(kType.classifier)) {
-                    "${kType.classifier} is not a valid type for SlashCommand option: ${function.name}"
+                    "${kType.classifier} is not a valid type for SlashCommand option: $handler"
                 }
 
-                parametersList.add(FunctionParameter(command, function, name, kType))
+                parametersList.add(FunctionParameter(handler, name, kType))
             }
 
             return parametersList

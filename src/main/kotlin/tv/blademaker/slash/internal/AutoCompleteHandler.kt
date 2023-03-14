@@ -1,61 +1,65 @@
 package tv.blademaker.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.OptionName
 import tv.blademaker.slash.context.AutoCompleteContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.valueParameters
 
 class AutoCompleteHandler(
-    override val parent: BaseSlashCommand,
+    override val annotation: OnAutoComplete,
     override val function: KFunction<*>
-) : Handler {
+) : Handler<OnAutoComplete, AutoCompleteContext> {
 
-    private val annotation: OnAutoComplete = function.findAnnotation()!!
+    constructor(entry: Map.Entry<OnAutoComplete, KFunction<*>>) : this(
+        annotation = entry.key,
+        function = entry.value
+    )
 
     val optionName: String
         get() = annotation.optionName
 
-    override val path = buildString {
-        append(parent.commandName)
-        if (annotation.group.isNotBlank()) append("/${annotation.group}")
-        if (annotation.name.isNotBlank()) append("/${annotation.name}")
+    private val options: List<FunctionParameter> = buildHandlerParameters(this)
+
+    override suspend fun execute(ctx: AutoCompleteContext) {
+        function.callSuspend(this, ctx, *options.map { it.compile(ctx) }.toTypedArray())
     }
 
-    private val options: List<FunctionParameter> = buildHandlerParameters(parent, function)
-
-    suspend fun execute(ctx: AutoCompleteContext) {
-        function.callSuspend(parent, ctx, *options.map { it.compile(ctx) }.toTypedArray())
-    }
+    override fun toString() = SlashUtils.handlerToString(this)
 
     companion object {
-        private fun buildHandlerParameters(command: BaseSlashCommand, function: KFunction<*>): List<FunctionParameter> {
-            check(!function.parameters.any { it.isVararg }) {
-                "SlashCommand cannot have varargs parameters: ${function.name}"
+        private fun buildHandlerParameters(handler: AutoCompleteHandler): List<FunctionParameter> {
+            require(!handler.function.parameters.any { it.isVararg }) {
+                "AutoComplete cannot have varargs parameters: : $handler"
             }
+
+            val valueParameters = handler.function.valueParameters
 
             val parametersList = mutableListOf<FunctionParameter>()
 
-            check(function.parameters.size in 2..3) {
-                "Not valid parameters count: ${command.commandName} -> ${function.name}"
+            require(valueParameters.size in 1..2) {
+                "Not valid parameters count: $handler"
             }
 
-            check(function.parameters[1].type.classifier == AutoCompleteContext::class) {
-                "The first parameter of a AutoComplete have to be AutoCompleteContext: ${function.parameters.first().type.classifier}"
+            val contextClassifier = valueParameters.first().type.classifier
+
+            require(contextClassifier == AutoCompleteContext::class.java) {
+                "The first parameter of $handler have to be AutoCompleteContext: $contextClassifier"
             }
 
-            if (function.parameters.size <= 2) return parametersList
+            if (valueParameters.size <= 1) return parametersList
 
-            val param = function.parameters[2]
+            val param = valueParameters[1]
             val name = param.findAnnotation<OptionName>()?.value ?: param.name!!
             val kType = param.type
             check(ValidOptionTypes.isValidType(kType.classifier)) {
-                "${kType.classifier} is not a valid type for AutoComplete option: ${function.name}"
+                "${kType.classifier} is not a valid type for AutoComplete option: $handler"
             }
 
-            parametersList.add(FunctionParameter(command, function, name, kType))
+            parametersList.add(FunctionParameter(handler, name, kType))
 
             return parametersList
         }

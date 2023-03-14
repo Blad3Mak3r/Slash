@@ -1,12 +1,11 @@
 package tv.blademaker.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.context.InteractionContext
 import kotlin.reflect.KFunction
 
-interface Handler {
-
-    val path: String
-    val parent: BaseSlashCommand
+interface Handler<A : Annotation, C : InteractionContext<*>> {
+    val annotation: A
     val function: KFunction<*>
 
+    suspend fun execute(ctx: C)
 }

@@ -1,14 +1,11 @@
 package tv.blademaker.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
 import tv.blademaker.slash.context.AutoCompleteContext
 import tv.blademaker.slash.context.SlashCommandContext
-import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 
 internal class FunctionParameter(
-    private val command: BaseSlashCommand,
-    private val function: KFunction<*>,
+    private val handler: Handler<*, *>,
     val name: String,
     private val type: KType
 ) {
@@ -37,6 +34,6 @@ internal class FunctionParameter(
     }
 
     override fun toString(): String {
-        return "${command.commandName}#${function.name}(ctx, ...$name)"
+        return "$handler {$name}"
     }
 }

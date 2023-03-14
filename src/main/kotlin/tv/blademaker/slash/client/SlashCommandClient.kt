@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
-import tv.blademaker.slash.BaseSlashCommand
+import tv.blademaker.slash.DiscoveryResult
 import tv.blademaker.slash.exceptions.ExceptionHandler
 
 @Suppress("unused")
@@ -15,7 +15,7 @@ interface SlashCommandClient : EventListener {
     /**
      * The command registry.
      */
-    val registry: List<BaseSlashCommand>
+    val handlers: DiscoveryResult
 
     val exceptionHandler: ExceptionHandler
 
@@ -45,8 +45,6 @@ interface SlashCommandClient : EventListener {
     fun onModalInteractionEvent(event: ModalInteractionEvent)
 
     fun onButtonInteractionEvent(event: ButtonInteractionEvent)
-
-    fun getCommand(name: String) = registry.firstOrNull { it.commandName.equals(name, true) }
 
     companion object {
         fun default(packageName: String) = DefaultSlashCommandBuilder(packageName)
