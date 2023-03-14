@@ -41,10 +41,18 @@ object SlashUtils {
 
     private inline fun <reified A : Annotation> Map<A, KFunction<*>>.runFilters(): Map<A, KFunction<*>> {
         for (item in this) {
-            check(!item.value.isAbstract)
-            check(item.value.visibility == KVisibility.PUBLIC)
-            check(!item.value.isInline)
-            check(item.value.isAccessible)
+            require(!item.value.isAbstract) {
+                "${item.value.name} is abstract"
+            }
+            require(item.value.visibility == KVisibility.PUBLIC) {
+                "${item.value.name} is not public"
+            }
+            require(!item.value.isInline) {
+                "${item.value.name} is inline"
+            }
+            require(item.value.isAccessible) {
+                "${item.value.name} is not accesible"
+            }
         }
         return this
     }
