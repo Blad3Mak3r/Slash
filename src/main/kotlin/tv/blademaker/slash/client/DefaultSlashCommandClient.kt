@@ -33,7 +33,7 @@ class DefaultSlashCommandClient internal constructor(
     packageName: String,
     override val exceptionHandler: ExceptionHandler,
     internal val contextCreator: ContextCreator,
-    internal val checks: MutableSet<CommandExecutionCheck>,
+    internal val checks: MutableSet<ExecutionInterceptor>,
     internal val timeout: Duration,
     rateLimit: RateLimitClient?,
     strategy: MetricsStrategy?
@@ -96,11 +96,6 @@ class DefaultSlashCommandClient internal constructor(
 
     override fun onButtonInteractionEvent(event: ButtonInteractionEvent) {
         findHandler(event)?.run { executor.execute(event, this.second, this.first) }
-    }
-
-    fun addCheck(check: CommandExecutionCheck) {
-        if (checks.contains(check)) error("check already registered.")
-        checks.add(check)
     }
 
     private companion object {

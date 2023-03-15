@@ -7,9 +7,9 @@ import tv.blademaker.slash.annotations.Permissions
 import tv.blademaker.slash.context.GuildSlashCommandContext
 import tv.blademaker.slash.exceptions.PermissionsLackException
 
-typealias CommandExecutionCheck = suspend (ctx: SlashCommandContext) -> Boolean
+typealias ExecutionInterceptor = suspend (ctx: SlashCommandContext) -> Boolean
 
-internal object Checks {
+internal object Interceptors {
     fun handlerPermissions(ctx: GuildSlashCommandContext, permissions: Permissions?) {
         if (!ctx.event.isFromGuild) return
         if (permissions == null || permissions.bot.isEmpty() && permissions.user.isEmpty()) return

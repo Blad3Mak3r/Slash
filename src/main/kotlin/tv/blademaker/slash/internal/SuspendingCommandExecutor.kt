@@ -62,10 +62,10 @@ open class SuspendingCommandExecutor(
             if (!checkGlobals(ctx)) return@launch
 
             log.debug("Running handler parent checks")
-            if (!handler.parent.doChecks(ctx)) return@launch
+            if (!handler.parent.runInterceptors(ctx)) return@launch
             if (ctx is GuildSlashCommandContext) {
                 log.debug("Running Guild checks")
-                Checks.handlerPermissions(ctx, handler.permissions)
+                Interceptors.handlerPermissions(ctx, handler.permissions)
             }
 
 

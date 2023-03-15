@@ -6,7 +6,7 @@ import tv.blademaker.slash.context.ContextCreator
 import tv.blademaker.slash.context.impl.ContextCreatorImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
-import tv.blademaker.slash.internal.CommandExecutionCheck
+import tv.blademaker.slash.internal.ExecutionInterceptor
 import tv.blademaker.slash.metrics.MetricsStrategy
 import tv.blademaker.slash.ratelimit.RateLimitClient
 import kotlin.time.Duration
@@ -21,7 +21,7 @@ class DefaultSlashCommandBuilder(
 
     private var exceptionHandler: ExceptionHandler? = null
 
-    private val checks = mutableSetOf<CommandExecutionCheck>()
+    private val interceptors = mutableSetOf<ExecutionInterceptor>()
 
     private var rateLimitClient: RateLimitClient? = null
 
@@ -42,9 +42,9 @@ class DefaultSlashCommandBuilder(
         return this
     }
 
-    fun addCheck(check: CommandExecutionCheck): DefaultSlashCommandBuilder {
-        if (checks.contains(check)) error("check already registered.")
-        checks.add(check)
+    fun addInterceptor(check: ExecutionInterceptor): DefaultSlashCommandBuilder {
+        if (interceptors.contains(check)) error("check already registered.")
+        interceptors.add(check)
         return this
     }
 
@@ -63,7 +63,7 @@ class DefaultSlashCommandBuilder(
             packageName,
             exceptionHandler ?: ExceptionHandlerImpl(),
             contextCreator ?: ContextCreatorImpl(),
-            checks,
+            interceptors,
             duration,
             rateLimitClient,
             metrics
