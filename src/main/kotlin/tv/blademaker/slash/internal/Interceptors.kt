@@ -2,12 +2,19 @@ package tv.blademaker.slash.internal
 
 import net.dv8tion.jda.api.entities.Member
 import tv.blademaker.slash.PermissionTarget
-import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.annotations.Permissions
-import tv.blademaker.slash.context.GuildSlashCommandContext
+import tv.blademaker.slash.context.*
 import tv.blademaker.slash.exceptions.PermissionsLackException
 
-typealias ExecutionInterceptor = suspend (ctx: SlashCommandContext) -> Boolean
+interface Interceptor<C : InteractionContext<*>> {
+    suspend fun intercept(ctx: C): Boolean
+}
+
+abstract class SlashCommandInterceptor : Interceptor<SlashCommandContext>
+
+abstract class MessageCommandInterceptor : Interceptor<MessageCommandContext>
+
+abstract class UserCommandInterceptor : Interceptor<UserCommandContext>
 
 internal object Interceptors {
     fun handlerPermissions(ctx: GuildSlashCommandContext, permissions: Permissions?) {

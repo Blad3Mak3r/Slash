@@ -1,37 +1,32 @@
 @file:Suppress("UNUSED_PARAMETER", "unused")
 
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
-import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.GenericEvent
 import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.InteractionTarget
-import tv.blademaker.slash.client.SlashCommandClient
-import tv.blademaker.slash.context.SlashCommandContext
-import tv.blademaker.slash.annotations.OptionName
+import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.OnSlashCommand
+import tv.blademaker.slash.annotations.OptionName
+import tv.blademaker.slash.client.SlashCommandClient
 import tv.blademaker.slash.context.AutoCompleteContext
-import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
+import tv.blademaker.slash.context.SlashCommandContext
 import tv.blademaker.slash.exceptions.ExceptionHandler
+import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
+import tv.blademaker.slash.internal.Registry
 
 class GenerateCommandTest {
 
     object DummySlashCommandClient : SlashCommandClient {
-        override val registry: List<BaseSlashCommand>
-            get() = listOf(
+        override val registry = Registry(
+            slash = listOf(
                 BasicCommand,
                 AdvancedCommand
-            )
+            ),
+            user = emptyList(),
+            message = emptyList()
+        )
         override val exceptionHandler: ExceptionHandler = ExceptionHandlerImpl()
-
-        override fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
-        }
-
-        override fun onCommandAutoCompleteEvent(event: CommandAutoCompleteInteractionEvent) {
-        }
-
-        override fun onModalInteractionEvent(event: ModalInteractionEvent) {
+        override fun onEvent(event: GenericEvent) {
         }
     }
 

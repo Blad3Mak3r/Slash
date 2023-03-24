@@ -6,7 +6,10 @@ import tv.blademaker.slash.context.ContextCreator
 import tv.blademaker.slash.context.impl.ContextCreatorImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
-import tv.blademaker.slash.internal.ExecutionInterceptor
+import tv.blademaker.slash.internal.Interceptor
+import tv.blademaker.slash.internal.MessageCommandInterceptor
+import tv.blademaker.slash.internal.SlashCommandInterceptor
+import tv.blademaker.slash.internal.UserCommandInterceptor
 import tv.blademaker.slash.metrics.MetricsStrategy
 import tv.blademaker.slash.ratelimit.RateLimitClient
 import kotlin.time.Duration
@@ -21,7 +24,7 @@ class DefaultSlashCommandBuilder(
 
     private var exceptionHandler: ExceptionHandler? = null
 
-    private val interceptors = mutableSetOf<ExecutionInterceptor>()
+    private val interceptors = mutableSetOf<Interceptor<*>>()
 
     private var rateLimitClient: RateLimitClient? = null
 
@@ -42,9 +45,27 @@ class DefaultSlashCommandBuilder(
         return this
     }
 
-    fun addInterceptor(check: ExecutionInterceptor): DefaultSlashCommandBuilder {
-        if (interceptors.contains(check)) error("check already registered.")
-        interceptors.add(check)
+    fun addSlashInterceptor(interceptor: SlashCommandInterceptor): DefaultSlashCommandBuilder {
+        if (interceptors.contains(interceptor)) error("SlashCommandInterceptor already registered.")
+        interceptors.add(interceptor)
+        return this
+    }
+
+    fun addUserInterceptor(interceptor: UserCommandInterceptor): DefaultSlashCommandBuilder {
+        if (interceptors.contains(interceptor)) error("UserCommandInterceptor already registered.")
+        interceptors.add(interceptor)
+        return this
+    }
+
+    fun addMessageInterceptor(interceptor: MessageCommandInterceptor): DefaultSlashCommandBuilder {
+        if (interceptors.contains(interceptor)) error("MessageCommandInterceptor already registered.")
+        interceptors.add(interceptor)
+        return this
+    }
+
+    fun addGlobalInterceptor(interceptor: Interceptor<*>) : DefaultSlashCommandBuilder {
+        if (interceptors.contains(interceptor)) error("${interceptor::class.java.simpleName} already registered.")
+        interceptors.add(interceptor)
         return this
     }
 

@@ -9,4 +9,4 @@ class ButtonContext(
     override val event: ButtonInteractionEvent,
     val matcher: Matcher,
     override val function: KFunction<*>
-) : ButtonInteraction by event, InteractionContext<ButtonInteractionEvent>
+) : ButtonInteraction by event, InteractionContext<ButtonInteractionEvent>, FunctionHandler

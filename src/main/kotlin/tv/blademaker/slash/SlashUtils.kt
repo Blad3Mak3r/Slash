@@ -51,26 +51,38 @@ object SlashUtils {
      */
     fun discoverSlashCommands(packageName: String): DiscoveryResult {
         val start = System.nanoTime()
-        val classes = Reflections(packageName, Scanners.SubTypes)
-            .getSubTypesOf(BaseSlashCommand::class.java)
+
+        val items = Reflections(packageName, Scanners.SubTypes)
+
+        val slashCommandsReflections = items.getSubTypesOf(BaseSlashCommand::class.java)
             .filter { !Modifier.isAbstract(it.modifiers) && BaseSlashCommand::class.java.isAssignableFrom(it) }
 
-        val commands = mutableListOf<BaseSlashCommand>()
+        val slashCommands = mutableListOf<BaseSlashCommand>()
 
-        for (clazz in classes) {
+        for (clazz in slashCommandsReflections) {
             val instance = clazz.getDeclaredConstructor().newInstance()
             val commandName = instance.commandName.lowercase()
 
-            if (commands.any { it.commandName.equals(commandName, true) }) {
+            if (slashCommands.any { it.commandName.equals(commandName, true) }) {
                 error("Command with name $commandName is already registered.")
             }
 
-            commands.add(instance)
+            slashCommands.add(instance)
         }
+
+        val userCommands = items.getSubTypesOf(UserCommand::class.java)
+            .filter { !Modifier.isAbstract(it.modifiers) && UserCommand::class.java.isAssignableFrom(it) }
+            .map { it.getDeclaredConstructor().newInstance() }
+
+        val messageCommands = items.getSubTypesOf(MessageCommand::class.java)
+            .filter { !Modifier.isAbstract(it.modifiers) && MessageCommand::class.java.isAssignableFrom(it) }
+            .map { it.getDeclaredConstructor().newInstance() }
 
         return DiscoveryResult(
             elapsedTime = (System.nanoTime() - start) / 1_000_000,
-            commands = commands
+            slashCommands = slashCommands,
+            userCommands = userCommands,
+            messageCommands = messageCommands
         )
     }
 
@@ -84,7 +96,7 @@ object SlashUtils {
         return this
     }
 
-    internal fun compileCommandHandlers(commands: List<BaseSlashCommand>): CommandHandlers {
+    internal fun compileSlashCommandHandlers(commands: List<BaseSlashCommand>): CommandHandlers {
         val slashCommandHandlers = commands
             .map { compileSlashCommandHandlers(it) }
             .reduceOrNull { acc, list -> list + acc }

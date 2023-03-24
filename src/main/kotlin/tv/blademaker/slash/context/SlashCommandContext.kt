@@ -21,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KFunction
 
 @Suppress("unused")
-interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashCommandInteractionEvent> {
+interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashCommandInteractionEvent>, FunctionHandler {
 
     val isAcknowledged: Boolean
         get() = event.isAcknowledged

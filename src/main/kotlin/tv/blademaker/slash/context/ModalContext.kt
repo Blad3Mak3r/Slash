@@ -10,7 +10,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KFunction
 
-class ModalContext(override val event: ModalInteractionEvent, val matcher: Matcher, override val function: KFunction<*>) : ModalInteraction by event, DeferrableInteraction, InteractionContext<ModalInteractionEvent> {
+class ModalContext(override val event: ModalInteractionEvent, val matcher: Matcher, override val function: KFunction<*>) : ModalInteraction by event, DeferrableInteraction, InteractionContext<ModalInteractionEvent>, FunctionHandler {
 
     /**
      * Automatically detect if the interaction is already acknowledge and if not
