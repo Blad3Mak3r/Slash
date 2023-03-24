@@ -10,11 +10,11 @@ interface Interceptor<C : InteractionContext<*>> {
     suspend fun intercept(ctx: C): Boolean
 }
 
-abstract class SlashCommandInterceptor : Interceptor<SlashCommandContext>
+interface SlashCommandInterceptor : Interceptor<SlashCommandContext>
 
-abstract class MessageCommandInterceptor : Interceptor<MessageCommandContext>
+interface MessageCommandInterceptor : Interceptor<MessageCommandContext>
 
-abstract class UserCommandInterceptor : Interceptor<UserCommandContext>
+interface UserCommandInterceptor : Interceptor<UserCommandContext>
 
 internal object Interceptors {
     fun handlerPermissions(ctx: GuildSlashCommandContext, permissions: Permissions?) {
