@@ -1,6 +1,6 @@
 package tv.blademaker.slash.internal
 
-import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.Permission
 import tv.blademaker.slash.PermissionTarget
 import tv.blademaker.slash.annotations.Permissions
 import tv.blademaker.slash.context.*
@@ -21,23 +21,22 @@ internal object Interceptors {
         if (!ctx.event.isFromGuild) return
         if (permissions == null || permissions.bot.isEmpty() && permissions.user.isEmpty()) return
 
-        var member: Member = ctx.member
+        val missingPerms = mutableListOf<Permission>()
 
         // Check for the user permissions
-        var guildPerms = member.hasPermission(permissions.user.toList())
-        var channelPerms = member.hasPermission(ctx.channel, permissions.user.toList())
+        missingPerms.addAll(permissions.user.filterNot { ctx.member.hasPermission(it) })
+        missingPerms.addAll(permissions.user.filterNot { ctx.member.hasPermission(ctx.channel, it) })
 
-        if (!(guildPerms && channelPerms)) {
-            throw PermissionsLackException(ctx, PermissionTarget.USER, permissions.user)
+        if (missingPerms.isNotEmpty()) {
+            throw PermissionsLackException(ctx, PermissionTarget.USER, missingPerms.toTypedArray())
         }
 
         // Check for the bot permissions
-        member = ctx.selfMember
-        guildPerms = member.hasPermission(permissions.bot.toList())
-        channelPerms = member.hasPermission(ctx.channel, permissions.bot.toList())
+        missingPerms.addAll(permissions.bot.filterNot { ctx.selfMember.hasPermission(it) })
+        missingPerms.addAll(permissions.bot.filterNot { ctx.selfMember.hasPermission(ctx.channel, it) })
 
-        if (!(guildPerms && channelPerms)) {
-            throw PermissionsLackException(ctx, PermissionTarget.BOT, permissions.bot)
+        if (missingPerms.isNotEmpty()) {
+            throw PermissionsLackException(ctx, PermissionTarget.BOT, missingPerms.toTypedArray())
         }
     }
 }
