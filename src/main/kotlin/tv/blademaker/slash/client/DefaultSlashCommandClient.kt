@@ -125,6 +125,7 @@ class DefaultSlashCommandClient internal constructor(
         on(::onModalInteractionEvent)
         on(::onButtonInteractionEvent)
         on(::onMessageContextInteractionEvent)
+        on(::onUserContextInteractionEvent)
     }
 
     private suspend fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
