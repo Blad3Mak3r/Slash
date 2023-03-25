@@ -46,7 +46,7 @@ class DefaultSlashCommandClient internal constructor(
     strategy: MetricsStrategy?
 ) : SlashCommandClient, CoroutineScope {
 
-    private val events = MutableSharedFlow<GenericEvent>()
+    private val events = MutableSharedFlow<GenericEvent>(replay = 0)
 
     private val dispatcher = newCoroutineDispatcher("SlashWorker-%s", 8, 50)
 
