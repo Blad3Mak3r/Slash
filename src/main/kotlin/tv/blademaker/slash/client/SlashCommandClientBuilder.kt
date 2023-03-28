@@ -4,6 +4,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.sharding.ShardManager
+import tv.blademaker.slash.context.MessageCommandContext
+import tv.blademaker.slash.context.SlashCommandContext
+import tv.blademaker.slash.context.UserCommandContext
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.internal.Interceptor
@@ -46,10 +49,22 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
+    fun addSlashInterceptor(builder: (ctx: SlashCommandContext) -> Boolean): SlashCommandClientBuilder {
+        return addSlashInterceptor(object : SlashCommandInterceptor {
+            override suspend fun intercept(ctx: SlashCommandContext) = builder(ctx)
+        })
+    }
+
     fun addUserInterceptor(interceptor: UserCommandInterceptor): SlashCommandClientBuilder {
         if (interceptors.contains(interceptor)) error("UserCommandInterceptor already registered.")
         interceptors.add(interceptor)
         return this
+    }
+
+    fun addUserInterceptor(builder: (ctx: UserCommandContext) -> Boolean): SlashCommandClientBuilder {
+        return addUserInterceptor(object : UserCommandInterceptor {
+            override suspend fun intercept(ctx: UserCommandContext) = builder(ctx)
+        })
     }
 
     fun addMessageInterceptor(interceptor: MessageCommandInterceptor): SlashCommandClientBuilder {
@@ -58,7 +73,13 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
-    fun addGlobalInterceptor(interceptor: Interceptor<*>) : SlashCommandClientBuilder {
+    fun addMessageInterceptor(builder: (ctx: MessageCommandContext) -> Boolean): SlashCommandClientBuilder {
+        return addMessageInterceptor(object : MessageCommandInterceptor {
+            override suspend fun intercept(ctx: MessageCommandContext) = builder(ctx)
+        })
+    }
+
+    fun addInterceptor(interceptor: Interceptor<*>) : SlashCommandClientBuilder {
         if (interceptors.contains(interceptor)) error("${interceptor::class.java.simpleName} already registered.")
         interceptors.add(interceptor)
         return this
@@ -79,7 +100,7 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
-    private fun build(): SlashCommandClient {
+    fun build(): SlashCommandClient {
         return SlashCommandClient(
             packageName,
             eventsFlow ?: MutableSharedFlow(replay = 0),
@@ -92,6 +113,9 @@ class SlashCommandClientBuilder internal constructor(
     }
 
     fun buildWith(jda: JDA): SlashCommandClient {
+        if (eventsFlow != null)
+            error("Cannot use buildWith() when you set your own eventsFlow, use build() instead.")
+
         val client = build()
 
         jda.addEventListener(client)
@@ -100,6 +124,9 @@ class SlashCommandClientBuilder internal constructor(
     }
 
     fun buildWith(shardManager: ShardManager): SlashCommandClient {
+        if (eventsFlow != null)
+            error("Cannot use buildWith() when you set your own eventsFlow, use build() instead.")
+
         val client = build()
 
         shardManager.addEventListener(client)
