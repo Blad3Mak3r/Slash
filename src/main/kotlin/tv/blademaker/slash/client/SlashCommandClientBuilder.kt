@@ -2,8 +2,6 @@ package tv.blademaker.slash.client
 
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.sharding.ShardManager
-import tv.blademaker.slash.context.ContextCreator
-import tv.blademaker.slash.context.impl.ContextCreatorImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
 import tv.blademaker.slash.internal.Interceptor
@@ -15,12 +13,10 @@ import tv.blademaker.slash.ratelimit.RateLimitClient
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
-class DefaultSlashCommandBuilder(
+class SlashCommandClientBuilder internal constructor(
     private val packageName: String
 ) {
     private var metrics: MetricsStrategy? = null
-
-    private var contextCreator: ContextCreator? = null
 
     private var exceptionHandler: ExceptionHandler? = null
 
@@ -30,60 +26,54 @@ class DefaultSlashCommandBuilder(
 
     private var duration: Duration = 1.minutes
 
-    fun enableMetrics(): DefaultSlashCommandBuilder {
+    fun enableMetrics(): SlashCommandClientBuilder {
         this.metrics = MetricsStrategy()
         return this
     }
 
-    fun enableMetrics(builder: MetricsStrategy.() -> Unit): DefaultSlashCommandBuilder {
+    fun enableMetrics(builder: MetricsStrategy.() -> Unit): SlashCommandClientBuilder {
         this.metrics = MetricsStrategy().apply(builder)
         return this
     }
 
-    fun contextCreator(contextCreator: ContextCreator): DefaultSlashCommandBuilder {
-        this.contextCreator = contextCreator
-        return this
-    }
-
-    fun addSlashInterceptor(interceptor: SlashCommandInterceptor): DefaultSlashCommandBuilder {
+    fun addSlashInterceptor(interceptor: SlashCommandInterceptor): SlashCommandClientBuilder {
         if (interceptors.contains(interceptor)) error("SlashCommandInterceptor already registered.")
         interceptors.add(interceptor)
         return this
     }
 
-    fun addUserInterceptor(interceptor: UserCommandInterceptor): DefaultSlashCommandBuilder {
+    fun addUserInterceptor(interceptor: UserCommandInterceptor): SlashCommandClientBuilder {
         if (interceptors.contains(interceptor)) error("UserCommandInterceptor already registered.")
         interceptors.add(interceptor)
         return this
     }
 
-    fun addMessageInterceptor(interceptor: MessageCommandInterceptor): DefaultSlashCommandBuilder {
+    fun addMessageInterceptor(interceptor: MessageCommandInterceptor): SlashCommandClientBuilder {
         if (interceptors.contains(interceptor)) error("MessageCommandInterceptor already registered.")
         interceptors.add(interceptor)
         return this
     }
 
-    fun addGlobalInterceptor(interceptor: Interceptor<*>) : DefaultSlashCommandBuilder {
+    fun addGlobalInterceptor(interceptor: Interceptor<*>) : SlashCommandClientBuilder {
         if (interceptors.contains(interceptor)) error("${interceptor::class.java.simpleName} already registered.")
         interceptors.add(interceptor)
         return this
     }
 
-    fun setRateLimitClient(client: RateLimitClient?): DefaultSlashCommandBuilder {
+    fun setRateLimitClient(client: RateLimitClient?): SlashCommandClientBuilder {
         rateLimitClient = client
         return this
     }
 
-    fun withTimeout(duration: Duration): DefaultSlashCommandBuilder {
+    fun withTimeout(duration: Duration): SlashCommandClientBuilder {
         this.duration = duration
         return this
     }
 
-    private fun build(): DefaultSlashCommandClient {
-        return DefaultSlashCommandClient(
+    private fun build(): SlashCommandClient {
+        return SlashCommandClient(
             packageName,
             exceptionHandler ?: ExceptionHandlerImpl(),
-            contextCreator ?: ContextCreatorImpl(),
             interceptors,
             duration,
             rateLimitClient,
@@ -91,7 +81,7 @@ class DefaultSlashCommandBuilder(
         )
     }
 
-    fun buildWith(jda: JDA): DefaultSlashCommandClient {
+    fun buildWith(jda: JDA): SlashCommandClient {
         val client = build()
 
         jda.addEventListener(client)
@@ -99,7 +89,7 @@ class DefaultSlashCommandBuilder(
         return client
     }
 
-    fun buildWith(shardManager: ShardManager): DefaultSlashCommandClient {
+    fun buildWith(shardManager: ShardManager): SlashCommandClient {
         val client = build()
 
         shardManager.addEventListener(client)

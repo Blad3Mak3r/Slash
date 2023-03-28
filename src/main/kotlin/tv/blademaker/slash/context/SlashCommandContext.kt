@@ -1,5 +1,6 @@
 package tv.blademaker.slash.context
 
+import kotlinx.coroutines.flow.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
+import tv.blademaker.slash.client.SlashCommandClient
 import tv.blademaker.slash.context.actions.ContextAction
 import tv.blademaker.slash.context.impl.GuildSlashCommandContextImpl
 import tv.blademaker.slash.context.impl.SlashCommandContextImpl
@@ -227,12 +229,12 @@ interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashC
     var extra: AtomicReference<Any?>
 
     companion object {
-        fun impl(event: SlashCommandInteractionEvent, function: KFunction<*>): SlashCommandContext {
-            return SlashCommandContextImpl(event, function)
+        fun impl(client: SlashCommandClient, event: SlashCommandInteractionEvent, function: KFunction<*>): SlashCommandContext {
+            return SlashCommandContextImpl(event, client, function)
         }
 
-        fun guild(event: SlashCommandInteractionEvent, function: KFunction<*>): GuildSlashCommandContext {
-            return GuildSlashCommandContextImpl(event, function)
+        fun guild(client: SlashCommandClient, event: SlashCommandInteractionEvent, function: KFunction<*>): GuildSlashCommandContext {
+            return GuildSlashCommandContextImpl(event, client, function)
         }
     }
 }

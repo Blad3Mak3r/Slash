@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
+import org.slf4j.LoggerFactory
 import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.OnButton
 import tv.blademaker.slash.annotations.OnModal
@@ -18,6 +19,8 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
 object SlashUtils {
+
+    val log = LoggerFactory.getLogger("Slash")
 
     /**
      * Convert an [Array] of [Permission] in a readable list.
