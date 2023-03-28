@@ -1,8 +1,8 @@
 package tv.blademaker.slash.client
 
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.SlashUtils
+import tv.blademaker.slash.SlashUtils.on
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.*
 import tv.blademaker.slash.context.impl.GuildSlashCommandContextImpl
@@ -41,6 +42,7 @@ import kotlin.time.Duration
  */
 class SlashCommandClient internal constructor(
     packageName: String,
+    private val eventsFlow: MutableSharedFlow<GenericEvent>,
     private val exceptionHandler: ExceptionHandler,
     private val interceptors: MutableSet<Interceptor<*>>,
     private val timeout: Duration,
@@ -48,7 +50,7 @@ class SlashCommandClient internal constructor(
     strategy: MetricsStrategy?
 ) : EventListener, CoroutineScope {
 
-    val eventsSharedFlow = MutableSharedFlow<GenericEvent>(replay = 0)
+    val events = eventsFlow.asSharedFlow()
 
     private val dispatcher = newCoroutineDispatcher("SlashWorker-%s", 8, 50)
 
@@ -89,7 +91,7 @@ class SlashCommandClient internal constructor(
 
 
     override fun onEvent(event: GenericEvent) {
-        launch { eventsSharedFlow.emit(event) }
+        launch { eventsFlow.emit(event) }
     }
 
     private fun createSlashCommandContext(
@@ -106,41 +108,13 @@ class SlashCommandClient internal constructor(
         }
     }
 
-    private inline fun <reified E : GenericEvent>on(noinline action: suspend (event: E) -> Unit): Job {
-        log.debug("Registering event collector for ${E::class.java.simpleName}.")
-        return eventsSharedFlow.buffer(Channel.UNLIMITED)
-            .filterIsInstance<E>()
-            .onEach {
-                try {
-                    action(it)
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Throwable) {
-                    log.error("Exception handling ${it::class.java.simpleName} [${it.jda.shardInfo}]: ${e.message}", e)
-                }
-            }
-            .launchIn(this)
-    }
-
-    suspend inline fun <reified E : GenericEvent>await(
-        timeout: Duration,
-        crossinline filter: suspend (event: E) -> Boolean
-    ): E? = withTimeoutOrNull(timeout) {
-        SlashUtils.log.debug("Registering event waiter for ${E::class.java.simpleName} with a timeout of.")
-        eventsSharedFlow.buffer(Channel.UNLIMITED)
-            .cancellable()
-            .filterIsInstance<E>()
-            .filter(filter)
-            .firstOrNull()
-    }
-
     init {
-        on(::onSlashCommandEvent)
-        on(::onCommandAutoCompleteEvent)
-        on(::onModalInteractionEvent)
-        on(::onButtonInteractionEvent)
-        on(::onMessageContextInteractionEvent)
-        on(::onUserContextInteractionEvent)
+        on(events, this, ::onSlashCommandEvent)
+        on(events, this, ::onCommandAutoCompleteEvent)
+        on(events, this, ::onModalInteractionEvent)
+        on(events, this, ::onButtonInteractionEvent)
+        on(events, this, ::onMessageContextInteractionEvent)
+        on(events, this, ::onUserContextInteractionEvent)
     }
 
     private suspend fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
@@ -253,7 +227,7 @@ class SlashCommandClient internal constructor(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(SlashCommandClient::class.java)
+        val log = LoggerFactory.getLogger(SlashCommandClient::class.java)
 
         private fun getEventLogPrefix(event: GenericInteractionCreateEvent) = when (event.isFromGuild) {
             true -> "[\u001b[32mSP::${event.guild?.name}(${event.guild?.id})\u001b[0m] ${event.user.asTag}"

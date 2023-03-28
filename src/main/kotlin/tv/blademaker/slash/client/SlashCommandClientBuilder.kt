@@ -1,6 +1,8 @@
 package tv.blademaker.slash.client
 
+import kotlinx.coroutines.flow.MutableSharedFlow
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.sharding.ShardManager
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.exceptions.ExceptionHandlerImpl
@@ -25,6 +27,8 @@ class SlashCommandClientBuilder internal constructor(
     private var rateLimitClient: RateLimitClient? = null
 
     private var duration: Duration = 1.minutes
+
+    private var eventsFlow: MutableSharedFlow<GenericEvent>? = null
 
     fun enableMetrics(): SlashCommandClientBuilder {
         this.metrics = MetricsStrategy()
@@ -70,9 +74,15 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
+    fun withEventFlow(eventsFlow: MutableSharedFlow<GenericEvent>): SlashCommandClientBuilder {
+        this.eventsFlow = eventsFlow
+        return this
+    }
+
     private fun build(): SlashCommandClient {
         return SlashCommandClient(
             packageName,
+            eventsFlow ?: MutableSharedFlow(replay = 0),
             exceptionHandler ?: ExceptionHandlerImpl(),
             interceptors,
             duration,

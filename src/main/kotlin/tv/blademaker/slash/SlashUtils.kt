@@ -1,26 +1,65 @@
 package tv.blademaker.slash
 
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withTimeoutOrNull
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
-import org.slf4j.LoggerFactory
 import tv.blademaker.slash.annotations.OnAutoComplete
 import tv.blademaker.slash.annotations.OnButton
 import tv.blademaker.slash.annotations.OnModal
 import tv.blademaker.slash.annotations.OnSlashCommand
+import tv.blademaker.slash.client.SlashCommandClient
 import tv.blademaker.slash.internal.*
 import java.lang.reflect.Modifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
+import kotlin.time.Duration
 
 object SlashUtils {
 
-    val log = LoggerFactory.getLogger("Slash")
+    inline fun <reified E : GenericEvent>on(
+        events: SharedFlow<GenericEvent>,
+        scope: CoroutineScope,
+        noinline action: suspend (event: E) -> Unit
+    ): Job {
+        SlashCommandClient.log.debug("Registering event collector for ${E::class.java.simpleName}.")
+        return events.buffer(Channel.UNLIMITED)
+            .filterIsInstance<E>()
+            .onEach {
+                try {
+                    action(it)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    SlashCommandClient.log.error("Exception handling ${it::class.java.simpleName} [${it.jda.shardInfo}]: ${e.message}", e)
+                }
+            }
+            .launchIn(scope)
+    }
+
+    suspend inline fun <reified E : GenericEvent>await(
+        events: SharedFlow<GenericEvent>,
+        timeout: Duration,
+        crossinline filter: suspend (event: E) -> Boolean
+    ): E? = withTimeoutOrNull(timeout) {
+        SlashCommandClient.log.debug("Registering event waiter for ${E::class.java.simpleName} with a timeout of.")
+        events.buffer(Channel.UNLIMITED)
+            .cancellable()
+            .filterIsInstance<E>()
+            .filter(filter)
+            .firstOrNull()
+    }
 
     /**
      * Convert an [Array] of [Permission] in a readable list.
