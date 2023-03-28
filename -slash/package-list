@@ -29,10 +29,10 @@ $dokka.location:tv.blademaker.slash.annotations/Permissions/user/#/PointingToDec
 $dokka.location:tv.blademaker.slash.client////PointingToDeclaration/-slash/tv.blademaker.slash.client/index.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/-companion/index.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient.Companion/builder/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/-companion/builder.html
+$dokka.location:tv.blademaker.slash.client/SlashCommandClient.Companion/log/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/-companion/log.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient///PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/index.html
-$dokka.location:tv.blademaker.slash.client/SlashCommandClient/await/#kotlin.time.Duration#kotlin.coroutines.SuspendFunction1[TypeParam(bounds=[net.dv8tion.jda.api.events.GenericEvent]),kotlin.Boolean]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/await.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient/coroutineContext/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/coroutine-context.html
-$dokka.location:tv.blademaker.slash.client/SlashCommandClient/eventsSharedFlow/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/events-shared-flow.html
+$dokka.location:tv.blademaker.slash.client/SlashCommandClient/events/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/events.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClient/onEvent/#net.dv8tion.jda.api.events.GenericEvent/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client/on-event.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder///PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client-builder/index.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder/addGlobalInterceptor/#tv.blademaker.slash.internal.Interceptor[*]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client-builder/add-global-interceptor.html
@@ -44,6 +44,7 @@ $dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder/buildWith/#
 $dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder/enableMetrics/#/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client-builder/enable-metrics.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder/enableMetrics/#kotlin.Function1[tv.blademaker.slash.metrics.MetricsStrategy,kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client-builder/enable-metrics.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder/setRateLimitClient/#tv.blademaker.slash.ratelimit.RateLimitClient?/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client-builder/set-rate-limit-client.html
+$dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder/withEventFlow/#kotlinx.coroutines.flow.MutableSharedFlow[net.dv8tion.jda.api.events.GenericEvent]/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client-builder/with-event-flow.html
 $dokka.location:tv.blademaker.slash.client/SlashCommandClientBuilder/withTimeout/#kotlin.time.Duration/PointingToDeclaration/-slash/tv.blademaker.slash.client/-slash-command-client-builder/with-timeout.html
 $dokka.location:tv.blademaker.slash.context.actions////PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/index.html
 $dokka.location:tv.blademaker.slash.context.actions/ContextAction.Companion///PointingToDeclaration/-slash/tv.blademaker.slash.context.actions/-context-action/-companion/index.html
@@ -350,8 +351,9 @@ $dokka.location:tv.blademaker.slash/PermissionTarget/valueOf/#kotlin.String/Poin
 $dokka.location:tv.blademaker.slash/PermissionTarget/values/#/PointingToDeclaration/-slash/tv.blademaker.slash/-permission-target/values.html
 $dokka.location:tv.blademaker.slash/SlashUtils///PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/index.html
 $dokka.location:tv.blademaker.slash/SlashUtils/asEphemeral/net.dv8tion.jda.api.requests.RestAction[*]#/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/as-ephemeral.html
+$dokka.location:tv.blademaker.slash/SlashUtils/await/#kotlinx.coroutines.flow.SharedFlow[net.dv8tion.jda.api.events.GenericEvent]#kotlin.time.Duration#kotlin.coroutines.SuspendFunction1[TypeParam(bounds=[net.dv8tion.jda.api.events.GenericEvent]),kotlin.Boolean]/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/await.html
 $dokka.location:tv.blademaker.slash/SlashUtils/discoverSlashCommands/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/discover-slash-commands.html
-$dokka.location:tv.blademaker.slash/SlashUtils/log/#/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/log.html
+$dokka.location:tv.blademaker.slash/SlashUtils/on/#kotlinx.coroutines.flow.SharedFlow[net.dv8tion.jda.api.events.GenericEvent]#kotlinx.coroutines.CoroutineScope#kotlin.coroutines.SuspendFunction1[TypeParam(bounds=[net.dv8tion.jda.api.events.GenericEvent]),kotlin.Unit]/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/on.html
 $dokka.location:tv.blademaker.slash/SlashUtils/toHuman/kotlin.Array[net.dv8tion.jda.api.Permission]#kotlin.Boolean/PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/to-human.html
 $dokka.location:tv.blademaker.slash/UserCommand///PointingToDeclaration/-slash/tv.blademaker.slash/-user-command/index.html
 $dokka.location:tv.blademaker.slash/UserCommand/UserCommand/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash/-user-command/-user-command.html
