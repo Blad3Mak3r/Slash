@@ -49,7 +49,7 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
-    fun addSlashInterceptor(builder: (ctx: SlashCommandContext) -> Boolean): SlashCommandClientBuilder {
+    suspend fun addSlashInterceptor(builder: suspend (ctx: SlashCommandContext) -> Boolean): SlashCommandClientBuilder {
         return addSlashInterceptor(object : SlashCommandInterceptor {
             override suspend fun intercept(ctx: SlashCommandContext) = builder(ctx)
         })
@@ -61,7 +61,7 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
-    fun addUserInterceptor(builder: (ctx: UserCommandContext) -> Boolean): SlashCommandClientBuilder {
+    suspend fun addUserInterceptor(builder: suspend (ctx: UserCommandContext) -> Boolean): SlashCommandClientBuilder {
         return addUserInterceptor(object : UserCommandInterceptor {
             override suspend fun intercept(ctx: UserCommandContext) = builder(ctx)
         })
@@ -73,7 +73,7 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
-    fun addMessageInterceptor(builder: (ctx: MessageCommandContext) -> Boolean): SlashCommandClientBuilder {
+    suspend fun addMessageInterceptor(builder: suspend (ctx: MessageCommandContext) -> Boolean): SlashCommandClientBuilder {
         return addMessageInterceptor(object : MessageCommandInterceptor {
             override suspend fun intercept(ctx: MessageCommandContext) = builder(ctx)
         })
