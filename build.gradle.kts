@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "1.8.21"
     id("org.jetbrains.dokka") version "1.8.10"
     id("com.github.ben-manes.versions") version "0.46.0"
 
@@ -41,12 +41,12 @@ val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
 
 version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
-val jdaVersion = "5.0.0-beta.5"
+val jdaVersion = "5.0.0-beta.9"
 val coroutinesVersion = "1.6.4"
-val slf4jApi = "2.0.6"
+val slf4jApi = "2.0.7"
 val prometheusVersion = "0.16.0"
 val reflectionsVersion = "0.10.2"
-val sentryVersion = "6.12.1"
+val sentryVersion = "6.18.1"
 
 repositories {
     mavenCentral()
@@ -55,21 +55,18 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib", "1.8.10"))
-    implementation(kotlin("reflect", "1.8.10"))
+    implementation(kotlin("stdlib", "1.8.21"))
+    implementation(kotlin("reflect", "1.8.21"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-
-    implementation("org.reflections:reflections:$reflectionsVersion")
-
-    implementation("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
-    api("org.slf4j:slf4j-api:$slf4jApi")
-    api("io.sentry:sentry:$sentryVersion")
-
-    api("io.prometheus:simpleclient:$prometheusVersion")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    compileOnly("org.reflections:reflections:$reflectionsVersion")
+    compileOnly("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
+    compileOnly("org.slf4j:slf4j-api:$slf4jApi")
+    compileOnly("io.sentry:sentry:$sentryVersion")
+    compileOnly("io.prometheus:simpleclient:$prometheusVersion")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.4.5")
+    testImplementation("ch.qos.logback:logback-classic:1.4.7")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
