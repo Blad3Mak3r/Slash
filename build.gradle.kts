@@ -41,7 +41,6 @@ val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
 
 version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
-val jdaVersion = "5.0.0-beta.9"
 val coroutinesVersion = "1.6.4"
 val slf4jApi = "2.0.7"
 val prometheusVersion = "0.16.0"
@@ -58,12 +57,12 @@ dependencies {
     implementation(kotlin("stdlib", "1.8.21"))
     implementation(kotlin("reflect", "1.8.21"))
 
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    compileOnly("org.reflections:reflections:$reflectionsVersion")
-    compileOnly("net.dv8tion:JDA:$jdaVersion") { exclude(module = "opus-java") }
-    compileOnly("org.slf4j:slf4j-api:$slf4jApi")
-    compileOnly("io.sentry:sentry:$sentryVersion")
-    compileOnly("io.prometheus:simpleclient:$prometheusVersion")
+    compileOnly(libs.coroutines)
+    compileOnly(libs.reflections)
+    compileOnly(libs.jda) { exclude(module = "opus-java") }
+    implementation(libs.slf4j)
+    compileOnly(libs.sentry)
+    compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("ch.qos.logback:logback-classic:1.4.7")
