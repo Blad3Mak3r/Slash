@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.SlashUtils
-import tv.blademaker.slash.SlashUtils.on
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.*
 import tv.blademaker.slash.exceptions.ExceptionHandler
@@ -90,6 +89,14 @@ class SlashCommandClient internal constructor(
 
     override fun onEvent(event: GenericEvent) {
         launch { eventsFlow.emit(event) }
+        when (event) {
+            is SlashCommandInteractionEvent -> launch { onSlashCommandEvent(event) }
+            is CommandAutoCompleteInteractionEvent -> launch { onCommandAutoCompleteEvent(event) }
+            is ModalInteractionEvent -> launch { onModalInteractionEvent(event) }
+            is ButtonInteractionEvent -> launch { onButtonInteractionEvent(event) }
+            is MessageContextInteractionEvent -> launch { onMessageContextInteractionEvent(event) }
+            is UserContextInteractionEvent -> launch { onUserContextInteractionEvent(event) }
+        }
     }
 
     private fun createSlashCommandContext(
@@ -104,15 +111,6 @@ class SlashCommandClient internal constructor(
                 false -> SlashCommandContext(this, event, handler.function)
             }
         }
-    }
-
-    init {
-        on(events, this, ::onSlashCommandEvent)
-        on(events, this, ::onCommandAutoCompleteEvent)
-        on(events, this, ::onModalInteractionEvent)
-        on(events, this, ::onButtonInteractionEvent)
-        on(events, this, ::onMessageContextInteractionEvent)
-        on(events, this, ::onUserContextInteractionEvent)
     }
 
     private suspend fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
