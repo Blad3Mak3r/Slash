@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin("jvm") version "1.8.21"
-    id("org.jetbrains.dokka") version "1.8.10"
+    id("org.jetbrains.dokka") version "1.8.20"
     id("com.github.ben-manes.versions") version "0.46.0"
 
     `maven-publish`
@@ -58,10 +58,10 @@ dependencies {
     implementation(kotlin("reflect", "1.8.21"))
 
     compileOnly(libs.coroutines.core)
-    compileOnly(libs.reflections)
+    api(libs.reflections)
     compileOnly(libs.jda) { exclude(module = "opus-java") }
     implementation(libs.slf4j)
-    compileOnly(libs.sentry)
+    implementation(libs.sentry)
     compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")

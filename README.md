@@ -40,11 +40,14 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 - [ ] Generate commands at build time.
 
 ## Requirements
-- **[JDA 5.0.0-beta.3][jda]**
-- JDK 11
-- Kotlin 1.8.0
-- Coroutines 1.6.4
-- Reflections 0.10.2
+
+| Package Name       | Required Version      |
+|--------------------|-----------------------|
+| Kotlinx Coroutines | ``1.7.1``             |
+| Java JDK           | ``11``                |
+| JDA                | ``5.0.0-beta.10``     |
+| Kotlin             | ``1.8.21``            |
+| Sentry             | ``6.22.0`` (optional) |
 
 ## Create commands
 

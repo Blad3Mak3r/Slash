@@ -7,7 +7,7 @@ dependencyResolutionManagement {
             val jda = version("jda", "5.0.0-beta.10")
             val prometheus = version("prometheus", "0.16.0")
             val reflections = version("reflections", "0.10.2")
-            val sentry = version("sentry", "6.18.1")
+            val sentry = version("sentry", "6.22.0")
             val slf4j = version("slf4j", "2.0.7")
 
             library("coroutines.core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").versionRef(coroutines)
