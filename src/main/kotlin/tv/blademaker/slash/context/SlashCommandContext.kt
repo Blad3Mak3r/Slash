@@ -13,16 +13,17 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import tv.blademaker.slash.client.SlashCommandClient
 import tv.blademaker.slash.context.actions.ContextAction
-import tv.blademaker.slash.context.impl.GuildSlashCommandContextImpl
-import tv.blademaker.slash.context.impl.SlashCommandContextImpl
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KFunction
 
 @Suppress("unused")
-interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashCommandInteractionEvent>, FunctionHandler {
+open class SlashCommandContext(
+    override val client: SlashCommandClient,
+    override val event: SlashCommandInteractionEvent,
+    override val function: KFunction<*>
+) : DeferrableInteraction, InteractionContext<SlashCommandInteractionEvent>, FunctionHandler {
 
     val isAcknowledged: Boolean
         get() = event.isAcknowledged
@@ -30,7 +31,7 @@ interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashC
     val isFromGuild: Boolean
         get() = event.isFromGuild
 
-    val guild: Guild?
+    open val guild: Guild?
         get() = event.guild
 
     override val interaction: CommandInteraction
@@ -42,16 +43,16 @@ interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashC
     val options: List<OptionMapping>
         get() = event.options
 
-    val channel: MessageChannel
+    open val channel: MessageChannel
         get() = event.channel
 
     val user: User
         get() = event.user
 
-    val member: Member?
+    open val member: Member?
         get() = event.member
 
-    override suspend fun acknowledge(ephemeral: Boolean) = suspendCoroutine<Unit> { cont ->
+    override suspend fun acknowledge(ephemeral: Boolean) = suspendCoroutine { cont ->
         if (isAcknowledged) {
             cont.resume(Unit)
         } else {
@@ -225,17 +226,7 @@ interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashC
         event.replyModal(Modal.create(customId, title).apply(builder).build())
 
     /**
-     * An extra object (reference) the set what you want.
+     * A map where you can define anything
      */
-    var extra: AtomicReference<Any?>
-
-    companion object {
-        fun impl(client: SlashCommandClient, event: SlashCommandInteractionEvent, function: KFunction<*>): SlashCommandContext {
-            return SlashCommandContextImpl(event, client, function)
-        }
-
-        fun guild(client: SlashCommandClient, event: SlashCommandInteractionEvent, function: KFunction<*>): GuildSlashCommandContext {
-            return GuildSlashCommandContextImpl(event, client, function)
-        }
-    }
+    var extra = HashMap<String, Any>()
 }

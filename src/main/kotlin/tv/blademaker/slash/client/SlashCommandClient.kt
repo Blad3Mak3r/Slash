@@ -17,8 +17,6 @@ import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.SlashUtils.on
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.*
-import tv.blademaker.slash.context.impl.GuildSlashCommandContextImpl
-import tv.blademaker.slash.context.impl.SlashCommandContextImpl
 import tv.blademaker.slash.exceptions.ExceptionHandler
 import tv.blademaker.slash.extensions.commandPath
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
@@ -99,11 +97,11 @@ class SlashCommandClient internal constructor(
         event: SlashCommandInteractionEvent
     ): SlashCommandContext {
         return when (handler.target) {
-            InteractionTarget.GUILD -> GuildSlashCommandContextImpl(event, this, handler.function)
-            InteractionTarget.DM -> SlashCommandContextImpl(event, this, handler.function)
+            InteractionTarget.GUILD -> GuildSlashCommandContext(this, event, handler.function)
+            InteractionTarget.DM -> SlashCommandContext(this, event, handler.function)
             InteractionTarget.ALL -> when (event.isFromGuild) {
-                true -> GuildSlashCommandContextImpl(event, this, handler.function)
-                false -> SlashCommandContextImpl(event, this, handler.function)
+                true -> GuildSlashCommandContext(this, event, handler.function)
+                false -> SlashCommandContext(this, event, handler.function)
             }
         }
     }
@@ -230,8 +228,8 @@ class SlashCommandClient internal constructor(
         val log = LoggerFactory.getLogger(SlashCommandClient::class.java)
 
         private fun getEventLogPrefix(event: GenericInteractionCreateEvent) = when (event.isFromGuild) {
-            true -> "[\u001b[32mSP::${event.guild?.name}(${event.guild?.id})\u001b[0m] ${event.user.asTag}"
-            false -> "[\u001b[32mDM::${event.user.asTag}(${event.user.id})\u001b[0m]"
+            true -> "[\u001b[32mSP::${event.guild?.name}(${event.guild?.id})\u001b[0m] ${event.user.effectiveName}"
+            false -> "[\u001b[32mDM::${event.user.effectiveName}(${event.user.id})\u001b[0m]"
         }
 
         fun builder(packageName: String): SlashCommandClientBuilder = SlashCommandClientBuilder(packageName)

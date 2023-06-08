@@ -3,8 +3,15 @@ package tv.blademaker.slash.context
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import tv.blademaker.slash.client.SlashCommandClient
+import kotlin.reflect.KFunction
 
-interface GuildSlashCommandContext : SlashCommandContext {
+open class GuildSlashCommandContext(
+    client: SlashCommandClient,
+    event: SlashCommandInteractionEvent,
+    function: KFunction<*>
+) : SlashCommandContext(client, event, function) {
     override val guild: Guild
         get() = event.guild!!
 

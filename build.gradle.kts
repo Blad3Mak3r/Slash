@@ -57,7 +57,7 @@ dependencies {
     implementation(kotlin("stdlib", "1.8.21"))
     implementation(kotlin("reflect", "1.8.21"))
 
-    compileOnly(libs.coroutines)
+    compileOnly(libs.coroutines.core)
     compileOnly(libs.reflections)
     compileOnly(libs.jda) { exclude(module = "opus-java") }
     implementation(libs.slf4j)
