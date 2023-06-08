@@ -1,6 +1,5 @@
 package tv.blademaker.slash.context
 
-import kotlinx.coroutines.flow.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
@@ -219,6 +218,8 @@ interface SlashCommandContext : DeferrableInteraction, InteractionContext<SlashC
      * @return The context action for the message.
      */
     fun message(builder: MessageCreateBuilder.() -> Unit) = ContextAction.build(this, builder)
+
+    fun message(content: String) = message { setContent(content) }
 
     fun replyModal(customId: String, title: String, builder: Modal.Builder.() -> Unit) =
         event.replyModal(Modal.create(customId, title).apply(builder).build())

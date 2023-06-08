@@ -14,7 +14,10 @@ import tv.blademaker.slash.PermissionTarget
 import tv.blademaker.slash.SlashUtils.toHuman
 import tv.blademaker.slash.UserCommand
 import tv.blademaker.slash.annotations.InteractionTarget
+import tv.blademaker.slash.extensions.captureSentryEvent
 import tv.blademaker.slash.extensions.commandPath
+import tv.blademaker.slash.extensions.message
+import tv.blademaker.slash.extensions.throwable
 import kotlin.time.Duration
 
 class ExceptionHandlerImpl : ExceptionHandler {
@@ -22,7 +25,10 @@ class ExceptionHandlerImpl : ExceptionHandler {
     override fun onException(ex: Throwable, command: BaseSlashCommand, event: ModalInteractionEvent) {
         val message = "Exception executing handler for modal `${event.modalId}`:\n```\n${ex.message}\n```"
 
-        log.error(message, ex)
+        captureSentryEvent(log) {
+            message(message)
+            throwable(ex)
+        }
 
         if (event.isAcknowledged) event.hook.sendMessage(message).setEphemeral(true).queue()
         else event.reply(message).setEphemeral(true).queue()
@@ -31,34 +37,41 @@ class ExceptionHandlerImpl : ExceptionHandler {
     override fun onException(ex: Throwable, command: BaseSlashCommand, event: SlashCommandInteractionEvent) {
         val message = "Exception executing handler for slash command `${event.commandPath}`:\n```\n${ex.message}\n```"
 
-        log.error(message, ex)
+        captureSentryEvent(log) {
+            message(message)
+            throwable(ex)
+        }
 
         if (event.isAcknowledged) event.hook.sendMessage(message).setEphemeral(true).queue()
         else event.reply(message).setEphemeral(true).queue()
     }
 
     override fun onException(ex: Throwable, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent) {
-        val message = "Exception executing handler for auto-complete interaction `${event.commandPath}`:\n```\n${ex.message}\n```"
-
-        log.error(message, ex)
+        captureSentryEvent(log) {
+            message("Exception executing handler for auto-complete interaction `${event.commandPath}`:\n```\n${ex.message}\n```")
+            throwable(ex)
+        }
     }
 
     override fun onException(ex: Throwable, command: BaseSlashCommand, event: ButtonInteractionEvent) {
-        val message = "Exception executing handler for button interaction `${event.button.id}`:\n```\n${ex.message}\n```"
-
-        log.error(message, ex)
+        captureSentryEvent(log) {
+            message("Exception executing handler for button interaction `${event.button.id}`:\n```\n${ex.message}\n```")
+            throwable(ex)
+        }
     }
 
     override fun onException(ex: Throwable, command: MessageCommand, event: MessageContextInteractionEvent) {
-        val message = "Exception executing handler for Message Command interaction `${event.fullCommandName}`:\n```\n${ex.message}\n```"
-
-        log.error(message, ex)
+        captureSentryEvent(log) {
+            message("Exception executing handler for Message Command interaction `${event.fullCommandName}`:\n```\n${ex.message}\n```")
+            throwable(ex)
+        }
     }
 
     override fun onException(ex: Throwable, command: UserCommand, event: UserContextInteractionEvent) {
-        val message = "Exception executing handler for User Command interaction `${event.fullCommandName}`:\n```\n${ex.message}\n```"
-
-        log.error(message, ex)
+        captureSentryEvent(log) {
+            message("Exception executing handler for User Command interaction `${event.fullCommandName}`:\n```\n${ex.message}\n```")
+            throwable(ex)
+        }
     }
 
     override fun onPermissionLackException(ex: PermissionsLackException) {
@@ -80,9 +93,15 @@ class ExceptionHandlerImpl : ExceptionHandler {
 
     override fun onInteractionTargetMismatch(ex: InteractionTargetMismatch) {
         when (ex.target) {
-            InteractionTarget.GUILD -> ex.context.replyMessage("This command cannot be used outside of a **Guild**.").queue()
-            InteractionTarget.DM -> ex.context.replyMessage("This command cannot be used on a **Guild**.").queue()
-            else -> throw IllegalStateException("Received InteractionTargetMismatch on a command with target InteractionTarget.ALL, report this to developer.")
+            InteractionTarget.GUILD -> ex.context.message("This command cannot be used outside of a **Guild**.").queue()
+            InteractionTarget.DM -> ex.context.message("This command cannot be used on a **Guild**.").queue()
+            else -> {
+                val message = "Received InteractionTargetMismatch on a command with target InteractionTarget.ALL, report this to developer."
+                ex.context.message(message).queue()
+                captureSentryEvent(log) {
+                    message(message)
+                }
+            }
         }
     }
 
