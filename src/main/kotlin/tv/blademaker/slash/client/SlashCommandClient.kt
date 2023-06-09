@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.EventListener
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.annotations.InteractionTarget
@@ -223,7 +224,7 @@ class SlashCommandClient internal constructor(
     }
 
     companion object {
-        val log = LoggerFactory.getLogger(SlashCommandClient::class.java)
+        val log: Logger = LoggerFactory.getLogger(SlashCommandClient::class.java)
 
         private fun getEventLogPrefix(event: GenericInteractionCreateEvent) = when (event.isFromGuild) {
             true -> "[\u001b[32mSP::${event.guild?.name}(${event.guild?.id})\u001b[0m] ${event.user.effectiveName}"
