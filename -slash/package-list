@@ -7,6 +7,7 @@ $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.ALL///Pointing
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.DM///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash.annotations/-interaction-target/-d-m/index.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget.GUILD///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash.annotations/-interaction-target/-g-u-i-l-d/index.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-interaction-target/index.html
+$dokka.location:tv.blademaker.slash.annotations/InteractionTarget/entries/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-interaction-target/entries.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget/valueOf/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-interaction-target/value-of.html
 $dokka.location:tv.blademaker.slash.annotations/InteractionTarget/values/#/PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-interaction-target/values.html
 $dokka.location:tv.blademaker.slash.annotations/OnAutoComplete///PointingToDeclaration/-slash/tv.blademaker.slash.annotations/-on-auto-complete/index.html
@@ -122,6 +123,8 @@ $dokka.location:tv.blademaker.slash.context/InteractionContext///PointingToDecla
 $dokka.location:tv.blademaker.slash.context/InteractionContext/client/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-interaction-context/client.html
 $dokka.location:tv.blademaker.slash.context/InteractionContext/event/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-interaction-context/event.html
 $dokka.location:tv.blademaker.slash.context/InteractionContext/interaction/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-interaction-context/interaction.html
+$dokka.location:tv.blademaker.slash.context/InteractionContext/jda/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-interaction-context/jda.html
+$dokka.location:tv.blademaker.slash.context/InteractionContext/selfUser/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-interaction-context/self-user.html
 $dokka.location:tv.blademaker.slash.context/MessageCommandContext///PointingToDeclaration/-slash/tv.blademaker.slash.context/-message-command-context/index.html
 $dokka.location:tv.blademaker.slash.context/MessageCommandContext/MessageCommandContext/#net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent#tv.blademaker.slash.client.SlashCommandClient/PointingToDeclaration/-slash/tv.blademaker.slash.context/-message-command-context/-message-command-context.html
 $dokka.location:tv.blademaker.slash.context/MessageCommandContext/client/#/PointingToDeclaration/-slash/tv.blademaker.slash.context/-message-command-context/client.html
@@ -292,6 +295,7 @@ $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.USER///PointingToD
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes.VOICE_CHANNEL///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash.internal/-valid-option-types/-v-o-i-c-e_-c-h-a-n-n-e-l/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes///PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/index.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes/convert/#net.dv8tion.jda.api.interactions.commands.OptionMapping?/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/convert.html
+$dokka.location:tv.blademaker.slash.internal/ValidOptionTypes/entries/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/entries.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes/valueOf/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/value-of.html
 $dokka.location:tv.blademaker.slash.internal/ValidOptionTypes/values/#/PointingToDeclaration/-slash/tv.blademaker.slash.internal/-valid-option-types/values.html
 $dokka.location:tv.blademaker.slash.metrics////PointingToDeclaration/-slash/tv.blademaker.slash.metrics/index.html
@@ -311,6 +315,7 @@ $dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target.CHANNEL///Pointin
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target.GUILD///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/-g-u-i-l-d/index.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target.USER///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/-u-s-e-r/index.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/index.html
+$dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target/entries/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/entries.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target/valueOf/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/value-of.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimit.Target/values/#/PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/-target/values.html
 $dokka.location:tv.blademaker.slash.ratelimit/RateLimit///PointingToDeclaration/-slash/tv.blademaker.slash.ratelimit/-rate-limit/index.html
@@ -344,6 +349,7 @@ $dokka.location:tv.blademaker.slash/MessageCommand/handle/#tv.blademaker.slash.c
 $dokka.location:tv.blademaker.slash/PermissionTarget.BOT///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash/-permission-target/-b-o-t/index.html
 $dokka.location:tv.blademaker.slash/PermissionTarget.USER///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-slash/tv.blademaker.slash/-permission-target/-u-s-e-r/index.html
 $dokka.location:tv.blademaker.slash/PermissionTarget///PointingToDeclaration/-slash/tv.blademaker.slash/-permission-target/index.html
+$dokka.location:tv.blademaker.slash/PermissionTarget/entries/#/PointingToDeclaration/-slash/tv.blademaker.slash/-permission-target/entries.html
 $dokka.location:tv.blademaker.slash/PermissionTarget/valueOf/#kotlin.String/PointingToDeclaration/-slash/tv.blademaker.slash/-permission-target/value-of.html
 $dokka.location:tv.blademaker.slash/PermissionTarget/values/#/PointingToDeclaration/-slash/tv.blademaker.slash/-permission-target/values.html
 $dokka.location:tv.blademaker.slash/SlashUtils///PointingToDeclaration/-slash/tv.blademaker.slash/-slash-utils/index.html
