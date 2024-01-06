@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.8.21"
-    id("org.jetbrains.dokka") version "1.8.20"
+    kotlin("jvm") version "1.9.10"
+    id("org.jetbrains.dokka") version "1.9.10"
     id("com.github.ben-manes.versions") version "0.46.0"
 
     `maven-publish`
@@ -41,12 +41,6 @@ val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
 
 version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
-val coroutinesVersion = "1.6.4"
-val slf4jApi = "2.0.7"
-val prometheusVersion = "0.16.0"
-val reflectionsVersion = "0.10.2"
-val sentryVersion = "6.18.1"
-
 repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
@@ -54,8 +48,8 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib", "1.8.21"))
-    implementation(kotlin("reflect", "1.8.21"))
+    implementation(kotlin("stdlib", "1.9.10"))
+    implementation(kotlin("reflect", "1.9.10"))
 
     compileOnly(libs.coroutines.core)
     api(libs.reflections)
@@ -65,7 +59,7 @@ dependencies {
     compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.4.7")
+    testImplementation("ch.qos.logback:logback-classic:1.4.12")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
