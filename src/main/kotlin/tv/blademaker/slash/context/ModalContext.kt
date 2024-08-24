@@ -24,7 +24,7 @@ class ModalContext(
      *
      *
      */
-    override suspend fun acknowledge(ephemeral: Boolean) = suspendCoroutine<Unit> { cont ->
+    override suspend fun acknowledge(ephemeral: Boolean) = suspendCoroutine { cont ->
         if (isAcknowledged) {
             cont.resume(Unit)
         } else {

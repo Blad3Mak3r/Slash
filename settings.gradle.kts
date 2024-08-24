@@ -4,7 +4,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             val coroutines = version("coroutines", "1.7.1")
-            val jda = version("jda", "5.0.0-beta.21")
+            val jda = version("jda", "5.1.0")
             val prometheus = version("prometheus", "0.16.0")
             val reflections = version("reflections", "0.10.2")
             val sentry = version("sentry", "7.6.0")

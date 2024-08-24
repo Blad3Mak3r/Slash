@@ -39,9 +39,9 @@ enum class ValidOptionTypes(
     companion object {
         fun isValidType(type: KClassifier?): Boolean {
             return if (type == null) false
-            else values().any { it.kClass == type }
+            else entries.any { it.kClass == type }
         }
 
-        fun get(type: KType) = values().find { it.kClass == type.classifier }
+        fun get(type: KType) = entries.find { it.kClass == type.classifier }
     }
 }

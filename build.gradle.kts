@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.9.10"
-    id("org.jetbrains.dokka") version "1.9.10"
-    id("com.github.ben-manes.versions") version "0.46.0"
+    kotlin("jvm") version "2.0.20"
+    id("org.jetbrains.dokka") version "1.9.20"
+    id("com.github.ben-manes.versions") version "0.51.0"
 
     `maven-publish`
     `java-library`
@@ -48,8 +48,8 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib", "1.9.10"))
-    implementation(kotlin("reflect", "1.9.10"))
+    implementation(kotlin("stdlib", "2.0.20"))
+    implementation(kotlin("reflect", "2.0.20"))
 
     compileOnly(libs.coroutines.core)
     api(libs.reflections)
@@ -59,7 +59,7 @@ dependencies {
     compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.5.3")
+    testImplementation("ch.qos.logback:logback-classic:1.5.7")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
