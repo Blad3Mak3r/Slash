@@ -15,13 +15,11 @@ import kotlin.time.Duration
 interface ExceptionHandler {
 
     fun wrap(e: Throwable, command: BaseSlashCommand, event: SlashCommandInteractionEvent) = when(e) {
-        is InteractionTargetMismatch -> onInteractionTargetMismatch(e)
         is PermissionsLackException -> onPermissionLackException(e)
         else -> onException(e, command, event)
     }
 
     fun wrap(e: Throwable, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent) = when(e) {
-        is InteractionTargetMismatch -> onInteractionTargetMismatch(e)
         is PermissionsLackException -> onPermissionLackException(e)
         else -> onException(e, command, event)
     }
@@ -39,8 +37,6 @@ interface ExceptionHandler {
     fun onException(ex: Throwable, command: UserCommand, event: UserContextInteractionEvent)
 
     fun onPermissionLackException(ex: PermissionsLackException)
-
-    fun onInteractionTargetMismatch(ex: InteractionTargetMismatch)
 
     fun onTimeoutCancellationException(ex: TimeoutCancellationException, event: SlashCommandInteractionEvent, timeout: Duration)
 }

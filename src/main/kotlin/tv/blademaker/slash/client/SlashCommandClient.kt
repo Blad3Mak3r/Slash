@@ -18,7 +18,6 @@ import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.*
 import tv.blademaker.slash.exceptions.ExceptionHandler
-import tv.blademaker.slash.exceptions.InteractionTargetMismatch
 import tv.blademaker.slash.extensions.commandPath
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
 import tv.blademaker.slash.internal.*
@@ -115,14 +114,30 @@ class SlashCommandClient internal constructor(
         }
     }
 
-    private fun checkEventTarget(event: SlashCommandInteractionEvent, handler: SlashCommandHandler) {
-        val result = when (handler.target) {
-            InteractionTarget.ALL -> true
-            InteractionTarget.GUILD -> event.isFromGuild
-            InteractionTarget.DM -> !event.isFromGuild
+    private fun checkTargetGuild(event: SlashCommandInteractionEvent, handler: SlashCommandHandler): Boolean {
+        if (!event.isFromGuild) {
+            event.reply("This command cannot be used outside of a **Guild**.").setEphemeral(true).queue()
         }
 
-        if (!result) throw InteractionTargetMismatch(event, handler.path, handler.target)
+        return event.isFromGuild
+    }
+
+    private fun checkTargetDirectMessage(event: SlashCommandInteractionEvent, handler: SlashCommandHandler): Boolean {
+        if (event.isFromGuild) {
+            event.reply("This command cannot be used on a **Guild**.").setEphemeral(true).queue()
+        }
+
+        return !event.isFromGuild
+    }
+
+    private fun checkEventTarget(event: SlashCommandInteractionEvent, handler: SlashCommandHandler): Boolean {
+        val result = when (handler.target) {
+            InteractionTarget.ALL -> true
+            InteractionTarget.GUILD -> checkTargetGuild(event, handler)
+            InteractionTarget.DM -> checkTargetDirectMessage(event, handler)
+        }
+
+        return result
     }
 
     private suspend fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
@@ -134,7 +149,8 @@ class SlashCommandClient internal constructor(
                     "this exceptions is reported to developer automatically.").setEphemeral(true).queue()
         }
 
-        checkEventTarget(event, handler)
+        if (!checkEventTarget(event, handler))
+            return
 
         log.debug("Executing handler ${handler.path} for command path ${event.commandPath}")
 
