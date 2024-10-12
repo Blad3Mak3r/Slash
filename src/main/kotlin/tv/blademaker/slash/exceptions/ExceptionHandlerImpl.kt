@@ -93,11 +93,11 @@ class ExceptionHandlerImpl : ExceptionHandler {
 
     override fun onInteractionTargetMismatch(ex: InteractionTargetMismatch) {
         when (ex.target) {
-            InteractionTarget.GUILD -> ex.context.message("This command cannot be used outside of a **Guild**.").queue()
-            InteractionTarget.DM -> ex.context.message("This command cannot be used on a **Guild**.").queue()
+            InteractionTarget.GUILD -> ex.event.reply("This command cannot be used outside of a **Guild**.").setEphemeral(true).queue()
+            InteractionTarget.DM -> ex.event.reply("This command cannot be used on a **Guild**.").setEphemeral(true).queue()
             else -> {
                 val message = "Received InteractionTargetMismatch on a command with target InteractionTarget.ALL, report this to developer."
-                ex.context.message(message).queue()
+                ex.event.reply(message).setEphemeral(true).queue()
                 captureSentryEvent(log) {
                     message(message)
                 }

@@ -3,8 +3,8 @@ rootProject.name = "Slash"
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
-            val coroutines = version("coroutines", "1.7.1")
-            val jda = version("jda", "5.1.0")
+            val coroutines = version("coroutines", "1.9.0")
+            val jda = version("jda", "5.1.2")
             val prometheus = version("prometheus", "0.16.0")
             val reflections = version("reflections", "0.10.2")
             val sentry = version("sentry", "7.6.0")

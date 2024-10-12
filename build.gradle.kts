@@ -59,7 +59,7 @@ dependencies {
     compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.5.7")
+    testImplementation("ch.qos.logback:logback-classic:1.5.10")
 }
 
 val dokkaOutputDir = "$buildDir/dokka"

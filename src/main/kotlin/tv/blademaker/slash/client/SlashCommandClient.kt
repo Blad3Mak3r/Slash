@@ -18,6 +18,7 @@ import tv.blademaker.slash.SlashUtils
 import tv.blademaker.slash.annotations.InteractionTarget
 import tv.blademaker.slash.context.*
 import tv.blademaker.slash.exceptions.ExceptionHandler
+import tv.blademaker.slash.exceptions.InteractionTargetMismatch
 import tv.blademaker.slash.extensions.commandPath
 import tv.blademaker.slash.extensions.newCoroutineDispatcher
 import tv.blademaker.slash.internal.*
@@ -114,6 +115,16 @@ class SlashCommandClient internal constructor(
         }
     }
 
+    private fun checkEventTarget(event: SlashCommandInteractionEvent, handler: SlashCommandHandler) {
+        val result = when (handler.target) {
+            InteractionTarget.ALL -> true
+            InteractionTarget.GUILD -> event.isFromGuild
+            InteractionTarget.DM -> !event.isFromGuild
+        }
+
+        if (!result) throw InteractionTargetMismatch(event, handler.path, handler.target)
+    }
+
     private suspend fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
         val handler = findHandler(event)
 
@@ -122,6 +133,8 @@ class SlashCommandClient internal constructor(
             return event.reply("Not found handler for command path ${event.commandPath}," +
                     "this exceptions is reported to developer automatically.").setEphemeral(true).queue()
         }
+
+        checkEventTarget(event, handler)
 
         log.debug("Executing handler ${handler.path} for command path ${event.commandPath}")
 

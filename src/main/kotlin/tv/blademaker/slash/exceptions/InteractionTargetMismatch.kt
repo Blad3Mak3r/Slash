@@ -1,11 +1,10 @@
 package tv.blademaker.slash.exceptions
 
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import tv.blademaker.slash.annotations.InteractionTarget
-import tv.blademaker.slash.context.SlashCommandContext
-import java.lang.RuntimeException
 
 class InteractionTargetMismatch(
-    val context: SlashCommandContext,
+    val event: SlashCommandInteractionEvent,
     val commandPath: String,
     val target: InteractionTarget
 ) : RuntimeException()
