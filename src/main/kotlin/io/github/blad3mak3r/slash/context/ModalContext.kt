@@ -4,7 +4,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.interactions.modals.ModalInteraction
-import tv.blademaker.slash.client.SlashCommandClient
+import io.github.blad3mak3r.slash.client.SlashCommandClient
 import java.util.regex.Matcher
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException

@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.interactions.Interaction
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
-import tv.blademaker.slash.context.SlashCommandContext
+import io.github.blad3mak3r.slash.context.SlashCommandContext
 
 @Suppress("unused")
 class EmbedContextAction(val ctx: SlashCommandContext, override val original: MessageEmbed) : ContextAction<MessageEmbed> {

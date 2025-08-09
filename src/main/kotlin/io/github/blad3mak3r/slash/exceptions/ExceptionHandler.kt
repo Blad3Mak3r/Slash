@@ -7,9 +7,9 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
-import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.MessageCommand
-import tv.blademaker.slash.UserCommand
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.MessageCommand
+import io.github.blad3mak3r.slash.UserCommand
 import kotlin.time.Duration
 
 interface ExceptionHandler {

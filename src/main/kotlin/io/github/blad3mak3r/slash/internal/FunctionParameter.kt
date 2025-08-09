@@ -1,8 +1,8 @@
 package io.github.blad3mak3r.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.context.AutoCompleteContext
-import tv.blademaker.slash.context.SlashCommandContext
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.context.AutoCompleteContext
+import io.github.blad3mak3r.slash.context.SlashCommandContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 

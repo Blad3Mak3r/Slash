@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
-import tv.blademaker.slash.context.SlashCommandContext
+import io.github.blad3mak3r.slash.context.SlashCommandContext
 import java.awt.Color
 
 interface ContextAction<T> {

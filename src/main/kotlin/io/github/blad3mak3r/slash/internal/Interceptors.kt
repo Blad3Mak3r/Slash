@@ -1,10 +1,10 @@
 package io.github.blad3mak3r.slash.internal
 
 import net.dv8tion.jda.api.Permission
-import tv.blademaker.slash.PermissionTarget
-import tv.blademaker.slash.annotations.Permissions
-import tv.blademaker.slash.context.*
-import tv.blademaker.slash.exceptions.PermissionsLackException
+import io.github.blad3mak3r.slash.PermissionTarget
+import io.github.blad3mak3r.slash.annotations.Permissions
+import io.github.blad3mak3r.slash.context.*
+import io.github.blad3mak3r.slash.exceptions.PermissionsLackException
 
 interface Interceptor<C : InteractionContext<*>> {
     suspend fun intercept(ctx: C): Boolean

@@ -11,8 +11,8 @@ import net.dv8tion.jda.api.interactions.modals.Modal
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
-import tv.blademaker.slash.client.SlashCommandClient
-import tv.blademaker.slash.context.actions.ContextAction
+import io.github.blad3mak3r.slash.client.SlashCommandClient
+import io.github.blad3mak3r.slash.context.actions.ContextAction
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine

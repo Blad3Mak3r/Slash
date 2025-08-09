@@ -1,10 +1,10 @@
 package io.github.blad3mak3r.slash.ratelimit
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import tv.blademaker.slash.context.SlashCommandContext
-import tv.blademaker.slash.extensions.commandPath
-import tv.blademaker.slash.utils.appendCodeBlock
-import tv.blademaker.slash.utils.appendLine
+import io.github.blad3mak3r.slash.context.SlashCommandContext
+import io.github.blad3mak3r.slash.extensions.commandPath
+import io.github.blad3mak3r.slash.utils.appendCodeBlock
+import io.github.blad3mak3r.slash.utils.appendLine
 
 interface RateLimitClient {
 

@@ -8,16 +8,16 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.MessageCommand
-import tv.blademaker.slash.PermissionTarget
-import tv.blademaker.slash.SlashUtils.toHuman
-import tv.blademaker.slash.UserCommand
-import tv.blademaker.slash.annotations.InteractionTarget
-import tv.blademaker.slash.extensions.captureSentryEvent
-import tv.blademaker.slash.extensions.commandPath
-import tv.blademaker.slash.extensions.message
-import tv.blademaker.slash.extensions.throwable
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.MessageCommand
+import io.github.blad3mak3r.slash.PermissionTarget
+import io.github.blad3mak3r.slash.SlashUtils.toHuman
+import io.github.blad3mak3r.slash.UserCommand
+import io.github.blad3mak3r.slash.annotations.InteractionTarget
+import io.github.blad3mak3r.slash.extensions.captureSentryEvent
+import io.github.blad3mak3r.slash.extensions.commandPath
+import io.github.blad3mak3r.slash.extensions.message
+import io.github.blad3mak3r.slash.extensions.throwable
 import kotlin.time.Duration
 
 class ExceptionHandlerImpl : ExceptionHandler {

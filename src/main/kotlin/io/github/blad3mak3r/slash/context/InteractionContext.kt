@@ -5,8 +5,8 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.interactions.Interaction
-import tv.blademaker.slash.SlashUtils
-import tv.blademaker.slash.client.SlashCommandClient
+import io.github.blad3mak3r.slash.SlashUtils
+import io.github.blad3mak3r.slash.client.SlashCommandClient
 import kotlin.time.Duration
 
 interface InteractionContext<E : GenericInteractionCreateEvent> {

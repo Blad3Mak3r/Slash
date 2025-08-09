@@ -1,9 +1,9 @@
 package io.github.blad3mak3r.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.DiscoveryResult
-import tv.blademaker.slash.MessageCommand
-import tv.blademaker.slash.UserCommand
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.DiscoveryResult
+import io.github.blad3mak3r.slash.MessageCommand
+import io.github.blad3mak3r.slash.UserCommand
 
 data class Registry(
     val message: List<MessageCommand>,

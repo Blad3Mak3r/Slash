@@ -1,6 +1,6 @@
 package io.github.blad3mak3r.slash.internal
 
-import tv.blademaker.slash.context.InteractionContext
+import io.github.blad3mak3r.slash.context.InteractionContext
 
 abstract class InterceptorHandler<C : InteractionContext<*>, T : Interceptor<C>> {
 

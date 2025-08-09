@@ -2,14 +2,14 @@ package io.github.blad3mak3r.slash.internal
 
 import kotlinx.coroutines.withTimeout
 import org.slf4j.LoggerFactory
-import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.annotations.InteractionTarget
-import tv.blademaker.slash.annotations.OnSlashCommand
-import tv.blademaker.slash.annotations.OptionName
-import tv.blademaker.slash.annotations.Permissions
-import tv.blademaker.slash.context.GuildSlashCommandContext
-import tv.blademaker.slash.context.SlashCommandContext
-import tv.blademaker.slash.ratelimit.RateLimit
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.annotations.InteractionTarget
+import io.github.blad3mak3r.slash.annotations.OnSlashCommand
+import io.github.blad3mak3r.slash.annotations.OptionName
+import io.github.blad3mak3r.slash.annotations.Permissions
+import io.github.blad3mak3r.slash.context.GuildSlashCommandContext
+import io.github.blad3mak3r.slash.context.SlashCommandContext
+import io.github.blad3mak3r.slash.ratelimit.RateLimit
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation

@@ -3,7 +3,7 @@ package io.github.blad3mak3r.slash.metrics
 import io.prometheus.client.Counter
 import io.prometheus.client.Gauge
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import tv.blademaker.slash.extensions.commandPath
+import io.github.blad3mak3r.slash.extensions.commandPath
 
 internal class Metrics(strategy: MetricsStrategy) {
 

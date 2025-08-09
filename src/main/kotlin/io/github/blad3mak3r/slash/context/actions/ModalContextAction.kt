@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditData
-import tv.blademaker.slash.context.ModalContext
+import io.github.blad3mak3r.slash.context.ModalContext
 
 class ModalContextAction(val ctx: ModalContext, override val original: MessageCreateData) : ContextAction<MessageCreateData> {
     override val configuration: ContextAction.Configuration = ContextAction.Configuration()

@@ -1,9 +1,9 @@
 package io.github.blad3mak3r.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.annotations.OnAutoComplete
-import tv.blademaker.slash.annotations.OptionName
-import tv.blademaker.slash.context.AutoCompleteContext
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.annotations.OnAutoComplete
+import io.github.blad3mak3r.slash.annotations.OptionName
+import io.github.blad3mak3r.slash.context.AutoCompleteContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation

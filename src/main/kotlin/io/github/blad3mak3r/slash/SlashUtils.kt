@@ -18,7 +18,7 @@ import io.github.blad3mak3r.slash.annotations.OnButton
 import io.github.blad3mak3r.slash.annotations.OnModal
 import io.github.blad3mak3r.slash.annotations.OnSlashCommand
 import io.github.blad3mak3r.slash.client.SlashCommandClient
-import tv.blademaker.slash.internal.*
+import io.github.blad3mak3r.slash.internal.*
 import java.lang.reflect.Modifier
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility

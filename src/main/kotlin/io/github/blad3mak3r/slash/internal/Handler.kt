@@ -1,6 +1,6 @@
 package io.github.blad3mak3r.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.BaseSlashCommand
 import kotlin.reflect.KFunction
 
 interface Handler {

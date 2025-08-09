@@ -1,8 +1,8 @@
 package io.github.blad3mak3r.slash.exceptions
 
 import net.dv8tion.jda.api.Permission
-import tv.blademaker.slash.PermissionTarget
-import tv.blademaker.slash.context.SlashCommandContext
+import io.github.blad3mak3r.slash.PermissionTarget
+import io.github.blad3mak3r.slash.context.SlashCommandContext
 import java.lang.RuntimeException
 
 class PermissionsLackException(

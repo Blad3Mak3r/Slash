@@ -1,9 +1,9 @@
 package io.github.blad3mak3r.slash.internal
 
-import tv.blademaker.slash.BaseSlashCommand
-import tv.blademaker.slash.annotations.OnModal
-import tv.blademaker.slash.annotations.matcher
-import tv.blademaker.slash.context.ModalContext
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.annotations.OnModal
+import io.github.blad3mak3r.slash.annotations.matcher
+import io.github.blad3mak3r.slash.context.ModalContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.findAnnotation
