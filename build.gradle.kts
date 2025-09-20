@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "2.0.20"
+    alias(libs.plugins.kotlin.jvm)
     id("com.github.ben-manes.versions") version "0.51.0"
 
     id("com.vanniktech.maven.publish") version "0.34.0"
@@ -23,7 +23,7 @@ val gitTag: String? by lazy {
         }
 
         stdout.toString().trim()
-    } catch(e: Throwable) {
+    } catch(_: Throwable) {
         null
     }
 }
@@ -60,12 +60,15 @@ dependencies {
     compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.5.10")
+    testImplementation("ch.qos.logback:logback-classic:1.5.13")
 }
 
 tasks {
     withType<KotlinCompile> {
-        this.kotlinOptions.jvmTarget = "11"
+        compilerOptions {
+            freeCompilerArgs.add("-Xjsr305=strict")
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
 }
 

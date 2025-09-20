@@ -1,0 +1,19 @@
+[versions]
+coroutines = "1.9.0"
+jda = "5.1.2"
+kotlin = "2.2.0"
+prometheus = "0.16.0"
+reflections = "0.10.2"
+sentry = "7.6.0"
+slf4j = "2.0.7"
+
+[libraries]
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
+prometheus = { module = "io.prometheus:simpleclient", version.ref = "prometheus" }
+reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
