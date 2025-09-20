@@ -1,5 +1,14 @@
 package io.github.blad3mak3r.slash.exceptions
 
+import io.github.blad3mak3r.slash.BaseSlashCommand
+import io.github.blad3mak3r.slash.MessageCommand
+import io.github.blad3mak3r.slash.PermissionTarget
+import io.github.blad3mak3r.slash.SlashUtils.toHuman
+import io.github.blad3mak3r.slash.UserCommand
+import io.github.blad3mak3r.slash.extensions.captureSentryEvent
+import io.github.blad3mak3r.slash.extensions.commandPath
+import io.github.blad3mak3r.slash.extensions.message
+import io.github.blad3mak3r.slash.extensions.throwable
 import kotlinx.coroutines.TimeoutCancellationException
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
@@ -8,16 +17,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.slf4j.LoggerFactory
-import io.github.blad3mak3r.slash.BaseSlashCommand
-import io.github.blad3mak3r.slash.MessageCommand
-import io.github.blad3mak3r.slash.PermissionTarget
-import io.github.blad3mak3r.slash.SlashUtils.toHuman
-import io.github.blad3mak3r.slash.UserCommand
-import io.github.blad3mak3r.slash.annotations.InteractionTarget
-import io.github.blad3mak3r.slash.extensions.captureSentryEvent
-import io.github.blad3mak3r.slash.extensions.commandPath
-import io.github.blad3mak3r.slash.extensions.message
-import io.github.blad3mak3r.slash.extensions.throwable
 import kotlin.time.Duration
 
 class ExceptionHandlerImpl : ExceptionHandler {
@@ -55,7 +54,7 @@ class ExceptionHandlerImpl : ExceptionHandler {
 
     override fun onException(ex: Throwable, command: BaseSlashCommand, event: ButtonInteractionEvent) {
         captureSentryEvent(log) {
-            message("Exception executing handler for button interaction `${event.button.id}`:\n```\n${ex.message}\n```")
+            message("Exception executing handler for button interaction `${event.button.customId}`:\n```\n${ex.message}\n```")
             throwable(ex)
         }
     }
