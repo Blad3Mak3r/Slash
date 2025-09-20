@@ -28,6 +28,9 @@ open class SlashCommandContext(
     val isAcknowledged: Boolean
         get() = event.isAcknowledged
 
+    val isFromAttachedGuild: Boolean
+        get() = event.isFromAttachedGuild
+
     val isFromGuild: Boolean
         get() = event.isFromGuild
 
