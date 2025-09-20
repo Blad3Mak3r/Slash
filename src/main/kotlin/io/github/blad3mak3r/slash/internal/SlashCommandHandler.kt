@@ -31,6 +31,7 @@ class SlashCommandHandler(
     }
 
     val target = annotation.target
+    val supportDetached: Boolean = annotation.supportDetached
 
     private val options: List<FunctionParameter> = buildHandlerParameters(parent, function, annotation.target)
 

@@ -18,7 +18,9 @@ import io.github.blad3mak3r.slash.SlashUtils
 import io.github.blad3mak3r.slash.annotations.InteractionTarget
 import io.github.blad3mak3r.slash.context.*
 import io.github.blad3mak3r.slash.exceptions.ExceptionHandler
+import io.github.blad3mak3r.slash.extensions.captureSentryEvent
 import io.github.blad3mak3r.slash.extensions.commandPath
+import io.github.blad3mak3r.slash.extensions.message
 import io.github.blad3mak3r.slash.extensions.newCoroutineDispatcher
 import io.github.blad3mak3r.slash.internal.*
 import io.github.blad3mak3r.slash.metrics.Metrics
@@ -140,6 +142,24 @@ class SlashCommandClient internal constructor(
         return result
     }
 
+    private fun checkDetachedSupport(event: SlashCommandInteractionEvent, handler: SlashCommandHandler): Boolean {
+        return when {
+            event.isFromAttachedGuild -> true
+            handler.supportDetached -> true
+            else -> {
+                val logMessage = "This command does not support detached messages. ${event.commandPath}"
+                captureSentryEvent(log) {
+                    message(logMessage)
+                    setExtra("command.path", event.commandPath)
+                    setExtra("handler.supportDetached", handler.supportDetached)
+                    setExtra("event.isFromAttachedGuild", event.isFromAttachedGuild)
+                }
+                event.reply("This command does not support detached messages.").setEphemeral(true).queue()
+                false
+            }
+        }
+    }
+
     private suspend fun onSlashCommandEvent(event: SlashCommandInteractionEvent) {
         val handler = findHandler(event)
 
@@ -150,6 +170,9 @@ class SlashCommandClient internal constructor(
         }
 
         if (!checkEventTarget(event, handler))
+            return
+
+        if (!checkDetachedSupport(event, handler))
             return
 
         log.debug("Executing handler ${handler.path} for command path ${event.commandPath}")
