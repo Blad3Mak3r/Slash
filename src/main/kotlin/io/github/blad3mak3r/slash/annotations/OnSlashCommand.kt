@@ -16,5 +16,10 @@ annotation class OnSlashCommand(
     /**
      * The [InteractionTarget] of the [OnSlashCommand] (default is InteractionTarget.GUILD)
      */
-    val target: InteractionTarget = InteractionTarget.GUILD
+    val target: InteractionTarget = InteractionTarget.GUILD,
+
+    /**
+     * Whether the command supports being used in a detached context (e.g., DMs).
+     */
+    val supportDetached: Boolean = false
 )
