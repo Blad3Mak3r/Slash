@@ -83,7 +83,7 @@ class SlashCommandClient internal constructor(
     }
 
     private fun findHandler(event: ButtonInteractionEvent): Pair<Matcher, ButtonHandler>? {
-        val buttonId = event.button.id ?: return null
+        val buttonId = event.button.customId ?: return null
         return commandHandlers.buttonHandlers.find { it.matches(buttonId) }?.let {
             Pair(it.matcher(buttonId), it)
         }
@@ -241,11 +241,11 @@ class SlashCommandClient internal constructor(
 
     private suspend fun onButtonInteractionEvent(event: ButtonInteractionEvent) {
         val handler = findHandler(event)
-            ?: return log.error("Not found handler for ButtonInteraction path ${event.button.id}")
+            ?: return log.error("Not found handler for ButtonInteraction path ${event.button.customId}")
 
         val ctx = ButtonContext(event, this, handler.first, handler.second.function)
 
-        log.info("${getEventLogPrefix(event)} [Button] --> ${event.button.id}")
+        log.info("${getEventLogPrefix(event)} [Button] --> ${event.button.customId}")
         handler.second.execute(ctx)
     }
 

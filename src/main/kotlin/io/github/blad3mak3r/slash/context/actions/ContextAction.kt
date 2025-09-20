@@ -4,12 +4,12 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.interactions.Interaction
-import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import io.github.blad3mak3r.slash.context.SlashCommandContext
+import net.dv8tion.jda.api.components.actionrow.ActionRow
 import java.awt.Color
 
 interface ContextAction<T> {
