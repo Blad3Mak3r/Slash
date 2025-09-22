@@ -1,13 +1,13 @@
-[maven-central-shield]: https://img.shields.io/maven-central/v/tv.blademaker/slash?color=blue
-[maven-central]: https://search.maven.org/artifact/tv.blademaker/slash
+[maven-central-shield]: https://img.shields.io/maven-central/v/io.github.bla3mak3r/slash?color=blue
+[maven-central]: https://search.maven.org/artifact/io.github.blad3mak3r/slash
 [kotlin]: https://kotlinlang.org/
-[jda]: https://github.com/DV8FromTheWorld/JDA/releases/tag/v6.0.0-rc.5
+[jda]: https://github.com/DV8FromTheWorld/JDA
 [jda-rework-interactions]: https://github.com/DV8FromTheWorld/JDA/tree/rework/interactions
 [slash-commands]: https://discord.com/developers/docs/interactions/application-commands
 
 # Slash [![Maven Central][maven-central-shield]][maven-central]
 ### 🚧 This project is currently in active development 🚧
-Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA 6.0.0-rc.5 (Java Discord API)][jda]** for an advanced implementation of **[Application Commands][slash-commands]** for Discord.
+Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Application Commands][slash-commands]** for Discord.
 
 
 ## Table of contents
@@ -45,7 +45,7 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 |--------------------|----------------------|
 | Kotlinx Coroutines | ``1.7.1``            |
 | Java JDK           | ``11``               |
-| JDA                | ``5.0.0-beta.19``    |
+| JDA                | ``6.0.0-rc.5``       |
 | Kotlin             | ``1.9.10``           |
 | Sentry             | ``7.1.0`` (optional) |
 
