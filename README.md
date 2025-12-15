@@ -331,16 +331,16 @@ repositories {
 }
 
 dependencies {
-    implementation("tv.blademaker:slash:x.y.z")
+    implementation("io.github.blad3mak3:slash:x.y.z")
 }
 ```
 
 ### Maven
 ```xml
 <dependency>
-    <groupId>tv.blademaker</groupId>
+    <groupId>io.github.blad3mak3r</groupId>
     <artifactId>slash</artifactId>
-    <version>x.y.z</version>
+    <version>X.X.X</version>
 </dependency>
         
 ```
