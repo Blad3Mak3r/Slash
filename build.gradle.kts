@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -14,33 +13,21 @@ plugins {
 
 group = "io.github.blad3mak3r"
 
-val gitTag: String? by lazy {
-    try {
-        val stdout = ByteArrayOutputStream()
-        rootProject.exec {
-            commandLine("git", "describe", "--tags", "--abbrev=0")
-            standardOutput = stdout
-        }
+val gitTagProvider = providers.exec {
+    commandLine("git", "describe", "--tags", "--abbrev=0")
+    workingDir = rootProject.projectDir
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { it.trim() }.orNull
 
-        stdout.toString().trim()
-    } catch(_: Throwable) {
-        null
-    }
-}
-
-val gitHash: String by lazy {
-    val stdout = ByteArrayOutputStream()
-    rootProject.exec {
-        commandLine("git", "rev-parse", "--short", "HEAD")
-        standardOutput = stdout
-    }
-
-    stdout.toString().trim()
-}
+val gitHashProvider = providers.exec {
+    commandLine("git", "rev-parse", "--short", "HEAD")
+    workingDir = rootProject.projectDir
+    isIgnoreExitValue = true
+}.standardOutput.asText.map { it.trim() }.orNull
 
 val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
 
-version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
+version = (gitTagProvider ?: gitHashProvider).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
 repositories {
     mavenCentral()
@@ -60,7 +47,7 @@ dependencies {
     compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.5.13")
+    testImplementation("ch.qos.logback:logback-classic:1.5.22")
 }
 
 tasks {

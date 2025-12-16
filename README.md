@@ -41,13 +41,13 @@ Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA
 
 ## Requirements
 
-| Package Name       | Required Version     |
-|--------------------|----------------------|
-| Kotlinx Coroutines | ``1.7.1``            |
-| Java JDK           | ``11``               |
-| JDA                | ``6.0.0-rc.5``       |
-| Kotlin             | ``1.9.10``           |
-| Sentry             | ``7.1.0`` (optional) |
+| Package Name       | Required Version      |
+|--------------------|-----------------------|
+| Kotlinx Coroutines | ``1.10.2``            |
+| Java JDK           | ``11``                |
+| JDA                | ``6.2.0``             |
+| Kotlin             | ``2.3.0``             |
+| Sentry             | ``8.29.0`` (optional) |
 
 ## Create commands
 

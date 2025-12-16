@@ -1,11 +1,11 @@
 [versions]
-coroutines = "1.9.0"
-jda = "6.1.1"
-kotlin = "2.2.0"
+coroutines = "1.10.2"
+jda = "6.2.0"
+kotlin = "2.3.0"
 prometheus = "0.16.0"
 reflections = "0.10.2"
-sentry = "7.6.0"
-slf4j = "2.0.7"
+sentry = "8.29.0"
+slf4j = "2.0.17"
 
 [libraries]
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
