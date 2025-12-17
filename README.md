@@ -331,15 +331,15 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.blad3mak3:slash:x.y.z")
+    implementation("io.github.blad3mak3.slash:slash-core:x.y.z")
 }
 ```
 
 ### Maven
 ```xml
 <dependency>
-    <groupId>io.github.blad3mak3r</groupId>
-    <artifactId>slash</artifactId>
+    <groupId>io.github.blad3mak3r.slash</groupId>
+    <artifactId>slash-core</artifactId>
     <version>X.X.X</version>
 </dependency>
         
