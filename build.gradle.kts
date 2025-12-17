@@ -2,9 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    id("com.github.ben-manes.versions") version "0.51.0"
-
-    id("com.vanniktech.maven.publish") version "0.34.0"
+    alias(libs.plugins.publish)
+    alias(libs.plugins.versions)
 
     `java-library`
     signing
@@ -36,8 +35,8 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib", "2.0.20"))
-    implementation(kotlin("reflect", "2.0.20"))
+    implementation(kotlin("stdlib", "2.3.0"))
+    implementation(kotlin("reflect", "2.3.0"))
 
     compileOnly(libs.coroutines.core)
     api(libs.reflections)

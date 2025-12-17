@@ -3,9 +3,11 @@ coroutines = "1.10.2"
 jda = "6.2.0"
 kotlin = "2.3.0"
 prometheus = "0.16.0"
+publish = "0.35.0"
 reflections = "0.10.2"
 sentry = "8.29.0"
 slf4j = "2.0.17"
+versions = "0.53.0"
 
 [libraries]
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -17,3 +19,5 @@ slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+publish = { id = "com.vanniktech.maven.publish", version.ref = "publish"}
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions"}
