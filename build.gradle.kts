@@ -1,102 +1,21 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-plugins {
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.publish)
-    alias(libs.plugins.versions)
-
-    `java-library`
-    signing
-    java
+val gitTag: String? by lazy {
+    providers.exec {
+        commandLine("git", "describe", "--tags", "--abbrev=0")
+        workingDir(rootProject.projectDir)
+        isIgnoreExitValue = true
+    }.standardOutput.asText.map { it.trim() }.orNull
 }
 
-group = "io.github.blad3mak3r"
-
-val gitTagProvider = providers.exec {
-    commandLine("git", "describe", "--tags", "--abbrev=0")
-    workingDir = rootProject.projectDir
-    isIgnoreExitValue = true
-}.standardOutput.asText.map { it.trim() }.orNull
-
-val gitHashProvider = providers.exec {
-    commandLine("git", "rev-parse", "--short", "HEAD")
-    workingDir = rootProject.projectDir
-    isIgnoreExitValue = true
-}.standardOutput.asText.map { it.trim() }.orNull
-
-val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
-
-version = (gitTagProvider ?: gitHashProvider).plus(if (isSnapshot) "-SNAPSHOT" else "")
-
-repositories {
-    mavenCentral()
-    maven("https://m2.dv8tion.net/releases")
-    maven("https://jitpack.io")
+val gitHash: String? by lazy {
+    providers.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        workingDir(rootProject.projectDir)
+        isIgnoreExitValue = true
+    }.standardOutput.asText.map { it.trim() }.orNull
 }
 
-dependencies {
-    implementation(kotlin("stdlib", "2.3.0"))
-    implementation(kotlin("reflect", "2.3.0"))
+rootProject.version = gitTag ?: gitHash ?: "dev"
 
-    compileOnly(libs.coroutines.core)
-    api(libs.reflections)
-    compileOnly(libs.jda) { exclude(module = "opus-java") }
-    implementation(libs.slf4j)
-    implementation(libs.sentry)
-    compileOnly(libs.prometheus)
-
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.5.22")
-}
-
-tasks {
-    withType<KotlinCompile> {
-        compilerOptions {
-            freeCompilerArgs.add("-Xjsr305=strict")
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-        }
-    }
-}
-
-java {
-    targetCompatibility = JavaVersion.VERSION_11
-    sourceCompatibility = JavaVersion.VERSION_11
-    withSourcesJar()
-}
-
-
-mavenPublishing {
-    coordinates("io.github.blad3mak3r", "slash", "$version")
-
-    pom {
-        name.set(project.name)
-        description.set("Advanced Slash Command handler for Discord and JDA")
-        url.set("https://github.com/Blad3Mak3r/Slash")
-        issueManagement {
-            system.set("GitHub")
-            url.set("https://github.com/Blad3Mak3r/Slash/issues")
-        }
-        licenses {
-            license {
-                name.set("Apache License 2.0")
-                url.set("https://github.com/Blad3Mak3r/Slash/LICENSE.txt")
-                distribution.set("repo")
-            }
-        }
-        scm {
-            url.set("https://github.com/Blad3Mak3r/Slash")
-            connection.set("https://github.com/Blad3Mak3r/Slash.git")
-            developerConnection.set("scm:git:ssh://git@github.com:Blad3Mak3r/Slash.git")
-        }
-        developers {
-            developer {
-                name.set("Juan Luis Caro")
-                url.set("https://github.com/Blad3Mak3r")
-            }
-        }
-    }
-
-    publishToMavenCentral(automaticRelease = true)
-
-    signAllPublications()
+subprojects {
+    this.version = rootProject.version
 }

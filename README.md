@@ -259,7 +259,7 @@ suspend fun someCommand(ctx: SlashCommandContext) {
 ```
 
 ### Custom Option names
-You can use the annotation [@OptionName](src/main/kotlin/tv/blademaker/slash/annotations/OptionName.kt)
+You can use the annotation [@OptionName](slash-core/src/main/kotlin/tv/blademaker/slash/annotations/OptionName.kt)
 the set a custom name for an option.
 ```kotlin
 @OnSlashCommand(target = InteractionTarget.ALL)

@@ -94,7 +94,7 @@ interface ContextAction<T> {
         }
 
         internal fun build(ctx: SlashCommandContext, embedBuilder: EmbedBuilder.() -> Unit): EmbedContextAction {
-            val color = ctx.event.guild?.selfMember?.color ?: Color(44, 47, 51)
+            val color = ctx.event.guild?.selfMember?.colors?.primary ?: Color(44, 47, 51)
             return build(ctx, EmbedBuilder().setColor(color).apply(embedBuilder))
         }
 
