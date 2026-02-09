@@ -5,7 +5,7 @@
 [jda-rework-interactions]: https://github.com/DV8FromTheWorld/JDA/tree/rework/interactions
 [slash-commands]: https://discord.com/developers/docs/interactions/application-commands
 
-# Slash [![Maven Central][maven-central-shield]][maven-central]
+# Slash [![Maven Central][maven-central-shield]][maven-central] [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Blad3Mak3r/Slash)
 ### 🚧 This project is currently in active development 🚧
 Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Application Commands][slash-commands]** for Discord.
 
