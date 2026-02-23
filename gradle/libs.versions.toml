@@ -1,6 +1,6 @@
 [versions]
 coroutines = "1.10.2"
-jda = "6.2.0"
+jda = "6.3.1"
 kotlin = "2.3.0"
 prometheus = "0.16.0"
 publish = "0.35.0"
