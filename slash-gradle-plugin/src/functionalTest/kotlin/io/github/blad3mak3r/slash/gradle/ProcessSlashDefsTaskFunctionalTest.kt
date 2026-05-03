@@ -47,7 +47,7 @@ class ProcessSlashDefsTaskFunctionalTest {
     // ── tests ─────────────────────────────────────────────────────────────────
 
     @Test
-    fun `processSlashDefs generates AbstractPingCommandHandler for simple command`() {
+    fun `processSlashDefs generates PingCommand interface for simple command`() {
         setupProject(
             """
             import io.github.blad3mak3r.slash.dsl.command
@@ -66,20 +66,21 @@ class ProcessSlashDefsTaskFunctionalTest {
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":processSlashDefs")!!.outcome)
 
-        val generatedFile = findGeneratedFile("AbstractPingCommandHandler.kt")
-        assertNotNull("AbstractPingCommandHandler.kt must be generated", generatedFile)
+        val generatedFile = findGeneratedFile("PingCommand.kt")
+        assertNotNull("PingCommand.kt must be generated", generatedFile)
 
         val code = generatedFile!!.readText()
-        assertTrue("abstract class", code.contains("abstract class AbstractPingCommandHandler"))
-        assertTrue("extends AbstractCommandHandler", code.contains(": AbstractCommandHandler()"))
-        assertTrue("abstract onPing method", code.contains("fun onPing("))
+        assertTrue("interface PingCommand", code.contains("interface PingCommand"))
+        assertTrue("extends SlashCommandHandler", code.contains(": SlashCommandHandler"))
+        assertTrue("onPing method", code.contains("fun onPing("))
         assertTrue("message parameter", code.contains("message"))
         assertTrue("buildCommandData present", code.contains("buildCommandData"))
         assertTrue("slash name", code.contains("\"ping\""))
+        assertTrue("KDoc path comment", code.contains("/ping"))
     }
 
     @Test
-    fun `processSlashDefs generates AbstractBanCommandHandler with subcommands and buttons`() {
+    fun `processSlashDefs generates BanCommand interface with subcommands and buttons`() {
         setupProject(
             """
             import io.github.blad3mak3r.slash.dsl.command
@@ -102,14 +103,15 @@ class ProcessSlashDefsTaskFunctionalTest {
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":processSlashDefs")!!.outcome)
 
-        val generatedFile = findGeneratedFile("AbstractBanCommandHandler.kt")
-        assertNotNull("AbstractBanCommandHandler.kt must be generated", generatedFile)
+        val generatedFile = findGeneratedFile("BanCommand.kt")
+        assertNotNull("BanCommand.kt must be generated", generatedFile)
 
         val code = generatedFile!!.readText()
-        assertTrue("abstract class", code.contains("abstract class AbstractBanCommandHandler"))
+        assertTrue("interface BanCommand", code.contains("interface BanCommand"))
         assertTrue("onMember method", code.contains("fun onMember("))
         assertTrue("dispatchButton present", code.contains("dispatchButton"))
         assertTrue("BTN_REGEX constant", code.contains("BTN_REGEX"))
+        assertTrue("KDoc path /ban member", code.contains("/ban member"))
     }
 
     @Test
@@ -132,7 +134,7 @@ class ProcessSlashDefsTaskFunctionalTest {
     }
 
     @Test
-    fun `processSlashDefs generates multiple handlers when multiple commands defined`() {
+    fun `processSlashDefs generates multiple interfaces when multiple commands defined`() {
         setupProject(
             """
             import io.github.blad3mak3r.slash.dsl.command
@@ -146,8 +148,8 @@ class ProcessSlashDefsTaskFunctionalTest {
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":processSlashDefs")!!.outcome)
 
-        assertNotNull("AbstractPingCommandHandler.kt", findGeneratedFile("AbstractPingCommandHandler.kt"))
-        assertNotNull("AbstractBanCommandHandler.kt",  findGeneratedFile("AbstractBanCommandHandler.kt"))
+        assertNotNull("PingCommand.kt", findGeneratedFile("PingCommand.kt"))
+        assertNotNull("BanCommand.kt",  findGeneratedFile("BanCommand.kt"))
     }
 
     // ── helpers ───────────────────────────────────────────────────────────────

@@ -11,8 +11,9 @@ import java.net.URLClassLoader
  * **Pass 2** — Registry generation.
  *
  * After `compileKotlin` has built the user's implementation classes, this task:
- * 1. Scans `build/classes/kotlin/main/` via [URLClassLoader] for concrete (non-abstract)
- *    subclasses of any `Abstract*CommandHandler` that is present on the classpath.
+ * 1. Scans `build/classes/kotlin/main/` via [URLClassLoader] for concrete (non-abstract,
+ *    non-interface) classes that implement any `*Command` interface from the
+ *    `io.github.blad3mak3r.slash.generated` package.
  * 2. Generates `object SlashCommandRegistry : SlashRegistry` using KotlinPoet into [outputDir].
  *
  * The generated file is added to a `slashRegistry` source set so that it is compiled and
@@ -21,7 +22,7 @@ import java.net.URLClassLoader
 @CacheableTask
 abstract class GenerateSlashRegistryTask : DefaultTask() {
 
-    /** Compiled output of the `main` source set (user implementations + generated abstract handlers). */
+    /** Compiled output of the `main` source set (user implementations + generated interfaces). */
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val mainClassesDir: DirectoryProperty
@@ -54,16 +55,16 @@ abstract class GenerateSlashRegistryTask : DefaultTask() {
         val classLoader = URLClassLoader(urls, Thread.currentThread().contextClassLoader)
 
         try {
-            val abstractHandlerClassName = "io.github.blad3mak3r.slash.AbstractCommandHandler"
-            val abstractHandlerClass = try {
-                classLoader.loadClass(abstractHandlerClassName)
+            val slashHandlerClassName = "io.github.blad3mak3r.slash.SlashCommandHandler"
+            val slashHandlerClass = try {
+                classLoader.loadClass(slashHandlerClassName)
             } catch (e: ClassNotFoundException) {
-                logger.error("[Slash] Cannot find AbstractCommandHandler on classpath — is slash-runtime a dependency?")
+                logger.error("[Slash] Cannot find SlashCommandHandler on classpath — is slash-runtime a dependency?")
                 return
             }
 
-            // ── 2. Load all classes, find abstract handlers + concrete impls ──
-            val abstractHandlers = mutableListOf<Class<*>>()
+            // ── 2. Load all classes, separate generated interfaces from concrete impls ──
+            val generatedInterfaces = mutableListOf<Class<*>>()
             val concreteImpls = mutableListOf<Class<*>>()
 
             classesDir.walkTopDown()
@@ -75,13 +76,20 @@ abstract class GenerateSlashRegistryTask : DefaultTask() {
                         .removeSuffix(".class")
                     try {
                         val clazz = classLoader.loadClass(className)
-                        if (abstractHandlerClass.isAssignableFrom(clazz) && clazz != abstractHandlerClass) {
-                            val isAbstract = java.lang.reflect.Modifier.isAbstract(clazz.modifiers)
-                            val isGenerated = clazz.simpleName.startsWith("Abstract")
-                            if (isAbstract || isGenerated) {
-                                abstractHandlers += clazz
-                                logger.debug("[Slash] Found abstract handler: ${clazz.name}")
-                            } else {
+                        if (!slashHandlerClass.isAssignableFrom(clazz) || clazz == slashHandlerClass) return@forEach
+
+                        val isInterface = clazz.isInterface
+                        val isGenerated = isInterface &&
+                            clazz.name.startsWith("io.github.blad3mak3r.slash.generated.")
+                        val isAbstract = java.lang.reflect.Modifier.isAbstract(clazz.modifiers)
+                        val isConcrete = !isInterface && !isAbstract
+
+                        when {
+                            isGenerated -> {
+                                generatedInterfaces += clazz
+                                logger.debug("[Slash] Found generated interface: ${clazz.name}")
+                            }
+                            isConcrete -> {
                                 concreteImpls += clazz
                                 logger.debug("[Slash] Found concrete impl: ${clazz.name}")
                             }
@@ -92,27 +100,25 @@ abstract class GenerateSlashRegistryTask : DefaultTask() {
                 }
 
             if (concreteImpls.isEmpty()) {
-                logger.warn("[Slash] No concrete AbstractCommandHandler implementations found — registry will be empty")
+                logger.warn("[Slash] No concrete SlashCommandHandler implementations found — registry will be empty")
             }
 
-            // ── 3. Map abstract handler → concrete impl ───────────────────────
-            // Each concrete impl should extend exactly one Abstract*CommandHandler
+            // ── 3. Map generated interface → concrete impl ────────────────────
+            // Each concrete impl should implement exactly one generated *Command interface.
             val implementations = mutableMapOf<String, String>()
             for (impl in concreteImpls) {
-                val matchingAbstract = abstractHandlers.find { abs ->
-                    abs.isAssignableFrom(impl) && abs != abstractHandlerClass
-                }
-                if (matchingAbstract != null) {
-                    val key = matchingAbstract.simpleName
+                val matchingInterface = generatedInterfaces.find { iface -> iface.isAssignableFrom(impl) }
+                if (matchingInterface != null) {
+                    val key = matchingInterface.simpleName
                     if (implementations.containsKey(key)) {
                         logger.warn(
-                            "[Slash] Multiple implementations of ${matchingAbstract.name}: " +
+                            "[Slash] Multiple implementations of ${matchingInterface.name}: " +
                             "${implementations[key]} and ${impl.name}. Using ${impl.name}."
                         )
                     }
                     implementations[key] = impl.name
                 } else {
-                    logger.warn("[Slash] Concrete handler ${impl.name} does not extend any known Abstract*CommandHandler — skipping")
+                    logger.warn("[Slash] Concrete handler ${impl.name} does not implement any known *Command interface — skipping")
                 }
             }
 

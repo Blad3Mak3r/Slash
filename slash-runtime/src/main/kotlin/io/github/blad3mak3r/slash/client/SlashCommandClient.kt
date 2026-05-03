@@ -1,6 +1,5 @@
 package io.github.blad3mak3r.slash.client
 
-import io.github.blad3mak3r.slash.AbstractCommandHandler
 import io.github.blad3mak3r.slash.SlashRegistry
 import io.github.blad3mak3r.slash.context.AutoCompleteContext
 import io.github.blad3mak3r.slash.context.ButtonContext
@@ -102,10 +101,7 @@ class SlashCommandClient internal constructor(
 // ── Extension helpers ─────────────────────────────────────────────────────────
 
 fun SlashCommandClient.registerCommandsWith(jda: JDA, guildId: Long? = null) {
-    val data = (this as? SlashCommandClient)?.let { client ->
-        // Access registry through reflection is not ideal; expose via companion or separate util
-    }
-    // Convenience: call directly from the registry
+    // Convenience: call directly from the registry via SlashRegistry extension below
 }
 
 fun SlashRegistry.registerCommandsWith(jda: JDA, guildId: Long? = null) {

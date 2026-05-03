@@ -9,16 +9,16 @@ class AbstractHandlerGeneratorTest {
     // ── simple command with top-level options ─────────────────────────────────
 
     @Test
-    fun `generates abstract class for GUILD command with required String option`() {
+    fun `generates interface for GUILD command with required String option`() {
         val def = simpleCommand("ping", "Ping the bot", CommandTarget.GUILD) {
             add(OptionDef("message", "Your message", String::class, required = true, choices = emptyList()))
         }
 
         val code = AbstractHandlerGenerator.generate(def).toString()
 
-        assertTrue(code.contains("abstract class AbstractPingCommandHandler"))
-        assertTrue("extends AbstractCommandHandler", code.contains(": AbstractCommandHandler()"))
-        assertTrue("has abstract onPing", code.contains("abstract suspend fun onPing("))
+        assertTrue("interface PingCommand", code.contains("interface PingCommand"))
+        assertTrue("extends SlashCommandHandler", code.contains(": SlashCommandHandler"))
+        assertTrue("has onPing method", code.contains("fun onPing("))
         // required String → non-nullable
         assertTrue("message is non-nullable String", code.contains("message: String") && !code.contains("message: String?"))
         assertTrue("GUILD command uses GuildSlashCommandContext", code.contains("GuildSlashCommandContext"))
@@ -29,6 +29,8 @@ class AbstractHandlerGeneratorTest {
         // dispatch extracts option and calls onPing
         assertTrue("dispatch calls getOption", code.contains("getOption(\"message\")"))
         assertTrue("dispatch calls onPing", code.contains("onPing("))
+        // KDoc comment on onPing
+        assertTrue("KDoc path comment", code.contains("/ping"))
     }
 
     @Test
@@ -45,7 +47,7 @@ class AbstractHandlerGeneratorTest {
     // ── subcommands ───────────────────────────────────────────────────────────
 
     @Test
-    fun `generates abstract methods for each subcommand`() {
+    fun `generates handler methods for each subcommand`() {
         val def = CommandDef(
             name = "ban",
             description = "Ban management",
@@ -75,14 +77,17 @@ class AbstractHandlerGeneratorTest {
 
         val code = AbstractHandlerGenerator.generate(def).toString()
 
-        assertTrue("class name", code.contains("abstract class AbstractBanCommandHandler"))
-        assertTrue("onMember method", code.contains("abstract suspend fun onMember("))
+        assertTrue("interface name", code.contains("interface BanCommand"))
+        assertTrue("onMember method", code.contains("fun onMember("))
         assertTrue("reason param is nullable", code.contains("reason: String?"))
-        assertTrue("onBot method", code.contains("abstract suspend fun onBot("))
+        assertTrue("onBot method", code.contains("fun onBot("))
         // dispatch uses when block
         assertTrue("dispatch has when", code.contains("when ("))
         assertTrue("dispatch routes member", code.contains("\"member\""))
         assertTrue("dispatch routes bot", code.contains("\"bot\""))
+        // KDoc path comments
+        assertTrue("KDoc for onMember", code.contains("/ban member"))
+        assertTrue("KDoc for onBot", code.contains("/ban bot"))
     }
 
     // ── buttons and modals ────────────────────────────────────────────────────
@@ -105,14 +110,17 @@ class AbstractHandlerGeneratorTest {
 
         assertTrue("dispatchButton override", code.contains("override suspend fun dispatchButton("))
         assertTrue("dispatchModal override", code.contains("override suspend fun dispatchModal("))
-        // abstract handler methods
-        assertTrue("abstract button handler", code.contains("Button("))
-        assertTrue("abstract modal handler", code.contains("Modal("))
+        // handler methods
+        assertTrue("button handler", code.contains("Button("))
+        assertTrue("modal handler", code.contains("Modal("))
         // companion regex constants
         assertTrue("BTN_REGEX constant in companion", code.contains("BTN_REGEX"))
         assertTrue("MODAL_REGEX constant in companion", code.contains("MODAL_REGEX"))
         assertTrue("Regex(\"ban-confirm", code.contains("Regex(\"ban-confirm"))
         assertTrue("Regex(\"ban-appeal", code.contains("Regex(\"ban-appeal"))
+        // KDoc comments on button/modal handlers
+        assertTrue("KDoc for button", code.contains("ban-confirm-[a-z0-9]+"))
+        assertTrue("KDoc for modal", code.contains("ban-appeal"))
     }
 
     // ── DM target ─────────────────────────────────────────────────────────────
@@ -170,12 +178,12 @@ class AbstractHandlerGeneratorTest {
     // ── PascalCase naming ─────────────────────────────────────────────────────
 
     @Test
-    fun `kebab-case command name becomes PascalCase class and method name`() {
+    fun `kebab-case command name becomes PascalCase interface and method name`() {
         val def = simpleCommand("slash-command", "Kebab test", CommandTarget.GUILD)
 
         val code = AbstractHandlerGenerator.generate(def).toString()
 
-        assertTrue("class uses PascalCase", code.contains("AbstractSlashCommandCommandHandler"))
+        assertTrue("interface uses PascalCase", code.contains("interface SlashCommandCommand"))
         assertTrue("getCommandName returns kebab original", code.contains("\"slash-command\""))
     }
 

@@ -11,7 +11,7 @@ import java.net.URLClassLoader
  * **Pass 1** — Compile-time code generation.
  *
  * Reads compiled classes from `src/slash/kotlin/` (the `slashDefs` source set), loads them via
- * [URLClassLoader] to populate `CommandRegistry`, then generates one `Abstract*CommandHandler.kt`
+ * [URLClassLoader] to populate `CommandRegistry`, then generates one `*Command.kt` interface
  * per command definition using KotlinPoet.
  *
  * The generated files are written to [outputDir] which is added to the `main` source set so
@@ -85,12 +85,12 @@ abstract class ProcessSlashDefsTask : DefaultTask() {
                 return
             }
 
-            // ── 4. Generate Abstract*CommandHandler.kt for each command ────────
+            // ── 4. Generate *Command.kt interface for each command ─────────────
             for (commandDef in commandDefs) {
                 commandDef!!
                 val cmdName = commandDef.javaClass.getMethod("getName").invoke(commandDef) as String
                 val fileSpec = AbstractHandlerGenerator.generate(commandDef)
-                val outputFile = outputDirectory.resolve("Abstract${cmdName.toPascalCase()}CommandHandler.kt")
+                val outputFile = outputDirectory.resolve("${cmdName.toPascalCase()}Command.kt")
                 fileSpec.writeTo(outputDirectory)
                 logger.lifecycle("[Slash] Generated ${outputFile.name}")
             }

@@ -4,16 +4,20 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
 /**
- * Generates an `Abstract*CommandHandler` file for a single [CommandDef], loaded via reflection
+ * Generates a `*Command` **interface** file for a single [CommandDef], loaded via reflection
  * from the slashDefs compilation output.
  *
- * All access to the CommandDef and its children is via standard Java reflection so that this code
+ * Generated naming convention:
+ * - Interface:       `BanCommand`  (in package `io.github.blad3mak3r.slash.generated`)
+ * - User's class:    `BanCommandHandler : BanCommand`  (user-written, anywhere in src/main/kotlin)
+ *
+ * All access to CommandDef and its children is via standard Java reflection so that this code
  * compiles and runs even when slash-dsl is only on the URLClassLoader classpath.
  */
 object AbstractHandlerGenerator {
 
-    private val ABSTRACT_COMMAND_HANDLER =
-        ClassName("io.github.blad3mak3r.slash", "AbstractCommandHandler")
+    private val SLASH_COMMAND_HANDLER =
+        ClassName("io.github.blad3mak3r.slash", "SlashCommandHandler")
     private val SLASH_COMMAND_DATA =
         ClassName("net.dv8tion.jda.api.interactions.commands.build", "SlashCommandData")
     private val COMMANDS =
@@ -57,23 +61,30 @@ object AbstractHandlerGenerator {
         val buttons = commandDef.list("getButtons")
         val modals = commandDef.list("getModals")
 
-        val className = "Abstract${cmdName.toPascalCase()}CommandHandler"
+        // Interface name: BanCommand, PingCommand, etc.
+        val interfaceName = "${cmdName.toPascalCase()}Command"
         val ctxType = if (target == "GUILD") GUILD_SLASH_CMD_CTX else SLASH_CMD_CTX
 
-        val classBuilder = TypeSpec.classBuilder(className)
-            .addModifiers(KModifier.ABSTRACT)
-            .superclass(ABSTRACT_COMMAND_HANDLER)
+        val ifaceBuilder = TypeSpec.interfaceBuilder(interfaceName)
+            .addKdoc(
+                "Generated interface for the [/%L] Discord command.\n\n" +
+                "Implement this interface and add your class to a source set visible to\n" +
+                "the [generateSlashRegistry] Gradle task. Do **not** edit this file.\n",
+                cmdName
+            )
+            .addSuperinterface(SLASH_COMMAND_HANDLER)
+            // Default implementations (routing plumbing)
             .addFunction(buildGetCommandName(cmdName))
             .addFunction(buildBuildCommandData(cmdName, description, target, subcommands, subcommandGroups, topLevelOptions))
             .addFunction(buildDispatch(cmdName, target, subcommands, topLevelOptions, ctxType))
 
-        // dispatchButton
+        // dispatchButton default impl
         if (buttons.isNotEmpty()) {
-            classBuilder.addFunction(buildDispatchButton(cmdName, buttons))
+            ifaceBuilder.addFunction(buildDispatchButton(cmdName, buttons))
         }
-        // dispatchModal
+        // dispatchModal default impl
         if (modals.isNotEmpty()) {
-            classBuilder.addFunction(buildDispatchModal(cmdName, modals))
+            ifaceBuilder.addFunction(buildDispatchModal(cmdName, modals))
         }
 
         // Abstract handler methods for each subcommand
@@ -81,21 +92,22 @@ object AbstractHandlerGenerator {
             sub!!
             val subName = sub.str("getName")
             val options = sub.list("getOptions")
-            classBuilder.addFunction(buildAbstractSubcommandFun(subName, options, ctxType))
+            ifaceBuilder.addFunction(buildSubcommandHandlerFun(cmdName, subName, options, ctxType))
         }
 
-        // If there are top-level options (no subcommands), add a single abstract handler
+        // If there are top-level options (no subcommands), a single abstract handler
         if (subcommands.isEmpty() && subcommandGroups.isEmpty() && topLevelOptions.isNotEmpty()) {
-            classBuilder.addFunction(buildAbstractRootFun(cmdName, topLevelOptions, ctxType))
+            ifaceBuilder.addFunction(buildRootHandlerFun(cmdName, topLevelOptions, ctxType))
         }
 
         // Abstract button handlers
         for (btn in buttons) {
             btn!!
             val pattern = btn.str("getPattern")
-            classBuilder.addFunction(
+            ifaceBuilder.addFunction(
                 FunSpec.builder("on${pattern.toHandlerSuffix()}Button")
-                    .addModifiers(KModifier.ABSTRACT, KModifier.SUSPEND)
+                    .addKdoc("Dispatched when a button interaction ID matches [%L].", pattern)
+                    .addModifiers(KModifier.SUSPEND)
                     .addParameter("ctx", BUTTON_CTX)
                     .build()
             )
@@ -105,15 +117,16 @@ object AbstractHandlerGenerator {
         for (modal in modals) {
             modal!!
             val pattern = modal.str("getPattern")
-            classBuilder.addFunction(
+            ifaceBuilder.addFunction(
                 FunSpec.builder("on${pattern.toHandlerSuffix()}Modal")
-                    .addModifiers(KModifier.ABSTRACT, KModifier.SUSPEND)
+                    .addKdoc("Dispatched when a modal interaction ID matches [%L].", pattern)
+                    .addModifiers(KModifier.SUSPEND)
                     .addParameter("ctx", MODAL_CTX)
                     .build()
             )
         }
 
-        // Companion with regex patterns
+        // Companion with regex pattern constants
         val companions = mutableListOf<PropertySpec>()
         for (btn in buttons) {
             btn!!
@@ -134,15 +147,15 @@ object AbstractHandlerGenerator {
                 .build()
         }
         if (companions.isNotEmpty()) {
-            classBuilder.addType(
+            ifaceBuilder.addType(
                 TypeSpec.companionObjectBuilder()
                     .addProperties(companions)
                     .build()
             )
         }
 
-        return FileSpec.builder("io.github.blad3mak3r.slash.generated", className)
-            .addType(classBuilder.build())
+        return FileSpec.builder("io.github.blad3mak3r.slash.generated", interfaceName)
+            .addType(ifaceBuilder.build())
             .build()
     }
 
@@ -240,12 +253,10 @@ object AbstractHandlerGenerator {
     private fun buildOptionBlock(opt: Any): CodeBlock {
         val optName = opt.str("getName")
         val optDesc = opt.str("getDescription")
-        val typeClass = opt.prop("getType")!!        // KClass<*> loaded via classloader
+        val typeClass = opt.prop("getType")!!
         val required = opt.bool("getRequired")
 
-        // KClass<*>.java.name is accessible without kotlin-reflect
         val javaTypeName = resolveJavaTypeName(typeClass)
-
         val mapping = TypeMappings.get(javaTypeName)
         return CodeBlock.of(
             "cmd.addOptions(%T(%T.%L, %S, %S, %L))\n",
@@ -288,13 +299,13 @@ object AbstractHandlerGenerator {
                 val options = sub.list("getOptions")
                 code.beginControlFlow("%S ->", subName)
                 val argList = buildOptionExtractions(code, options)
-                code.addStatement("on${subName.toPascalCase()}(%L)", "$dispatchCtx, $argList".trim(',',' '))
+                code.addStatement("on${subName.toPascalCase()}(%L)", "$dispatchCtx, $argList".trim(',', ' '))
                 code.endControlFlow()
             }
             code.endControlFlow()
         } else if (topLevelOptions.isNotEmpty()) {
             val argList = buildOptionExtractions(code, topLevelOptions)
-            code.addStatement("on${cmdName.toPascalCase()}(%L)", "$dispatchCtx, $argList".trim(',',' '))
+            code.addStatement("on${cmdName.toPascalCase()}(%L)", "$dispatchCtx, $argList".trim(',', ' '))
         }
 
         return FunSpec.builder("dispatch")
@@ -379,9 +390,16 @@ object AbstractHandlerGenerator {
             .build()
     }
 
-    private fun buildAbstractSubcommandFun(subName: String, options: List<*>, ctxType: ClassName): FunSpec {
+    /** Generates a handler method for a subcommand, e.g. `onMember` for `/ban member`. */
+    private fun buildSubcommandHandlerFun(
+        cmdName: String,
+        subName: String,
+        options: List<*>,
+        ctxType: ClassName
+    ): FunSpec {
         val builder = FunSpec.builder("on${subName.toPascalCase()}")
-            .addModifiers(KModifier.ABSTRACT, KModifier.SUSPEND)
+            .addKdoc("Handles [/%L %L].", cmdName, subName)
+            .addModifiers(KModifier.SUSPEND)
             .addParameter("ctx", ctxType)
         for (opt in options) {
             opt!!
@@ -398,9 +416,15 @@ object AbstractHandlerGenerator {
         return builder.build()
     }
 
-    private fun buildAbstractRootFun(cmdName: String, options: List<*>, ctxType: ClassName): FunSpec {
+    /** Generates a handler method for a top-level command with options, e.g. `onPing` for `/ping`. */
+    private fun buildRootHandlerFun(
+        cmdName: String,
+        options: List<*>,
+        ctxType: ClassName
+    ): FunSpec {
         val builder = FunSpec.builder("on${cmdName.toPascalCase()}")
-            .addModifiers(KModifier.ABSTRACT, KModifier.SUSPEND)
+            .addKdoc("Handles [/%L].", cmdName)
+            .addModifiers(KModifier.SUSPEND)
             .addParameter("ctx", ctxType)
         for (opt in options) {
             opt!!
