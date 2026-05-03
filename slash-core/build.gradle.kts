@@ -13,18 +13,16 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
-    maven("https://jitpack.io")
 }
 
 dependencies {
+    api(project(":slash-annotations"))
+
     implementation(kotlin("stdlib", "2.3.0"))
-    implementation(kotlin("reflect", "2.3.0"))
 
     compileOnly(libs.coroutines.core)
-    api(libs.reflections)
     compileOnly(libs.jda) { exclude(module = "opus-java") }
     implementation(libs.slf4j)
-    implementation(libs.sentry)
     compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")

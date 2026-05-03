@@ -18,19 +18,13 @@ import io.github.blad3mak3r.slash.ratelimit.RateLimitClient
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
-class SlashCommandClientBuilder internal constructor(
-    private val packageName: String
-) {
+class SlashCommandClientBuilder internal constructor() {
+
     private var metrics: MetricsStrategy? = null
-
     private var exceptionHandler: ExceptionHandler? = null
-
     private val interceptors = mutableSetOf<Interceptor<*>>()
-
     private var rateLimitClient: RateLimitClient? = null
-
     private var duration: Duration = 1.minutes
-
     private var eventsFlow: MutableSharedFlow<GenericEvent>? = null
 
     fun enableMetrics(): SlashCommandClientBuilder {
@@ -43,44 +37,46 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
+    fun setExceptionHandler(handler: ExceptionHandler): SlashCommandClientBuilder {
+        this.exceptionHandler = handler
+        return this
+    }
+
     fun addSlashInterceptor(interceptor: SlashCommandInterceptor): SlashCommandClientBuilder {
-        if (interceptors.contains(interceptor)) error("SlashCommandInterceptor already registered.")
+        check(!interceptors.contains(interceptor)) { "SlashCommandInterceptor already registered." }
         interceptors.add(interceptor)
         return this
     }
 
-    fun addSlashInterceptor(builder: suspend (ctx: SlashCommandContext) -> Boolean): SlashCommandClientBuilder {
-        return addSlashInterceptor(object : SlashCommandInterceptor {
+    fun addSlashInterceptor(builder: suspend (ctx: SlashCommandContext) -> Boolean): SlashCommandClientBuilder =
+        addSlashInterceptor(object : SlashCommandInterceptor {
             override suspend fun intercept(ctx: SlashCommandContext) = builder(ctx)
         })
-    }
 
     fun addUserInterceptor(interceptor: UserCommandInterceptor): SlashCommandClientBuilder {
-        if (interceptors.contains(interceptor)) error("UserCommandInterceptor already registered.")
+        check(!interceptors.contains(interceptor)) { "UserCommandInterceptor already registered." }
         interceptors.add(interceptor)
         return this
     }
 
-    fun addUserInterceptor(builder: suspend (ctx: UserCommandContext) -> Boolean): SlashCommandClientBuilder {
-        return addUserInterceptor(object : UserCommandInterceptor {
+    fun addUserInterceptor(builder: suspend (ctx: UserCommandContext) -> Boolean): SlashCommandClientBuilder =
+        addUserInterceptor(object : UserCommandInterceptor {
             override suspend fun intercept(ctx: UserCommandContext) = builder(ctx)
         })
-    }
 
     fun addMessageInterceptor(interceptor: MessageCommandInterceptor): SlashCommandClientBuilder {
-        if (interceptors.contains(interceptor)) error("MessageCommandInterceptor already registered.")
+        check(!interceptors.contains(interceptor)) { "MessageCommandInterceptor already registered." }
         interceptors.add(interceptor)
         return this
     }
 
-    fun addMessageInterceptor(builder: suspend (ctx: MessageCommandContext) -> Boolean): SlashCommandClientBuilder {
-        return addMessageInterceptor(object : MessageCommandInterceptor {
+    fun addMessageInterceptor(builder: suspend (ctx: MessageCommandContext) -> Boolean): SlashCommandClientBuilder =
+        addMessageInterceptor(object : MessageCommandInterceptor {
             override suspend fun intercept(ctx: MessageCommandContext) = builder(ctx)
         })
-    }
 
-    fun addInterceptor(interceptor: Interceptor<*>) : SlashCommandClientBuilder {
-        if (interceptors.contains(interceptor)) error("${interceptor::class.java.simpleName} already registered.")
+    fun addInterceptor(interceptor: Interceptor<*>): SlashCommandClientBuilder {
+        check(!interceptors.contains(interceptor)) { "${interceptor::class.java.simpleName} already registered." }
         interceptors.add(interceptor)
         return this
     }
@@ -100,38 +96,26 @@ class SlashCommandClientBuilder internal constructor(
         return this
     }
 
-    fun build(): SlashCommandClient {
-        return SlashCommandClient(
-            packageName,
-            eventsFlow ?: MutableSharedFlow(replay = 0),
-            exceptionHandler ?: ExceptionHandlerImpl(),
-            interceptors,
-            duration,
-            rateLimitClient,
-            metrics
-        )
-    }
+    fun build(): SlashCommandClient = SlashCommandClient(
+        eventsFlow ?: MutableSharedFlow(replay = 0),
+        exceptionHandler ?: ExceptionHandlerImpl(),
+        interceptors,
+        duration,
+        rateLimitClient,
+        metrics
+    )
 
     fun buildWith(jda: JDA): SlashCommandClient {
-        if (eventsFlow != null)
-            error("Cannot use buildWith() when you set your own eventsFlow, use build() instead.")
-
-        val client = build()
-
-        jda.addEventListener(client)
-
-        return client
+        check(eventsFlow == null) {
+            "Cannot use buildWith() when you have set a custom eventsFlow; use build() instead."
+        }
+        return build().also { jda.addEventListener(it) }
     }
 
     fun buildWith(shardManager: ShardManager): SlashCommandClient {
-        if (eventsFlow != null)
-            error("Cannot use buildWith() when you set your own eventsFlow, use build() instead.")
-
-        val client = build()
-
-        shardManager.addEventListener(client)
-
-        return client
+        check(eventsFlow == null) {
+            "Cannot use buildWith() when you have set a custom eventsFlow; use build() instead."
+        }
+        return build().also { shardManager.addEventListener(it) }
     }
-
 }

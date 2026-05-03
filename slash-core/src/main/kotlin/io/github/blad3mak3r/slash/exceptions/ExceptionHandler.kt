@@ -7,36 +7,32 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
-import io.github.blad3mak3r.slash.BaseSlashCommand
-import io.github.blad3mak3r.slash.MessageCommand
-import io.github.blad3mak3r.slash.UserCommand
 import kotlin.time.Duration
 
 interface ExceptionHandler {
 
-    fun wrap(e: Throwable, command: BaseSlashCommand, event: SlashCommandInteractionEvent) = when(e) {
+    fun wrap(e: Throwable, event: SlashCommandInteractionEvent) = when (e) {
         is PermissionsLackException -> onPermissionLackException(e)
-        else -> onException(e, command, event)
+        else -> onException(e, event)
     }
 
-    fun wrap(e: Throwable, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent) = when(e) {
-        is PermissionsLackException -> onPermissionLackException(e)
-        else -> onException(e, command, event)
-    }
+    fun onException(ex: Throwable, event: SlashCommandInteractionEvent)
 
-    fun onException(ex: Throwable, command: BaseSlashCommand, event: SlashCommandInteractionEvent)
+    fun onException(ex: Throwable, event: CommandAutoCompleteInteractionEvent)
 
-    fun onException(ex: Throwable, command: BaseSlashCommand, event: CommandAutoCompleteInteractionEvent)
+    fun onException(ex: Throwable, event: ModalInteractionEvent)
 
-    fun onException(ex: Throwable, command: BaseSlashCommand, event: ModalInteractionEvent)
+    fun onException(ex: Throwable, event: ButtonInteractionEvent)
 
-    fun onException(ex: Throwable, command: BaseSlashCommand, event: ButtonInteractionEvent)
+    fun onException(ex: Throwable, event: MessageContextInteractionEvent)
 
-    fun onException(ex: Throwable, command: MessageCommand, event: MessageContextInteractionEvent)
-
-    fun onException(ex: Throwable, command: UserCommand, event: UserContextInteractionEvent)
+    fun onException(ex: Throwable, event: UserContextInteractionEvent)
 
     fun onPermissionLackException(ex: PermissionsLackException)
 
-    fun onTimeoutCancellationException(ex: TimeoutCancellationException, event: SlashCommandInteractionEvent, timeout: Duration)
+    fun onTimeoutCancellationException(
+        ex: TimeoutCancellationException,
+        event: SlashCommandInteractionEvent,
+        timeout: Duration
+    )
 }

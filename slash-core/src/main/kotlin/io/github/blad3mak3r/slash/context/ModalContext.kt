@@ -9,21 +9,13 @@ import java.util.regex.Matcher
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.reflect.KFunction
 
 class ModalContext(
     override val event: ModalInteractionEvent,
     override val client: SlashCommandClient,
-    val matcher: Matcher,
-    override val function: KFunction<*>
-) : ModalInteraction by event, DeferrableInteraction, InteractionContext<ModalInteractionEvent>, FunctionHandler {
+    val matcher: Matcher
+) : ModalInteraction by event, DeferrableInteraction, InteractionContext<ModalInteractionEvent> {
 
-    /**
-     * Automatically detect if the interaction is already acknowledge and if not
-     * will acknowledge it.
-     *
-     *
-     */
     override suspend fun acknowledge(ephemeral: Boolean) = suspendCoroutine { cont ->
         if (isAcknowledged) {
             cont.resume(Unit)
