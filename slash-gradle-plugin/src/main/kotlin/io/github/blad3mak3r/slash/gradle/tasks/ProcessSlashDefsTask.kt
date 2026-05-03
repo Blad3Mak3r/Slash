@@ -65,7 +65,9 @@ abstract class ProcessSlashDefsTask : DefaultTask() {
                         .replace('\\', '.')
                         .removeSuffix(".class")
                     try {
-                        classLoader.loadClass(className)
+                        // forName with initialize=true triggers <clinit>, running top-level
+                        // `val ping = command("ping") { ... }` initialisers that register commands.
+                        Class.forName(className, true, classLoader)
                         logger.debug("[Slash] Loaded def class: $className")
                     } catch (e: Exception) {
                         logger.debug("[Slash] Could not load $className: ${e.message}")

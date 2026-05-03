@@ -244,8 +244,7 @@ object AbstractHandlerGenerator {
         val required = opt.bool("getRequired")
 
         // KClass<*>.java.name is accessible without kotlin-reflect
-        val javaTypeName = (typeClass as? Class<*>)?.name
-            ?: typeClass.javaClass.getMethod("getJava").invoke(typeClass).let { (it as Class<*>).name }
+        val javaTypeName = resolveJavaTypeName(typeClass)
 
         val mapping = TypeMappings.get(javaTypeName)
         return CodeBlock.of(

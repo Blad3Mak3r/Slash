@@ -1,5 +1,6 @@
 package io.github.blad3mak3r.slash.gradle
 
+import io.github.blad3mak3r.slash.dsl.CommandRegistry
 import io.github.blad3mak3r.slash.gradle.tasks.GenerateSlashRegistryTask
 import io.github.blad3mak3r.slash.gradle.tasks.ProcessSlashDefsTask
 import org.gradle.api.Plugin
@@ -8,6 +9,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.File
 
 class SlashPlugin : Plugin<Project> {
 
@@ -24,10 +26,19 @@ class SlashPlugin : Plugin<Project> {
         val generatedRegistryDir =
             project.layout.buildDirectory.dir("generated/slash/registry")
 
+        // ── Locate slash-dsl JAR/classes from plugin's own classloader ─────────
+        // Auto-injected so user projects don't need to declare slash-dsl explicitly.
+        val slashDslEntry = findClasspathEntry(CommandRegistry::class.java)
+
         // ── slashDefs source set: src/slash/kotlin/ ───────────────────────────
         val slashDefsSourceSet = sourceSets.create("slashDefs") { ss ->
             // slashDefs inherits main's compile classpath so JDA types are available
             ss.compileClasspath += mainSourceSet.compileClasspath
+            if (slashDslEntry != null) {
+                val slashDslFiles = project.files(slashDslEntry)
+                ss.compileClasspath += slashDslFiles
+                ss.runtimeClasspath += slashDslFiles
+            }
         }
         // Add src/slash/kotlin to the Kotlin source set for slashDefs
         kotlinExt.sourceSets.named("slashDefs").configure { kss ->
@@ -100,6 +111,36 @@ class SlashPlugin : Plugin<Project> {
         project.tasks.named("jar", Jar::class.java).configure { jar ->
             jar.dependsOn(project.tasks.named("compileSlashRegistryKotlin"))
             jar.from(slashRegistrySourceSet.output)
+        }
+    }
+
+    /**
+     * Finds the JAR file or classes directory that contains [clazz] from the plugin's own
+     * classloader. Used to auto-inject slash-dsl into the slashDefs compile/runtime classpath
+     * so consumer projects don't need an explicit `implementation(slash-dsl)` declaration.
+     */
+    private fun findClasspathEntry(clazz: Class<*>): File? {
+        val resourceName = clazz.name.replace('.', '/') + ".class"
+        val url = clazz.classLoader?.getResource(resourceName) ?: return null
+        return try {
+            when (url.protocol) {
+                "jar" -> {
+                    // jar:file:/path/to/slash-dsl.jar!/io/github/...class
+                    val jarPath = url.path.substringBefore("!").removePrefix("file:")
+                    File(jarPath).takeIf { it.exists() }
+                }
+                "file" -> {
+                    // file:/path/to/build/classes/kotlin/main/io/github/...class
+                    // Walk up `depth` directories to reach the classes root
+                    val depth = resourceName.split("/").size
+                    var f = File(url.toURI())
+                    repeat(depth) { f = f.parentFile }
+                    f.takeIf { it.isDirectory }
+                }
+                else -> null
+            }
+        } catch (_: Exception) {
+            null
         }
     }
 }
