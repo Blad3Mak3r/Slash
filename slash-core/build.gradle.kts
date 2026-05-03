@@ -18,7 +18,7 @@ repositories {
 dependencies {
     api(project(":slash-annotations"))
 
-    implementation(kotlin("stdlib", "2.3.0"))
+    implementation(kotlin("stdlib"))
 
     compileOnly(libs.coroutines.core)
     compileOnly(libs.jda) { exclude(module = "opus-java") }
