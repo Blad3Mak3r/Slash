@@ -1,346 +1,302 @@
-[maven-central-shield]: https://img.shields.io/maven-central/v/io.github.bla3mak3r/slash?color=blue
+[maven-central-shield]: https://img.shields.io/maven-central/v/io.github.blad3mak3r/slash-core?color=blue
 [maven-central]: https://search.maven.org/artifact/io.github.blad3mak3r/slash
 [kotlin]: https://kotlinlang.org/
 [jda]: https://github.com/DV8FromTheWorld/JDA
-[jda-rework-interactions]: https://github.com/DV8FromTheWorld/JDA/tree/rework/interactions
 [slash-commands]: https://discord.com/developers/docs/interactions/application-commands
 
 # Slash [![Maven Central][maven-central-shield]][maven-central] [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Blad3Mak3r/Slash)
-### 🚧 This project is currently in active development 🚧
-Slash is a library written 100% with **[Kotlin][kotlin]** that works with **[JDA (Java Discord API)][jda]** for an advanced implementation of **[Application Commands][slash-commands]** for Discord.
+### v2 — zero-reflection, compile-time code generation via KSP
 
+Slash is a library written 100% in **[Kotlin][kotlin]** that works with **[JDA][jda]** for an advanced implementation of **[Application Commands][slash-commands]** for Discord.
+
+All command routing is generated at **compile time** by the included KSP processor. There is no classpath scanning, no `kotlin-reflect`, and no startup overhead from reflection.
+
+---
 
 ## Table of contents
-- [ToDo](#todo)
 - [Requirements](#requirements)
-- [Commands creation](#create-commands)
-    - [Basic command](#basic-command)
-    - [Sub-commands and permissions](#sub-commands-slash-command-with-permissions)
-    - [Advanced commands](#advanced-commands-with-sub-command-groups-and-permissions)
-    - [Registering commands](#registering-commands)
-    - [Using Context Actions](#using-context-actions)
-    - [Custom Option names](#custom-option-names)
-    - [Auto complete commands options](#slash-commands-option-auto-complete)
-    - [Modals](#modals)
-    - [Rate Limiting Command Execution](#rate-limiting)
-- [Download](#download)
+- [Setup (Gradle)](#setup-gradle)
+- [Creating commands](#creating-commands)
+  - [Basic slash command](#basic-slash-command)
+  - [Sub-commands and permissions](#sub-commands-and-permissions)
+  - [Sub-command groups](#sub-command-groups)
+  - [Preconditions (@Require)](#preconditions-require)
+  - [Auto-complete](#auto-complete)
+  - [Buttons and Modals](#buttons-and-modals)
+  - [User and Message context commands](#user-and-message-context-commands)
+  - [Rate limiting](#rate-limiting)
+  - [Custom option names](#custom-option-names)
+- [Building the client](#building-the-client)
+- [Context Actions](#context-actions)
 
-**This library does not synchronize the commands created with the commands published on Discord.**
-
-## ToDo
-- [x] Implement handler for default command.
-- [x] Implement handlers for sub-commands.
-- [x] Implement handlers for sub-commands groups.
-- [x] Add support for **Auto Complete** command interactions.
-- [x] Add support for **Modals** command interactions.
-- [x] Add support for non-guild commands (DM commands).
-- [ ] Synchronize discord published commands with create commands.
-- [ ] Useful docs.
-- [ ] Be a nice package :).
-- [ ] Generate commands at build time.
+---
 
 ## Requirements
 
-| Package Name       | Required Version      |
-|--------------------|-----------------------|
-| Kotlinx Coroutines | ``1.10.2``            |
-| Java JDK           | ``11``                |
-| JDA                | ``6.2.0``             |
-| Kotlin             | ``2.3.0``             |
-| Sentry             | ``8.29.0`` (optional) |
+| Dependency         | Version  |
+|--------------------|----------|
+| Kotlin             | `2.3.0`  |
+| KSP                | `2.3.0-1.0.31` |
+| JDA                | `6.3.1+` |
+| Kotlinx Coroutines | `1.10.2` |
+| Java JDK           | `11`     |
 
-## Create commands
+---
 
-### Basic command
-Create a command inside the package ``net.example.commands`` called ``PingCommand.kt``:
+## Setup (Gradle)
 
 ```kotlin
-class PingCommand : BaseSlashCommand("ping") {
+// settings.gradle.kts — enable the KSP plugin
+plugins {
+    id("com.google.devtools.ksp") version "2.3.0-1.0.31" apply false
+}
+```
 
-    // This command can be used on guilds and direct messages.
-    // SlashCommandContext is used on DM and ALL targets.
+```kotlin
+// your-module/build.gradle.kts
+plugins {
+    kotlin("jvm")
+    id("com.google.devtools.ksp")
+}
+
+repositories {
+    mavenCentral()
+    maven("https://m2.dv8tion.net/releases")
+}
+
+dependencies {
+    // Runtime library
+    implementation("io.github.blad3mak3r.slash:slash-core:VERSION")
+
+    // Annotations (SOURCE retention — no bytecode impact)
+    implementation("io.github.blad3mak3r.slash:slash-annotations:VERSION")
+
+    // KSP processor — generates the wiring code at compile time
+    ksp("io.github.blad3mak3r.slash:slash-ksp-processor:VERSION")
+}
+```
+
+---
+
+## Creating commands
+
+### Basic slash command
+
+```kotlin
+@ApplicationCommand("ping")
+class PingCommand {
+
     @OnSlashCommand(target = InteractionTarget.ALL)
     suspend fun default(ctx: SlashCommandContext) {
         ctx.acknowledge(true)
-
-        val restPing = ctx.jda.restPing.await()
+        val restPing    = ctx.jda.restPing.await()
         val gatewayPing = ctx.jda.gatewayPing
 
         ctx.embed {
             setTitle("Pong!")
-            addField("Rest", "${restPing}ms", true)
+            addField("REST",    "${restPing}ms",    true)
             addField("Gateway", "${gatewayPing}ms", true)
         }.queue()
     }
-
-}
-
-class Whois : BaseSlashCommand("whois") {
-    
-    // This command only can be used on guilds.
-    // If you try to use it with SlashCommandContext instead of GuildSlashCommandContext
-    // the library will report warms about this.
-    @OnSlashCommand(target = InteractionTarget.GUILD)
-    suspend fun default(ctx: GuildSlashCommandContext, member: Member) {
-        ctx.embed {
-            setAuthor(/* ... */)
-            setTitle("Whois ${member.asTag}")
-            setDescription(/* ... */)
-        }.queue()
-        // When using queue on a ContextAction will automatically select between
-        // reply() and send()
-    }
 }
 ```
 
-### Sub-commands slash command with permissions
-Create a command inside package ``net.example.commands`` called ``RoleCommand.kt``:
+### Sub-commands and permissions
 
 ```kotlin
-class RoleCommand : BaseSlashCommand("role") {
-    
-    // The parsed path is role/add
-    // This handler required MANAGE_ROLES permission fot both, bot and user who execute the command.
-    @OnSlashCommand("add", target = InteractionTarget.GUILD)
-    @Permissions(bot = [Permission.MANAGE_ROLES], user = [Permission.MANAGE_ROLES])
+@ApplicationCommand("role")
+class RoleCommand {
+
+    // path: role/add
+    @OnSlashCommand(name = "add", target = InteractionTarget.GUILD)
+    @Permissions([Permission.MANAGE_ROLES])
     suspend fun addRole(ctx: GuildSlashCommandContext, member: Member) {
-        // This handler will add a role to the member.
+        // add role
     }
 
-    // The parsed path is role/remove
-    // This handler required MANAGE_ROLES permission fot both, bot and user who execute the command.
-    @OnSlashCommand("remove", target = InteractionTarget.GUILD)
-    @Permissions(bot = [Permission.MANAGE_ROLES], user = [Permission.MANAGE_ROLES])
+    // path: role/remove
+    @OnSlashCommand(name = "remove", target = InteractionTarget.GUILD)
+    @Permissions([Permission.MANAGE_ROLES])
     suspend fun removeRole(ctx: GuildSlashCommandContext, member: Member) {
-        // This handler will remove a role to a member if the member have the role.
+        // remove role
     }
 
-    // The parsed path is role/list
-    @OnSlashCommand("list", target = InteractionTarget.GUILD)
-    suspend fun listRoles(ctx: GuildSlashCommandContext, member: Member?) {
-        // This handler has a nullable param, that means the option on the command event
-        // can be null.
-    }
-
-    // The parsed path is role/compare
-    @OnSlashCommand("compare", target = InteractionTarget.GUILD)
-    suspend fun compareRoles(ctx: GuildSlashCommandContext, member1: Member, member2: Member) {
-        // This handler will compare the roles between two members from the guild.
-    }
+    // path: role/list — nullable param means the option is optional
+    @OnSlashCommand(name = "list", target = InteractionTarget.GUILD)
+    suspend fun listRoles(ctx: GuildSlashCommandContext, member: Member?) { }
 }
 ```
 
-This command will create 4 handlers with the following user representation:
-- /role add: (member)
-- /role remove: (member)
-- /role list: (member?)
-- /role compare: (member) (member)
-
-### Advanced commands with sub-command groups and permissions
-Create a command inside package ``net.example.commands`` called ``TwitchCommand.kt``:
+### Sub-command groups
 
 ```kotlin
-class TwitchCommand : BaseSlashCommand("twitch") {
+@ApplicationCommand("twitch")
+class TwitchCommand {
 
-    // The parsed path is twitch/clips/top
+    // path: twitch/clips/top
     @OnSlashCommand(group = "clips", name = "top", target = InteractionTarget.ALL)
-    @Permissions(bot = [Permission.MESSAGE_EMBED_LINKS])
-    suspend fun clipTop(ctx: SlashCommandContext, channel: String?) {
-        
-    }
+    @Permissions([Permission.MESSAGE_EMBED_LINKS], target = PermissionTarget.BOT)
+    suspend fun clipTop(ctx: SlashCommandContext, channel: String?) { }
 
-    // The parsed path is twitch/clips/random
+    // path: twitch/clips/random
     @OnSlashCommand(group = "clips", name = "random", target = InteractionTarget.ALL)
-    @Permissions(bot = [Permission.MESSAGE_EMBED_LINKS])
-    suspend fun clipRandom(ctx: SlashCommandContext, channel: String?) {
-        
+    suspend fun clipRandom(ctx: SlashCommandContext, channel: String?) { }
+}
+```
+
+### Preconditions (`@Require`)
+
+Implement `Precondition` in your project; it runs before the handler executes:
+
+```kotlin
+class AdminOnly : Precondition {
+    override suspend fun check(ctx: SlashCommandContext): Boolean {
+        if (ctx !is GuildSlashCommandContext) return false
+        val isAdmin = ctx.member.hasPermission(Permission.ADMINISTRATOR)
+        if (!isAdmin) ctx.replyMessage("Admins only.").setEphemeral(true).queue()
+        return isAdmin
+    }
+}
+
+@ApplicationCommand("admin")
+@Require(AdminOnly::class)   // applied to every handler in this class
+class AdminCommand {
+
+    @OnSlashCommand(name = "ban", target = InteractionTarget.GUILD)
+    suspend fun ban(ctx: GuildSlashCommandContext, member: Member) { }
+}
+```
+
+### Auto-complete
+
+```kotlin
+@ApplicationCommand("search")
+class SearchCommand {
+
+    @OnSlashCommand(target = InteractionTarget.ALL)
+    suspend fun default(ctx: SlashCommandContext, query: String) { }
+
+    // Provides completions for the 'query' option of the default handler
+    @OnAutoComplete(option = "query")
+    suspend fun queryComplete(ctx: AutoCompleteContext) {
+        ctx.replyChoiceStrings(listOf("option a", "option b", "option c")).queue()
     }
 }
 ```
-This command will create 2 handlers with the following user representation:
-- /twitch clips top (channel?)
-- /twitch clips random (channel?)
 
-### Registering commands
-Register the handler using ``SlashCommandClient.default(packageName)`` with the package name where the commands are located, and register
-the event listener in your JDA or ShardManager builder.
+### Buttons and Modals
 
 ```kotlin
-val shardManager = DefaultShardManagerBuilder().apply { /* ... */ }.build(false)
+@ApplicationCommand("demo")
+class DemoCommand {
 
-val commandClient = SlashCommandClient.default("com.example.commands")
-  .contextCreator(object : ContextCreator {
-    // You can override the default ContextCreator
-    
-    override suspend fun createContext(event: SlashCommandInteractionEvent): SlashCommandContext {
-      return SlashCommandContext.impl(event)
+    @OnSlashCommand(target = InteractionTarget.ALL)
+    suspend fun showButton(ctx: SlashCommandContext) {
+        ctx.replyMessage("Click me!").addActionRow(
+            Button.primary("demo:click:${ctx.user.id}", "Click")
+        ).queue()
     }
 
-    // SlashCommandContext and GuildSlashCommandContext contains an extra object
-    // that is a AtomicReference<Any?> so you can set any object here on the context creation
-    // and retrieve it when you handle the command.
-    override suspend fun createGuildContext(event: SlashCommandInteractionEvent): GuildSlashCommandContext {
-      val context = SlashCommandContext.guild(event)
-      context.extra.set(Utils.getGuildConfig(event))
-      return context
+    // pattern is a regex matched against the button's custom ID
+    @OnButton("demo:click:(.+?)")
+    suspend fun onClick(ctx: ButtonContext) {
+        val userId = ctx.matcher.group(1)
+        ctx.reply("Clicked by $userId").queue()
     }
 
-  })
-  .addCheck { ctx ->
-    // Imagine you have an ignored channels filter, you can add the global check here.
-    if (!ctx.isFromGuild || ctx.guild == null) return true
-    
-    val cannotExecute = Utils.checkIgnoredChannels(ctx.guild)
-    
-    return !cannotExecute
-  }
-  .buildWith(shardManager)
+    @OnModal("feedback:(.+?)")
+    suspend fun onFeedback(ctx: ModalContext) {
+        val category = ctx.matcher.group(1)
+        ctx.reply("Feedback for $category received.").queue()
+    }
+}
 ```
 
-``commandClient`` will register ``PingCommand``, ``RoleCommand`` and ``TwitchCommand``.
+### User and Message context commands
 
-### Using context actions
-You can build context actions inside SlashCommands so easy.
+```kotlin
+@ApplicationCommand("Get Info", type = CommandType.USER)
+class GetUserInfoCommand {
+
+    @OnUserCommand
+    suspend fun handle(ctx: UserCommandContext) {
+        ctx.reply("User: ${ctx.target.effectiveName}").setEphemeral(true).queue()
+    }
+}
+
+@ApplicationCommand("Quote", type = CommandType.MESSAGE)
+class QuoteCommand {
+
+    @OnMessageCommand
+    suspend fun handle(ctx: MessageCommandContext) {
+        ctx.reply("Quoted: ${ctx.target.contentDisplay}").setEphemeral(true).queue()
+    }
+}
+```
+
+### Rate limiting
+
+```kotlin
+@ApplicationCommand("slow")
+class SlowCommand {
+
+    @OnSlashCommand(target = InteractionTarget.GUILD)
+    @RateLimit(limit = 3, period = 10_000L)  // 3 calls per 10 seconds
+    suspend fun default(ctx: GuildSlashCommandContext) {
+        ctx.message("This command is rate limited.").queue()
+    }
+}
+```
+
+### Custom option names
+
+```kotlin
+@OnSlashCommand(target = InteractionTarget.ALL)
+suspend fun search(ctx: SlashCommandContext, @OptionName("query") q: String) {
+    // q maps to the Discord option named "query"
+}
+```
+
+---
+
+## Building the client
+
+No package name required — all handlers are discovered via `ServiceLoader` from the KSP-generated `META-INF/services` file.
+
+```kotlin
+val jda = JDABuilder.createDefault(TOKEN).build()
+
+val client = SlashCommandClient.builder()
+    .withTimeout(30.seconds)
+    // optional: global interceptors
+    .addSlashInterceptor { ctx ->
+        val allowed = !isMaintenanceMode()
+        if (!allowed) ctx.replyMessage("Bot is in maintenance.").setEphemeral(true).queue()
+        allowed
+    }
+    .buildWith(jda)  // registers as JDA EventListener automatically
+```
+
+---
+
+## Context Actions
+
+Every `SlashCommandContext` exposes DSL helpers that automatically choose between `reply()` and `send()`:
+
 ```kotlin
 @OnSlashCommand(target = InteractionTarget.ALL)
 suspend fun contextActions(ctx: SlashCommandContext) {
-    
-    // This is a context action
-    val embedAction: EmbedContextAction = ctx.embed {
-        setTitle("Embed Title")
-    }
-    
-    val messageAction: MessageContextAction = ctx.message {
-        append("Message content")
-    }
-    
-    // To execute an action use send() or reply()
-    // Only use this if you know if the interaction was acknowledged or
-    // you need the response from discord.
-    val messageResult: ReplyAction = messageAction.reply().await()
-    
-    val embedResult: WebhookMessageAction<Message> = embedAction.send().await()
-    
-    // You can queue the request
-    // This will check if the interaction was acknowledged previusly and use the correct behaviour
+
+    // Builds an embed reply/send action
     ctx.embed {
-        setDescription("This is the third message but i dont need to use reply() or send()")
-    }.queue()
-    
-    // When using queue() you can set if the message hast the ephemeral flag or not (by default is set to false)
-    ctx.message("This message will be ephemeral").queue(true)
-    // Ephemeral messages only are ephemeral when the first reply is ephemeral.
-    
-    // You can get the generated message use 'original'.
-    val embed = embedAction.original
-    
-    val message = messageAction.original
-    
+        setTitle("Hello!")
+        setDescription("This uses the DSL.")
+    }.queue()                          // auto-selects reply vs send
+
+    ctx.message("Plain text reply").queue(ephemeral = true)
+
+    // You can also use the explicit methods
+    ctx.replyEmbed { setTitle("Explicit reply") }.setEphemeral(true).queue()
+    ctx.sendMessage("Follow-up message").queue()
 }
-```
-
-### Acknowledge Interactions
-You have 3 seconds to respond or acknowledge an interaction, you can handle this so easy with the following code.
-```kotlin
-
-@OnSlashCommand(target = InteractionTarget.ALL)
-suspend fun someCommand(ctx: SlashCommandContext) {
-    // If your need to wait before continue the code execution, you can use
-    ctx.tryAcknowledge().await()
-    // But if the interaction is already acknowledged this will throw an IllegalStateException.
-    
-    // If you don't know if your interaction was acknowledged and don't need to wait use
-    ctx.acknowledge()
-  
-    // If you want to the interaction follow-up messages to be ephemeral, you need to set true when using the function.
-    ctx.acknowledge(true)
-}
-
-```
-
-### Custom Option names
-You can use the annotation [@OptionName](slash-core/src/main/kotlin/tv/blademaker/slash/annotations/OptionName.kt)
-the set a custom name for an option.
-```kotlin
-@OnSlashCommand(target = InteractionTarget.ALL)
-suspend fun customName(ctx: SlashCommandContext, @OptionName("query") option1: String) {
-    // the variable option1 will get the content of ctx.getOption("query")!
-}
-```
-
-### Rate Limiting Command Execution
-Since version **0.6.3** you can rate limit the execution of slash commands based on 3 different targets:
-- User
-- Channel
-- Guild
-
-Configure the rate limited (is not necessary):
-```kotlin
-
-val commandHandler = SlashCommandClient.default("com.example.commands")
-    .configureRateLimit {
-        purgeUnit = TimeUnit.MINUTES
-        purgeDelay = 5
-        onRateLimitHit = { ctx, rateLimit ->
-            // Override default with your implementation.
-        }
-    }
-```
-
-### Slash Commands option auto complete
-**AutoCompleteContext** extends **CommandAutoCompleteInteraction**.
-```kotlin
-@OnAutoComplete("commands", "search", optionName = "query")
-suspend fun commandSearchAutocomplete(ctx: AutoCompleteContext) {
-    
-}
-```
-
-### Modals
-**ModalContext** extends **ModalInteraction**
-
-**@OnModal** supports RegEx.
-```kotlin
-@OnModal("feature-request:(.+?)")
-suspend fun testModal(ctx: ModalContext) {
-    
-}
-```
-
-### Rate Limiting
-```kotlin
-@RateLimit(quota = 5, duration = 20, unit = TimeUnit.SECONDS, target = RateLimit.Target.GUILD)
-@OnSlashCommand(target = InteractionTarget.GUILD)
-fun rateLimitedCommand(ctx: GuildSlashCommand) {
-    ctx.message {
-        append("This is an example of a rate limited Slash Command, ")
-        append("If you hit the limit you will be notified.")
-    }.queue()
-}
-```
-
-[@RateLimit annotation documentation](https://blad3mak3r.github.io/Slash/-slash/tv.blademaker.slash.ratelimit/-rate-limit/index.html)
-
-## Download
-[![Maven Central][maven-central-shield]][maven-central]
-
-### Gradle
-```kotlin
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation("io.github.blad3mak3.slash:slash-core:x.y.z")
-}
-```
-
-### Maven
-```xml
-<dependency>
-    <groupId>io.github.blad3mak3r.slash</groupId>
-    <artifactId>slash-core</artifactId>
-    <version>X.X.X</version>
-</dependency>
-        
 ```
