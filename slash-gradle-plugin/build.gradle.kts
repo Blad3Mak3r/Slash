@@ -29,6 +29,7 @@ dependencies {
     compileOnly(libs.jda) { exclude(module = "opus-java") }
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
+    compileOnly(kotlin("gradle-plugin"))
 
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.13.2")
