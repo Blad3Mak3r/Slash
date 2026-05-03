@@ -1,3 +1,5 @@
 rootProject.name = "Slash"
 
-include(":slash-core")
+include(":slash-dsl")
+include(":slash-gradle-plugin")
+include(":slash-runtime")

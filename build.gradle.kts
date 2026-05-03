@@ -1,3 +1,9 @@
+plugins {
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.publish) apply false
+    alias(libs.plugins.versions) apply false
+}
+
 val gitTag: String? by lazy {
     providers.exec {
         commandLine("git", "describe", "--tags", "--abbrev=0")

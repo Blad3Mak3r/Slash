@@ -1,23 +1,26 @@
 [versions]
-coroutines = "1.10.2"
-jda = "6.3.1"
-kotlin = "2.3.0"
-prometheus = "0.16.0"
-publish = "0.35.0"
-reflections = "0.10.2"
-sentry = "8.29.0"
-slf4j = "2.0.17"
-versions = "0.53.0"
+coroutines    = "1.10.2"
+jda           = "6.3.1"
+kotlin        = "2.3.0"
+kotlinpoet    = "2.2.0"
+prometheus    = "0.16.0"
+publish       = "0.35.0"
+reflections   = "0.10.2"
+sentry        = "8.29.0"
+slf4j         = "2.0.17"
+versions      = "0.53.0"
 
 [libraries]
-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
-prometheus = { module = "io.prometheus:simpleclient", version.ref = "prometheus" }
-reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
-sentry = { module = "io.sentry:sentry", version.ref = "sentry" }
-slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+coroutines-core       = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core",      version.ref = "coroutines" }
+jda                   = { module = "net.dv8tion:JDA",                                    version.ref = "jda" }
+kotlin-embeddable     = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable",    version.ref = "kotlin" }
+kotlinpoet            = { module = "com.squareup:kotlinpoet",                            version.ref = "kotlinpoet" }
+prometheus            = { module = "io.prometheus:simpleclient",                         version.ref = "prometheus" }
+reflections           = { module = "org.reflections:reflections",                        version.ref = "reflections" }
+sentry                = { module = "io.sentry:sentry",                                   version.ref = "sentry" }
+slf4j                 = { module = "org.slf4j:slf4j-api",                                version.ref = "slf4j" }
 
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-publish = { id = "com.vanniktech.maven.publish", version.ref = "publish"}
-versions = { id = "com.github.ben-manes.versions", version.ref = "versions"}
+kotlin-jvm  = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+publish     = { id = "com.vanniktech.maven.publish",   version.ref = "publish" }
+versions    = { id = "com.github.ben-manes.versions",  version.ref = "versions" }
