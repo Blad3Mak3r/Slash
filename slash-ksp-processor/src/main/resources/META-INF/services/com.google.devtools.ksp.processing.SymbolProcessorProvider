@@ -1,1 +1,1 @@
-com.google.devtools.ksp.processing.SymbolProcessorProvider=io.github.blad3mak3r.slash.ksp.SlashProcessorProvider
+io.github.blad3mak3r.slash.ksp.SlashProcessorProvider
