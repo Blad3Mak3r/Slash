@@ -12,34 +12,36 @@ object TypeMapping {
      * Returns `null` if the type is unsupported.
      */
     fun accessorFor(typeName: String): String? = when (typeName) {
-        "String"                                                -> "asString()"
-        "Long"                                                  -> "asLong()"
-        "Int"                                                   -> "asString().toInt()"
-        "Boolean"                                               -> "asBoolean()"
-        "Double"                                                -> "asDouble()"
-        "Float"                                                 -> "asDouble().toFloat()"
+        // JDA 6 exposes all OptionMapping getters as Kotlin properties (getAsXxx → asXxx).
+        // Access them without parentheses; Kotlin extension functions on the value still use ().
+        "String"                                                -> "asString"
+        "Long"                                                  -> "asLong"
+        "Int"                                                   -> "asString.toInt()"
+        "Boolean"                                               -> "asBoolean"
+        "Double"                                                -> "asDouble"
+        "Float"                                                 -> "asDouble.toFloat()"
         "Member",
         "net.dv8tion.jda.api.entities.Member"                   -> "asMember!!"
         "User",
-        "net.dv8tion.jda.api.entities.User"                     -> "asUser()"
+        "net.dv8tion.jda.api.entities.User"                     -> "asUser"
         "Role",
-        "net.dv8tion.jda.api.entities.Role"                     -> "asRole()"
+        "net.dv8tion.jda.api.entities.Role"                     -> "asRole"
         // KSP reports simpleName as "Attachment" for the nested class Message.Attachment
         "Attachment",
         "Message.Attachment",
-        "net.dv8tion.jda.api.entities.Message.Attachment"       -> "asAttachment()"
+        "net.dv8tion.jda.api.entities.Message.Attachment"       -> "asAttachment"
         "IMentionable",
-        "net.dv8tion.jda.api.entities.IMentionable"             -> "asMentionable()"
-        // Channels — use asChannel() with a safe cast and require non-null at the call site
+        "net.dv8tion.jda.api.entities.IMentionable"             -> "asMentionable"
+        // Channels — asChannel is a property returning GuildChannelUnion which extends GuildChannel
         "GuildChannel",
         "net.dv8tion.jda.api.entities.channel.middleman.GuildChannel"
-                                                                -> "asChannel()"
+                                                                -> "asChannel"
         "TextChannel",
         "net.dv8tion.jda.api.entities.channel.concrete.TextChannel"
-                                                                -> "asChannel() as? net.dv8tion.jda.api.entities.channel.concrete.TextChannel"
+                                                                -> "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.TextChannel"
         "VoiceChannel",
         "net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel"
-                                                                -> "asChannel() as? net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel"
+                                                                -> "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel"
         else                                                    -> null
     }
 
