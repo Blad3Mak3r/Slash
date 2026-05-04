@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.publish)
-    alias(libs.plugins.versions)
 
     `java-library`
     signing
@@ -16,23 +15,12 @@ repositories {
 }
 
 dependencies {
-    api(project(":slash-annotations"))
-
-    implementation(kotlin("stdlib"))
-
-    compileOnly(libs.coroutines.core)
     compileOnly(libs.jda) { exclude(module = "opus-java") }
-    implementation(libs.slf4j)
-    compileOnly(libs.prometheus)
-
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("ch.qos.logback:logback-classic:1.5.22")
 }
 
 tasks {
     withType<KotlinCompile> {
         compilerOptions {
-            freeCompilerArgs.add("-Xjsr305=strict")
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
         }
     }
@@ -44,13 +32,12 @@ java {
     withSourcesJar()
 }
 
-
 mavenPublishing {
-    coordinates("io.github.blad3mak3r.slash", "slash-core", "$version")
+    coordinates("io.github.blad3mak3r.slash", "slash-annotations", "$version")
 
     pom {
         name.set(project.name)
-        description.set("Advanced Slash Command handler for Discord and JDA")
+        description.set("Compile-time annotations for the Slash Discord command library")
         url.set("https://github.com/Blad3Mak3r/Slash")
         issueManagement {
             system.set("GitHub")

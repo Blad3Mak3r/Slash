@@ -1,6 +1,5 @@
 package io.github.blad3mak3r.slash.extensions
 
-import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.slf4j.LoggerFactory
@@ -16,17 +15,16 @@ object UncaughtExceptionHandler : Thread.UncaughtExceptionHandler {
 
     override fun uncaughtException(t: Thread, e: Throwable) {
         logger.error("Caught exception in thread $t", e)
-        Sentry.captureException(e)
     }
-
 }
 
-internal fun newThreadFactory(name: String,
-                     corePoolSize: Int,
-                     maximumPoolSize: Int,
-                     keepAliveTime: Long = 5L,
-                     unit: TimeUnit = TimeUnit.MINUTES,
-                     daemon: Boolean = true
+internal fun newThreadFactory(
+    name: String,
+    corePoolSize: Int,
+    maximumPoolSize: Int,
+    keepAliveTime: Long = 5L,
+    unit: TimeUnit = TimeUnit.MINUTES,
+    daemon: Boolean = true
 ): ThreadPoolExecutor {
     return ThreadPoolExecutor(
         corePoolSize, maximumPoolSize,
@@ -36,14 +34,16 @@ internal fun newThreadFactory(name: String,
     )
 }
 
-internal fun newCoroutineDispatcher(name: String,
-                           corePoolSize: Int,
-                           maximumPoolSize: Int,
-                           keepAliveTime: Long = 5L,
-                           unit: TimeUnit = TimeUnit.MINUTES,
-                           daemon: Boolean = true
+internal fun newCoroutineDispatcher(
+    name: String,
+    corePoolSize: Int,
+    maximumPoolSize: Int,
+    keepAliveTime: Long = 5L,
+    unit: TimeUnit = TimeUnit.MINUTES,
+    daemon: Boolean = true
 ): CoroutineDispatcher {
-    return newThreadFactory(name, corePoolSize, maximumPoolSize, keepAliveTime, unit, daemon).asCoroutineDispatcher()
+    return newThreadFactory(name, corePoolSize, maximumPoolSize, keepAliveTime, unit, daemon)
+        .asCoroutineDispatcher()
 }
 
 internal class CustomThreadFactory(
