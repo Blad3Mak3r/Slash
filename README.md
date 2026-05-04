@@ -35,7 +35,7 @@ All command routing is generated at **compile time** by the included KSP process
 | Dependency         | Version  |
 |--------------------|----------|
 | Kotlin             | `2.3.0`  |
-| KSP                | `2.3.0-1.0.31` |
+| KSP                | `2.3.6` |
 | JDA                | `6.3.1+` |
 | Kotlinx Coroutines | `1.10.2` |
 | Java JDK           | `11`     |
