@@ -14,7 +14,13 @@ private const val CONTEXT_PKG     = "io.github.blad3mak3r.slash.context"
 
 object RegistrarGenerator {
 
-    fun generate(codeGenerator: CodeGenerator, model: CommandModel) {
+    /**
+     * Generates the `XxxRegistrar` source file and returns its fully-qualified
+     * class name so the caller can accumulate all names and write the
+     * ServiceLoader manifest file once (avoids FileAlreadyExistsException when
+     * multiple @ApplicationCommand classes are present in the same compilation).
+     */
+    fun generate(codeGenerator: CodeGenerator, model: CommandModel): String {
         val classDecl   = model.classDecl
         val pkg         = classDecl.packageName.asString()
         val simpleName  = classDecl.simpleName.asString()
@@ -58,13 +64,7 @@ object RegistrarGenerator {
         // Write Kotlin source
         file.writeTo(codeGenerator, Dependencies(aggregating = false, classDecl.containingFile!!))
 
-        // Append this registrar to the ServiceLoader manifest
-        val serviceFile = codeGenerator.createNewFileByPath(
-            dependencies = Dependencies(aggregating = false, classDecl.containingFile!!),
-            path         = "META-INF/services/$REGISTRY_PKG.CommandRegistrar",
-            extensionName = ""
-        )
-        serviceFile.bufferedWriter().use { it.write("$pkg.$registrarName\n") }
+        return "$pkg.$registrarName"
     }
 
     // ── register() function body ──────────────────────────────────────────────

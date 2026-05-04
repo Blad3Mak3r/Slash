@@ -16,6 +16,7 @@ private const val ANN_REQUIRE             = "io.github.blad3mak3r.slash.annotati
 private const val ANN_PERMISSIONS         = "io.github.blad3mak3r.slash.annotations.Permissions"
 private const val ANN_RATE_LIMIT          = "io.github.blad3mak3r.slash.annotations.RateLimit"
 private const val ANN_OPTION_NAME         = "io.github.blad3mak3r.slash.annotations.OptionName"
+private const val SERVICE_FILE            = "META-INF/services/io.github.blad3mak3r.slash.registry.CommandRegistrar"
 
 class SlashProcessor(
     private val codeGenerator: CodeGenerator,
@@ -29,9 +30,23 @@ class SlashProcessor(
 
         val deferred = symbols.filter { !it.validate() }.toList()
 
+        val registrarFqns = mutableListOf<String>()
+        val sourceFiles   = mutableListOf<KSFile>()
+
         symbols.filter { it.validate() }.forEach { classDecl ->
             val model = resolveCommandModel(classDecl) ?: return@forEach
-            RegistrarGenerator.generate(codeGenerator, model)
+            registrarFqns += RegistrarGenerator.generate(codeGenerator, model)
+            classDecl.containingFile?.let { sourceFiles += it }
+        }
+
+        // Write the ServiceLoader manifest once for all registrars in this round,
+        // avoiding FileAlreadyExistsException when multiple @ApplicationCommand
+        // classes are present in the same compilation unit.
+        if (registrarFqns.isNotEmpty()) {
+            val deps = Dependencies(aggregating = true, *sourceFiles.toTypedArray())
+            codeGenerator.createNewFileByPath(deps, SERVICE_FILE, extensionName = "")
+                .bufferedWriter()
+                .use { w -> registrarFqns.forEach { fqn -> w.write(fqn); w.newLine() } }
         }
 
         return deferred
