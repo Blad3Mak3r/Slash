@@ -11,9 +11,13 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.Role
 import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.channel.concrete.Category
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 
 /**
  * Exhaustive parameter-type coverage command.
@@ -26,7 +30,8 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
  * /types entities    — Member, User, Role  (guild target)
  * /types nullable-entities — Member?, User?, Role?
  * /types misc        — Message.Attachment, IMentionable
- * /types channels    — GuildChannel, TextChannel?, VoiceChannel?  (guild target)
+ * /types channels    — GuildChannel, TextChannel, VoiceChannel? (guild target)
+ * /types channels-extended — GuildMessageChannel, AudioChannel, Category?, StageChannel? (guild target)
  */
 @ApplicationCommand(name = "types")
 class AllTypesCommand {
@@ -111,6 +116,19 @@ class AllTypesCommand {
     ) {
         ctx.replyMessage(
             "channel=${channel.name} text=${textChannel.name} voice=${optVoice?.name}"
+        ).queue()
+    }
+
+    @OnSlashCommand(name = "channels-extended", target = InteractionTarget.GUILD)
+    suspend fun channelsExtended(
+        ctx: GuildSlashCommandContext,
+        msgChannel: GuildMessageChannel,  // non-null → generates: asChannel as GuildMessageChannel
+        audioChannel: AudioChannel,       // non-null → generates: asChannel as AudioChannel
+        category: Category?,              // nullable → generates: asChannel as? Category
+        stage: StageChannel?              // nullable → generates: asChannel as? StageChannel
+    ) {
+        ctx.replyMessage(
+            "msg=${msgChannel.name} audio=${audioChannel.name} cat=${category?.name} stage=${stage?.name}"
         ).queue()
     }
 }

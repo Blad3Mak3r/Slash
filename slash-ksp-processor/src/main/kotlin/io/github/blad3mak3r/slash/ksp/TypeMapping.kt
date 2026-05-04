@@ -46,7 +46,16 @@ object TypeMapping {
         "GuildChannel",
         "net.dv8tion.jda.api.entities.channel.middleman.GuildChannel"
                                                                 -> "asChannel"
-        // Concrete channel subtypes require a cast; use safe/unsafe depending on nullability
+        // Middleman channel interfaces — GuildChannelUnion does NOT implement them directly; cast required
+        "GuildMessageChannel",
+        "net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel"
+        "AudioChannel",
+        "net.dv8tion.jda.api.entities.channel.middleman.AudioChannel" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.middleman.AudioChannel"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.middleman.AudioChannel"
+        // Concrete channel subtypes — cast required; safe/unsafe depending on nullability
         "TextChannel",
         "net.dv8tion.jda.api.entities.channel.concrete.TextChannel" ->
             if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.TextChannel"
@@ -55,6 +64,30 @@ object TypeMapping {
         "net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel" ->
             if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel"
             else          "asChannel as net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel"
+        "StageChannel",
+        "net.dv8tion.jda.api.entities.channel.concrete.StageChannel" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.StageChannel"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.concrete.StageChannel"
+        "NewsChannel",
+        "net.dv8tion.jda.api.entities.channel.concrete.NewsChannel" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.NewsChannel"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.concrete.NewsChannel"
+        "Category",
+        "net.dv8tion.jda.api.entities.channel.concrete.Category" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.Category"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.concrete.Category"
+        "ThreadChannel",
+        "net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel"
+        "ForumChannel",
+        "net.dv8tion.jda.api.entities.channel.concrete.ForumChannel" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.ForumChannel"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.concrete.ForumChannel"
+        "MediaChannel",
+        "net.dv8tion.jda.api.entities.channel.concrete.MediaChannel" ->
+            if (nullable) "asChannel as? net.dv8tion.jda.api.entities.channel.concrete.MediaChannel"
+            else          "asChannel as net.dv8tion.jda.api.entities.channel.concrete.MediaChannel"
         else                                                    -> null
     }
 
