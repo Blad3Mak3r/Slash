@@ -128,7 +128,7 @@ class SlashProcessor(
         val ann             = fn.annotations.first { it.fqn == ANN_ON_SLASH }
         val group           = ann.arg("group") as? String ?: ""
         val name            = ann.arg("name") as? String ?: ""
-        val target          = ann.arg("target")?.enumEntryName() ?: "ALL"
+        val target          = ann.arg("target")?.enumEntryName() ?: "GUILD"
         val supportDetached = ann.arg("supportDetached") as? Boolean ?: false
 
         // Drop first param (ctx) and resolve the rest as Discord options
@@ -180,7 +180,36 @@ class SlashProcessor(
             logger.error("@OnAutoComplete on ${fn.simpleName.asString()} is missing 'option'", fn)
             return null
         }
-        return AutoCompleteHandlerModel(fn, group, name, optionName)
+
+        // Drop first param (ctx: AutoCompleteContext); any remaining params are resolved as options
+        val params = fn.parameters.drop(1).mapNotNull { param ->
+            val pName = param.annotations
+                .firstOrNull { it.fqn == ANN_OPTION_NAME }
+                ?.arg("value") as? String
+                ?: param.name?.asString()
+                ?: run {
+                    logger.error("Cannot resolve parameter name in ${fn.simpleName.asString()}", param)
+                    return@mapNotNull null
+                }
+
+            val typeName = param.type.resolve().declaration.simpleName.asString()
+            if (!TypeMapping.isSupported(typeName)) {
+                logger.error(
+                    "Unsupported option type '$typeName' in ${fn.simpleName.asString()}. " +
+                    "Supported: String, Long, Int, Boolean, Double, Float, Member, User, Role, Attachment, channels.",
+                    param
+                )
+                return null
+            }
+
+            ParameterModel(
+                optionName = pName,
+                kotlinType = typeName,
+                nullable   = param.type.resolve().isMarkedNullable
+            )
+        }
+
+        return AutoCompleteHandlerModel(fn, group, name, optionName, params)
     }
 
     // ── Annotation helpers ────────────────────────────────────────────────────

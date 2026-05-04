@@ -105,12 +105,12 @@ class AllTypesCommand {
     @OnSlashCommand(name = "channels", target = InteractionTarget.GUILD)
     suspend fun channels(
         ctx: GuildSlashCommandContext,
-        channel: GuildChannel,
-        textChannel: TextChannel?,
-        voiceChannel: VoiceChannel?
+        channel: GuildChannel,      // GuildChannelUnion assignable to GuildChannel — no cast
+        textChannel: TextChannel,   // non-null → generates: asChannel as TextChannel
+        optVoice: VoiceChannel?     // nullable  → generates: asChannel as? VoiceChannel
     ) {
         ctx.replyMessage(
-            "channel=${channel.name} text=${textChannel?.name} voice=${voiceChannel?.name}"
+            "channel=${channel.name} text=${textChannel.name} voice=${optVoice?.name}"
         ).queue()
     }
 }

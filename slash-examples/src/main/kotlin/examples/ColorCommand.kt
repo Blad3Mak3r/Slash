@@ -10,7 +10,9 @@ import net.dv8tion.jda.api.interactions.commands.Command
 /**
  * /color color:<String>
  *
- * Covers: @OnAutoComplete, autocomplete handler providing dynamic choices.
+ * Covers: @OnAutoComplete with an injected String parameter (mirrors
+ * real-world usage where the focused option value is passed as a param
+ * instead of reading ctx.focusedOption.value manually).
  */
 @ApplicationCommand(name = "color")
 class ColorCommand {
@@ -20,11 +22,14 @@ class ColorCommand {
         ctx.replyMessage("You picked: **$color**").queue()
     }
 
+    /**
+     * The processor resolves `color` from ctx.getOption("color")!!.asString
+     * and passes it as an argument — same pattern as MemeSlashCommand.complete().
+     */
     @OnAutoComplete(option = "color")
-    suspend fun completeColor(ctx: AutoCompleteContext) {
-        val input = ctx.focusedOption.value
+    suspend fun completeColor(ctx: AutoCompleteContext, color: String) {
         val choices = listOf("Red", "Green", "Blue", "Yellow", "Purple", "Orange")
-            .filter { it.startsWith(input, ignoreCase = true) }
+            .filter { it.startsWith(color, ignoreCase = true) }
             .map { Command.Choice(it, it) }
         ctx.replyChoices(choices).queue()
     }

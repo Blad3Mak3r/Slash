@@ -38,7 +38,8 @@ data class AutoCompleteHandlerModel(
     val function: KSFunctionDeclaration,
     val group: String,
     val name: String,
-    val optionName: String
+    val optionName: String,
+    val parameters: List<ParameterModel>  // extra params after ctx, resolved as Discord options
 )
 
 data class ButtonHandlerModel(

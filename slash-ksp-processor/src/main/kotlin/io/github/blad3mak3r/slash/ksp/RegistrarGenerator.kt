@@ -146,7 +146,7 @@ object RegistrarGenerator {
 
                     // Resolve option parameters
                     for (param in h.parameters) {
-                        val accessor = TypeMapping.accessorFor(param.kotlinType) ?: continue
+                        val accessor = TypeMapping.accessorFor(param.kotlinType, param.nullable) ?: continue
                         if (param.nullable) {
                             builder.addStatement(
                                 "  val %N = ctx.getOption(%S)?.%L",
@@ -172,7 +172,26 @@ object RegistrarGenerator {
                         "registry.registerAutoComplete(path = %S, optionName = %S) { ctx ->\n",
                         path, ac.optionName
                     )
-                    builder.addStatement("  _instance.%N(ctx)", ac.function.simpleName.asString())
+
+                    // Resolve extra option parameters (e.g. the focused option value)
+                    for (param in ac.parameters) {
+                        val accessor = TypeMapping.accessorFor(param.kotlinType, param.nullable) ?: continue
+                        if (param.nullable) {
+                            builder.addStatement(
+                                "  val %N = ctx.getOption(%S)?.%L",
+                                param.optionName, param.optionName, accessor
+                            )
+                        } else {
+                            builder.addStatement(
+                                "  val %N = ctx.getOption(%S)!!.%L",
+                                param.optionName, param.optionName, accessor
+                            )
+                        }
+                    }
+
+                    val paramList = ac.parameters.joinToString(", ") { it.optionName }
+                    val paramSuffix = if (paramList.isNotBlank()) ", $paramList" else ""
+                    builder.addStatement("  _instance.%N(ctx$paramSuffix)", ac.function.simpleName.asString())
                     builder.addStatement("}")
                 }
             }

@@ -13,6 +13,6 @@ package io.github.blad3mak3r.slash.annotations
 annotation class OnSlashCommand(
     val group: String = "",
     val name: String = "",
-    val target: InteractionTarget = InteractionTarget.ALL,
+    val target: InteractionTarget = InteractionTarget.GUILD,
     val supportDetached: Boolean = false
 )
