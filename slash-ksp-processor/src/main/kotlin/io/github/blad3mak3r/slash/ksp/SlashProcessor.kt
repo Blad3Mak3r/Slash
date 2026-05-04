@@ -48,8 +48,7 @@ class SlashProcessor(
         }
 
         val commandName = appAnn.arguments.first { it.name?.asString() == "name" }.value as String
-        val commandType = (appAnn.arguments.firstOrNull { it.name?.asString() == "type" }?.value
-            ?.let { (it as? KSType)?.declaration?.simpleName?.asString() } ?: "SLASH")
+        val commandType = appAnn.arg("type")?.enumEntryName() ?: "SLASH"
 
         val classRequire  = resolveRequire(classDecl.annotations)
         val classPerms    = resolvePermissions(classDecl.annotations)
@@ -111,7 +110,7 @@ class SlashProcessor(
         val ann = fn.annotations.first { it.fqn == ANN_ON_SLASH }
         val group          = ann.arg("group") as? String ?: ""
         val name           = ann.arg("name") as? String ?: ""
-        val target         = (ann.arg("target") as? KSType)?.declaration?.simpleName?.asString() ?: "ALL"
+        val target         = ann.arg("target")?.enumEntryName() ?: "ALL"
         val supportDetached = ann.arg("supportDetached") as? Boolean ?: false
 
         // Skip first param (ctx) and resolve remaining as option parameters
@@ -178,10 +177,11 @@ class SlashProcessor(
     private fun resolvePermissions(annotations: Sequence<KSAnnotation>): PermissionsModel? {
         val ann = annotations.firstOrNull { it.fqn == ANN_PERMISSIONS } ?: return null
         @Suppress("UNCHECKED_CAST")
-        val perms = (ann.arg("value") as? List<KSType>)
-            ?.mapNotNull { it.declaration.simpleName.asString() }
+        val perms = (ann.arg("value") as? List<*>)
+            ?.mapNotNull { it?.enumEntryName() }
+            ?.takeIf { it.isNotEmpty() }
             ?: return null
-        val target = (ann.arg("target") as? KSType)?.declaration?.simpleName?.asString() ?: "USER"
+        val target = ann.arg("target")?.enumEntryName() ?: "USER"
         return PermissionsModel(perms, target)
     }
 
@@ -203,4 +203,15 @@ class SlashProcessor(
 
     private fun KSAnnotation.arg(name: String): Any? =
         arguments.firstOrNull { it.name?.asString() == name }?.value
+
+    /**
+     * Resolves the simple name of an enum entry regardless of whether KSP
+     * represents it as [KSType] (KSP1 / legacy) or [KSClassDeclaration]
+     * (KSP2 / K2 AA mode, where enum entries are KSClassDeclarationEnumEntryImpl).
+     */
+    private fun Any.enumEntryName(): String? = when (this) {
+        is KSType -> declaration.simpleName.asString()
+        is KSClassDeclaration -> simpleName.asString()
+        else -> null
+    }
 }
