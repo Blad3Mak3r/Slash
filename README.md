@@ -47,7 +47,7 @@ All command routing is generated at **compile time** by the included KSP process
 ```kotlin
 // settings.gradle.kts — enable the KSP plugin
 plugins {
-    id("com.google.devtools.ksp") version "2.3.0-1.0.31" apply false
+    id("com.google.devtools.ksp") version "2.3.6" apply false
 }
 ```
 
