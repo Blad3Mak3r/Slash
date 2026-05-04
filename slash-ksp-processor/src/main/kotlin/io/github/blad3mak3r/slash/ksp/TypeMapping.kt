@@ -26,7 +26,7 @@ object TypeMapping {
         // Access them without parentheses; Kotlin extension functions on the value still use ().
         "String"                                                -> "asString"
         "Long"                                                  -> "asLong"
-        "Int"                                                   -> "asString.toInt()"
+        "Int"                                                   -> "asInt"
         "Boolean"                                               -> "asBoolean"
         "Double"                                                -> "asDouble"
         "Float"                                                 -> "asDouble.toFloat()"
