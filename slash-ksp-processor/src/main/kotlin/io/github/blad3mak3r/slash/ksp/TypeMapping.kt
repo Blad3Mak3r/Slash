@@ -24,6 +24,8 @@ object TypeMapping {
         "net.dv8tion.jda.api.entities.User"                     -> "asUser()"
         "Role",
         "net.dv8tion.jda.api.entities.Role"                     -> "asRole()"
+        // KSP reports simpleName as "Attachment" for the nested class Message.Attachment
+        "Attachment",
         "Message.Attachment",
         "net.dv8tion.jda.api.entities.Message.Attachment"       -> "asAttachment()"
         "IMentionable",
