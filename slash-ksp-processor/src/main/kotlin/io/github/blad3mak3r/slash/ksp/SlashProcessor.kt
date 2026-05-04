@@ -47,11 +47,14 @@ class SlashProcessor(
             return null
         }
 
-        val commandName = appAnn.arguments.first { it.name?.asString() == "name" }.value as String
+        val commandName = appAnn.arg("name") as? String ?: run {
+            logger.error("@ApplicationCommand on ${classDecl.simpleName.asString()} is missing 'name'", classDecl)
+            return null
+        }
         val commandType = appAnn.arg("type")?.enumEntryName() ?: "SLASH"
 
-        val classRequire  = resolveRequire(classDecl.annotations)
-        val classPerms    = resolvePermissions(classDecl.annotations)
+        val classRequire   = resolveRequire(classDecl.annotations)
+        val classPerms     = resolvePermissions(classDecl.annotations)
         val classRateLimit = resolveRateLimit(classDecl.annotations)
 
         val functions = classDecl.getDeclaredFunctions()
@@ -70,7 +73,7 @@ class SlashProcessor(
             .filter { fn -> fn.annotations.any { it.fqn == ANN_ON_BUTTON } }
             .map { fn ->
                 val ann = fn.annotations.first { it.fqn == ANN_ON_BUTTON }
-                val pattern = ann.arguments.first { it.name?.asString() == "pattern" }.value as String
+                val pattern = ann.arg("pattern") as? String ?: ""
                 ButtonHandlerModel(fn, pattern)
             }.toList()
 
@@ -78,7 +81,7 @@ class SlashProcessor(
             .filter { fn -> fn.annotations.any { it.fqn == ANN_ON_MODAL } }
             .map { fn ->
                 val ann = fn.annotations.first { it.fqn == ANN_ON_MODAL }
-                val pattern = ann.arguments.first { it.name?.asString() == "pattern" }.value as String
+                val pattern = ann.arg("pattern") as? String ?: ""
                 ModalHandlerModel(fn, pattern)
             }.toList()
 
@@ -91,33 +94,33 @@ class SlashProcessor(
             ?.let { fn -> MessageHandlerModel(fn, resolveRequire(fn.annotations)) }
 
         return CommandModel(
-            classDecl      = classDecl,
-            commandName    = commandName,
-            commandType    = commandType,
-            classRequire   = classRequire,
-            classPermissions = classPerms,
-            classRateLimit = classRateLimit,
-            slashHandlers  = slashHandlers,
+            classDecl            = classDecl,
+            commandName          = commandName,
+            commandType          = commandType,
+            classRequire         = classRequire,
+            classPermissions     = classPerms,
+            classRateLimit       = classRateLimit,
+            slashHandlers        = slashHandlers,
             autoCompleteHandlers = autoCompleteHandlers,
-            buttonHandlers = buttonHandlers,
-            modalHandlers  = modalHandlers,
-            userHandler    = userHandler,
-            messageHandler = messageHandler
+            buttonHandlers       = buttonHandlers,
+            modalHandlers        = modalHandlers,
+            userHandler          = userHandler,
+            messageHandler       = messageHandler
         )
     }
 
     private fun resolveSlashHandler(commandName: String, fn: KSFunctionDeclaration): SlashHandlerModel? {
-        val ann = fn.annotations.first { it.fqn == ANN_ON_SLASH }
-        val group          = ann.arg("group") as? String ?: ""
-        val name           = ann.arg("name") as? String ?: ""
-        val target         = ann.arg("target")?.enumEntryName() ?: "ALL"
+        val ann             = fn.annotations.first { it.fqn == ANN_ON_SLASH }
+        val group           = ann.arg("group") as? String ?: ""
+        val name            = ann.arg("name") as? String ?: ""
+        val target          = ann.arg("target")?.enumEntryName() ?: "ALL"
         val supportDetached = ann.arg("supportDetached") as? Boolean ?: false
 
-        // Skip first param (ctx) and resolve remaining as option parameters
+        // Drop first param (ctx) and resolve the rest as Discord options
         val params = fn.parameters.drop(1).mapNotNull { param ->
             val optionName = param.annotations
                 .firstOrNull { it.fqn == ANN_OPTION_NAME }
-                ?.arguments?.first()?.value as? String
+                ?.arg("value") as? String
                 ?: param.name?.asString()
                 ?: run {
                     logger.error("Cannot resolve parameter name in ${fn.simpleName.asString()}", param)
@@ -128,7 +131,7 @@ class SlashProcessor(
             if (!TypeMapping.isSupported(typeName)) {
                 logger.error(
                     "Unsupported option type '$typeName' in ${fn.simpleName.asString()}. " +
-                    "Supported: String, Long, Int, Boolean, Double, Float, Member, User, Role, Message.Attachment, channels.",
+                    "Supported: String, Long, Int, Boolean, Double, Float, Member, User, Role, Attachment, channels.",
                     param
                 )
                 return null
@@ -155,11 +158,11 @@ class SlashProcessor(
     }
 
     private fun resolveAutoCompleteHandler(commandName: String, fn: KSFunctionDeclaration): AutoCompleteHandlerModel? {
-        val ann = fn.annotations.first { it.fqn == ANN_ON_AUTOCOMPLETE }
+        val ann        = fn.annotations.first { it.fqn == ANN_ON_AUTOCOMPLETE }
         val group      = ann.arg("group") as? String ?: ""
         val name       = ann.arg("name") as? String ?: ""
         val optionName = ann.arg("option") as? String ?: run {
-            logger.error("@OnAutoComplete on ${fn.simpleName.asString()} missing 'option'", fn)
+            logger.error("@OnAutoComplete on ${fn.simpleName.asString()} is missing 'option'", fn)
             return null
         }
         return AutoCompleteHandlerModel(fn, group, name, optionName)
@@ -169,14 +172,15 @@ class SlashProcessor(
 
     private fun resolveRequire(annotations: Sequence<KSAnnotation>): List<String> {
         val ann = annotations.firstOrNull { it.fqn == ANN_REQUIRE } ?: return emptyList()
+        // KClass<> args are still KSType in both KSP1 and KSP2
         @Suppress("UNCHECKED_CAST")
-        val klasses = ann.arguments.firstOrNull()?.value as? List<KSType> ?: return emptyList()
+        val klasses = ann.arg("value") as? List<KSType> ?: return emptyList()
         return klasses.mapNotNull { it.declaration.qualifiedName?.asString() }
     }
 
     private fun resolvePermissions(annotations: Sequence<KSAnnotation>): PermissionsModel? {
         val ann = annotations.firstOrNull { it.fqn == ANN_PERMISSIONS } ?: return null
-        @Suppress("UNCHECKED_CAST")
+        // In KSP2, enum entries in arrays come as KSClassDeclaration; in KSP1 as KSType.
         val perms = (ann.arg("value") as? List<*>)
             ?.mapNotNull { it?.enumEntryName() }
             ?.takeIf { it.isNotEmpty() }
@@ -186,8 +190,8 @@ class SlashProcessor(
     }
 
     private fun resolveRateLimit(annotations: Sequence<KSAnnotation>): RateLimitModel? {
-        val ann = annotations.firstOrNull { it.fqn == ANN_RATE_LIMIT } ?: return null
-        val limit  = (ann.arg("limit") as? Int) ?: return null
+        val ann    = annotations.firstOrNull { it.fqn == ANN_RATE_LIMIT } ?: return null
+        val limit  = ann.arg("limit") as? Int ?: return null
         val period = when (val p = ann.arg("period")) {
             is Long -> p
             is Int  -> p.toLong()
@@ -198,16 +202,25 @@ class SlashProcessor(
 
     // ── Extension helpers ─────────────────────────────────────────────────────
 
+    /** Fully-qualified annotation name, used for identity checks. */
     private val KSAnnotation.fqn: String
         get() = annotationType.resolve().declaration.qualifiedName?.asString() ?: ""
 
+    /**
+     * Looks up an annotation argument by name, checking both explicitly-provided
+     * [KSAnnotation.arguments] and [KSAnnotation.defaultArguments].
+     *
+     * KSP (both KSP1 and KSP2) only puts explicitly-provided values in [arguments];
+     * parameters that were not written at the call site live in [defaultArguments].
+     */
     private fun KSAnnotation.arg(name: String): Any? =
-        arguments.firstOrNull { it.name?.asString() == name }?.value
+        (arguments + defaultArguments).firstOrNull { it.name?.asString() == name }?.value
 
     /**
-     * Resolves the simple name of an enum entry regardless of whether KSP
-     * represents it as [KSType] (KSP1 / legacy) or [KSClassDeclaration]
-     * (KSP2 / K2 AA mode, where enum entries are KSClassDeclarationEnumEntryImpl).
+     * Resolves the simple name of an enum entry regardless of KSP version:
+     * - KSP1 / legacy: enum entries in annotation args arrive as [KSType].
+     * - KSP2 / K2 AA:  enum entries arrive as [KSClassDeclaration]
+     *   (specifically KSClassDeclarationEnumEntryImpl).
      */
     private fun Any.enumEntryName(): String? = when (this) {
         is KSType -> declaration.simpleName.asString()
