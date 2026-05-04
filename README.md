@@ -5,7 +5,6 @@
 [slash-commands]: https://discord.com/developers/docs/interactions/application-commands
 
 # Slash [![Maven Central][maven-central-shield]][maven-central] [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Blad3Mak3r/Slash)
-### v2 — zero-reflection, compile-time code generation via KSP
 
 Slash is a library written 100% in **[Kotlin][kotlin]** that works with **[JDA][jda]** for an advanced implementation of **[Application Commands][slash-commands]** for Discord.
 
