@@ -86,6 +86,20 @@ class HandlerRegistry {
         check(!message.containsKey(key)) { "Message command '$name' is already registered." }
         message[key] = MessageEntry(name, preconditions, handler)
     }
+
+    /** Returns a human-readable summary of everything registered so far. */
+    fun summary(): String =
+        "slash=${slash.size}, autoComplete=${autoComplete.size}, " +
+        "buttons=${buttons.size}, modals=${modals.size}, " +
+        "message=${message.size}, user=${user.size}"
+
+    fun slashCount(): Int = slash.size
+    fun autoCompleteCount(): Int = autoComplete.size
+    fun buttonCount(): Int = buttons.size
+    fun modalCount(): Int = modals.size
+    fun messageCount(): Int = message.size
+    fun userCount(): Int = user.size
+    fun slashPaths(): Set<String> = slash.keys.toSortedSet()
 }
 
 // ── Entry types ───────────────────────────────────────────────────────────────

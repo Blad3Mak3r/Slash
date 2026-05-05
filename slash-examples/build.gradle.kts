@@ -16,6 +16,10 @@ dependencies {
 
     compileOnly(libs.jda) { exclude(module = "opus-java") }
     compileOnly(libs.coroutines.core)
+
+    testImplementation(libs.jda) { exclude(module = "opus-java") }
+    testImplementation(libs.coroutines.core)
+    testImplementation(kotlin("test"))
 }
 
 tasks {
