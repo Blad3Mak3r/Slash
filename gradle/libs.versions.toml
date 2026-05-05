@@ -4,7 +4,6 @@ jda = "6.3.1"
 kotlin = "2.3.20"
 kotlinpoet = "1.18.1"
 ksp = "2.3.7"
-prometheus = "0.16.0"
 publish = "0.35.0"
 slf4j = "2.0.17"
 versions = "0.53.0"
@@ -15,7 +14,6 @@ jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
-prometheus = { module = "io.prometheus:simpleclient", version.ref = "prometheus" }
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 [plugins]

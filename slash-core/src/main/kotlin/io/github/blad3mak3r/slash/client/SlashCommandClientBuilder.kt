@@ -13,7 +13,6 @@ import io.github.blad3mak3r.slash.internal.Interceptor
 import io.github.blad3mak3r.slash.internal.MessageCommandInterceptor
 import io.github.blad3mak3r.slash.internal.SlashCommandInterceptor
 import io.github.blad3mak3r.slash.internal.UserCommandInterceptor
-import io.github.blad3mak3r.slash.metrics.MetricsStrategy
 import io.github.blad3mak3r.slash.ratelimit.RateLimitClient
 import io.github.blad3mak3r.slash.registry.DefaultPreconditionProvider
 import io.github.blad3mak3r.slash.registry.PreconditionProvider
@@ -22,23 +21,12 @@ import kotlin.time.Duration.Companion.minutes
 
 class SlashCommandClientBuilder internal constructor() {
 
-    private var metrics: MetricsStrategy? = null
     private var exceptionHandler: ExceptionHandler? = null
     private val interceptors = mutableSetOf<Interceptor<*>>()
     private var rateLimitClient: RateLimitClient? = null
     private var duration: Duration = 1.minutes
     private var eventsFlow: MutableSharedFlow<GenericEvent>? = null
     private var preconditionProvider: PreconditionProvider? = null
-
-    fun enableMetrics(): SlashCommandClientBuilder {
-        this.metrics = MetricsStrategy()
-        return this
-    }
-
-    fun enableMetrics(builder: MetricsStrategy.() -> Unit): SlashCommandClientBuilder {
-        this.metrics = MetricsStrategy().apply(builder)
-        return this
-    }
 
     fun setExceptionHandler(handler: ExceptionHandler): SlashCommandClientBuilder {
         this.exceptionHandler = handler
@@ -131,7 +119,6 @@ class SlashCommandClientBuilder internal constructor() {
         interceptors,
         duration,
         rateLimitClient,
-        metrics,
         preconditionProvider ?: DefaultPreconditionProvider()
     )
 

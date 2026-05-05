@@ -21,8 +21,6 @@ import io.github.blad3mak3r.slash.exceptions.ExceptionHandler
 import io.github.blad3mak3r.slash.extensions.commandPath
 import io.github.blad3mak3r.slash.extensions.newCoroutineDispatcher
 import io.github.blad3mak3r.slash.internal.*
-import io.github.blad3mak3r.slash.metrics.Metrics
-import io.github.blad3mak3r.slash.metrics.MetricsStrategy
 import io.github.blad3mak3r.slash.ratelimit.RateLimitClient
 import io.github.blad3mak3r.slash.registry.CommandRegistrar
 import io.github.blad3mak3r.slash.registry.DefaultPreconditionProvider
@@ -39,7 +37,6 @@ class SlashCommandClient internal constructor(
     private val interceptors: MutableSet<Interceptor<*>>,
     private val timeout: Duration,
     private val rateLimit: RateLimitClient?,
-    strategy: MetricsStrategy?,
     preconditionProvider: PreconditionProvider
 ) : EventListener, CoroutineScope {
 
@@ -49,8 +46,6 @@ class SlashCommandClient internal constructor(
     private val supervisorJob = SupervisorJob()
     override val coroutineContext: CoroutineContext
         get() = dispatcher + Job(supervisorJob)
-
-    private val metrics: Metrics? = if (strategy != null) Metrics(strategy) else null
 
     private val registry: HandlerRegistry = HandlerRegistry().also { reg ->
         val loader = ServiceLoader.load(CommandRegistrar::class.java)
@@ -154,7 +149,6 @@ class SlashCommandClient internal constructor(
         log.debug("Executing slash handler '${entry.path}'")
 
         try {
-            metrics?.incHandledCommand(event)
             val ctx = createSlashCommandContext(entry.target, event)
 
             // Rate limiting
@@ -182,16 +176,12 @@ class SlashCommandClient internal constructor(
             }
 
             log.info("${getEventLogPrefix(event)} [Slash] --> ${event.commandString}")
-            val start = System.nanoTime()
             withTimeout(timeout) { entry.handler(ctx) }
-            metrics?.incSuccessCommand(event, (System.nanoTime() - start) / 1_000_000)
 
         } catch (tce: TimeoutCancellationException) {
             exceptionHandler.onTimeoutCancellationException(tce, event, timeout)
-            metrics?.incFailedCommand(event)
         } catch (ex: Exception) {
             exceptionHandler.wrap(ex, event)
-            metrics?.incFailedCommand(event)
         }
     }
 

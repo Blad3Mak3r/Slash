@@ -47,7 +47,6 @@ Slash turns annotated Kotlin classes into fully-wired JDA interaction handlers. 
 - **Rate limiting** — per-user sliding-window bucketing via pluggable `RateLimitClient`
 - **Interceptors** — before-handler middleware for cross-cutting concerns
 - **ShardManager support** — first-class multi-shard bot support
-- **Prometheus metrics** — optional built-in metrics via `MetricsStrategy`
 
 ---
 
@@ -69,7 +68,6 @@ Slash turns annotated Kotlin classes into fully-wired JDA interaction handlers. 
 - [Interceptors](#interceptors)
 - [Building the Client](#building-the-client)
 - [Context Actions DSL](#context-actions-dsl)
-- [Metrics](#metrics)
 - [How It Works](#how-it-works)
 
 ---
@@ -574,36 +572,6 @@ suspend fun handle(ctx: SlashCommandContext) {
         setDescription(data.toString())
     }.queue()
 }
-```
-
----
-
-## Metrics
-
-Enable optional Prometheus metrics with `enableMetrics()`. Add the Prometheus client to your dependencies first:
-
-```toml
-# gradle/libs.versions.toml
-[versions]
-prometheus = "0.16.0"
-
-[libraries]
-prometheus = { module = "io.prometheus:simpleclient", version.ref = "prometheus" }
-```
-
-```kotlin
-// app/build.gradle.kts
-dependencies {
-    implementation(libs.prometheus)
-}
-```
-
-```kotlin
-SlashCommandClient.builder()
-    .enableMetrics {
-        // configure MetricsStrategy
-    }
-    .buildWith(jda)
 ```
 
 ---

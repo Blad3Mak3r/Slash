@@ -23,7 +23,6 @@ dependencies {
     compileOnly(libs.coroutines.core)
     compileOnly(libs.jda) { exclude(module = "opus-java") }
     implementation(libs.slf4j)
-    compileOnly(libs.prometheus)
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("ch.qos.logback:logback-classic:1.5.22")
