@@ -25,7 +25,9 @@ import io.github.blad3mak3r.slash.metrics.Metrics
 import io.github.blad3mak3r.slash.metrics.MetricsStrategy
 import io.github.blad3mak3r.slash.ratelimit.RateLimitClient
 import io.github.blad3mak3r.slash.registry.CommandRegistrar
+import io.github.blad3mak3r.slash.registry.DefaultPreconditionProvider
 import io.github.blad3mak3r.slash.registry.HandlerRegistry
+import io.github.blad3mak3r.slash.registry.PreconditionProvider
 import java.util.ServiceLoader
 import java.util.regex.Matcher
 import kotlin.coroutines.CoroutineContext
@@ -37,7 +39,8 @@ class SlashCommandClient internal constructor(
     private val interceptors: MutableSet<Interceptor<*>>,
     private val timeout: Duration,
     private val rateLimit: RateLimitClient?,
-    strategy: MetricsStrategy?
+    strategy: MetricsStrategy?,
+    preconditionProvider: PreconditionProvider
 ) : EventListener, CoroutineScope {
 
     val events = eventsFlow.asSharedFlow()
@@ -53,7 +56,7 @@ class SlashCommandClient internal constructor(
         val loader = ServiceLoader.load(CommandRegistrar::class.java)
         var count = 0
         for (registrar in loader) {
-            registrar.register(reg)
+            registrar.register(reg, preconditionProvider)
             count++
         }
         log.info(

@@ -15,6 +15,8 @@ import io.github.blad3mak3r.slash.internal.SlashCommandInterceptor
 import io.github.blad3mak3r.slash.internal.UserCommandInterceptor
 import io.github.blad3mak3r.slash.metrics.MetricsStrategy
 import io.github.blad3mak3r.slash.ratelimit.RateLimitClient
+import io.github.blad3mak3r.slash.registry.DefaultPreconditionProvider
+import io.github.blad3mak3r.slash.registry.PreconditionProvider
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -26,6 +28,7 @@ class SlashCommandClientBuilder internal constructor() {
     private var rateLimitClient: RateLimitClient? = null
     private var duration: Duration = 1.minutes
     private var eventsFlow: MutableSharedFlow<GenericEvent>? = null
+    private var preconditionProvider: PreconditionProvider? = null
 
     fun enableMetrics(): SlashCommandClientBuilder {
         this.metrics = MetricsStrategy()
@@ -96,13 +99,40 @@ class SlashCommandClientBuilder internal constructor() {
         return this
     }
 
+    /**
+     * Supplies a custom [PreconditionProvider] implementation (e.g. a DI-backed one).
+     * Mutually exclusive with [preconditions]; the last call wins.
+     */
+    fun preconditionProvider(provider: PreconditionProvider): SlashCommandClientBuilder {
+        this.preconditionProvider = provider
+        return this
+    }
+
+    /**
+     * Configures precondition instances using a [DefaultPreconditionProvider] DSL.
+     *
+     * Example:
+     * ```kotlin
+     * .preconditions {
+     *     bind<AdminOnly>(AdminOnly(database))
+     *     bind<NotOnCooldown>(NotOnCooldown(redis))
+     * }
+     * ```
+     */
+    fun preconditions(block: DefaultPreconditionProvider.() -> Unit): SlashCommandClientBuilder {
+        val provider = DefaultPreconditionProvider().apply(block)
+        this.preconditionProvider = provider
+        return this
+    }
+
     fun build(): SlashCommandClient = SlashCommandClient(
         eventsFlow ?: MutableSharedFlow(replay = 0),
         exceptionHandler ?: ExceptionHandlerImpl(),
         interceptors,
         duration,
         rateLimitClient,
-        metrics
+        metrics,
+        preconditionProvider ?: DefaultPreconditionProvider()
     )
 
     fun buildWith(jda: JDA): SlashCommandClient {

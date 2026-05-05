@@ -1,4 +1,5 @@
 import io.github.blad3mak3r.slash.registry.CommandRegistrar
+import io.github.blad3mak3r.slash.registry.DefaultPreconditionProvider
 import io.github.blad3mak3r.slash.registry.HandlerRegistry
 import java.util.ServiceLoader
 import kotlin.test.Test
@@ -19,10 +20,11 @@ class ServiceLoaderTest {
     @Test
     fun `All registrars populate the HandlerRegistry without errors`() {
         val registry = HandlerRegistry()
+        val provider = DefaultPreconditionProvider()
         val loader = ServiceLoader.load(CommandRegistrar::class.java)
 
         for (registrar in loader) {
-            registrar.register(registry)
+            registrar.register(registry, provider)
         }
 
         assertTrue(registry.slashCount() > 0, "slash handlers must be registered")

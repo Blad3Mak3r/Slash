@@ -12,6 +12,8 @@ private const val REGISTRY_PKG    = "io.github.blad3mak3r.slash.registry"
 private const val ANNOTATIONS_PKG = "io.github.blad3mak3r.slash.annotations"
 private const val CONTEXT_PKG     = "io.github.blad3mak3r.slash.context"
 
+private val PRECONDITION_PROVIDER_TYPE = ClassName(REGISTRY_PKG, "PreconditionProvider")
+
 object RegistrarGenerator {
 
     /**
@@ -41,19 +43,11 @@ object RegistrarGenerator {
             model.messageHandler?.let { addAll(it.require) }
         }.toList()
 
-        val preProps = allPreFqns.mapIndexed { i, fqn ->
-            val cn = ClassName.bestGuess(fqn)
-            PropertySpec.builder("_pre$i", cn, KModifier.PRIVATE)
-                .initializer("%T()", cn)
-                .build()
-        }
-
         val registerFun = buildRegisterFunction(handlerRegistryType, model, allPreFqns)
 
         val registrarClass = TypeSpec.classBuilder(registrarName)
             .addSuperinterface(commandRegistrarType)
             .addProperty(instanceProp)
-            .addProperties(preProps)
             .addFunction(registerFun)
             .build()
 
@@ -77,7 +71,26 @@ object RegistrarGenerator {
         val builder = FunSpec.builder("register")
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("registry", handlerRegistryType)
+            .addParameter("preconditionProvider", PRECONDITION_PROVIDER_TYPE)
 
+        // Emit bindIfAbsent for each unique precondition type so zero-arg defaults
+        // are registered automatically (user-supplied bindings take precedence).
+        allPreFqns.forEachIndexed { i, fqn ->
+            val cn = ClassName.bestGuess(fqn)
+            builder.addStatement(
+                "preconditionProvider.bindIfAbsent(%T::class.java) { %T() }",
+                cn, cn
+            )
+        }
+
+        // Resolve each precondition as a local val
+        allPreFqns.forEachIndexed { i, fqn ->
+            val cn = ClassName.bestGuess(fqn)
+            builder.addStatement(
+                "val _pre%L = preconditionProvider.get(%T::class.java)",
+                i, cn
+            )
+        }
         when (model.commandType) {
             "MESSAGE" -> {
                 model.messageHandler?.let { handler ->
