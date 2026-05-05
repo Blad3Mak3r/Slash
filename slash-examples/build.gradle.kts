@@ -34,3 +34,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
     sourceCompatibility = JavaVersion.VERSION_11
 }
+
+// Explicitly register the KSP-generated resource directory so that
+// IntelliJ IDEA (when NOT delegating builds to Gradle) still includes
+// the META-INF/services file on the run classpath.
+sourceSets.main {
+    resources.srcDir("build/generated/ksp/main/resources")
+}
