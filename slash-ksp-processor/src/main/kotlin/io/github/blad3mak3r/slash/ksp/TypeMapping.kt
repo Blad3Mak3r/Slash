@@ -31,7 +31,12 @@ object TypeMapping {
         "Double"                                                -> "asDouble"
         "Float"                                                 -> "asDouble.toFloat()"
         "Member",
-        "net.dv8tion.jda.api.entities.Member"                   -> "asMember!!"
+        "net.dv8tion.jda.api.entities.Member"                   ->
+            // JDA's asMember returns Member? (null when the user is not a guild member).
+            // For non-null Member params we assert with !! (caller ensures guild context).
+            // For Member? params we must NOT append !! — the option may not be provided
+            // at all, so the safe-call ?.asMember already produces null and !! would NPE.
+            if (nullable) "asMember" else "asMember!!"
         "User",
         "net.dv8tion.jda.api.entities.User"                     -> "asUser"
         "Role",
