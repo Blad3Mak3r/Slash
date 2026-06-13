@@ -74,14 +74,14 @@ Slash turns annotated Kotlin classes into fully-wired JDA interaction handlers. 
 
 ## Requirements
 
-| Dependency         | Version  |
-|--------------------|----------|
-| Kotlin             | `2.0+`   |
-| KSP                | `2.x`    |
-| JDA                | `6.x`    |
-| Kotlinx Coroutines | `1.9+`   |
-| Java               | `11+`    |
-| Gradle             | `8+`     |
+| Dependency         | Version |
+|--------------------|---------|
+| Kotlin             | `2.0+`  |
+| KSP                | `2.x`   |
+| JDA                | `6.4.x` |
+| Kotlinx Coroutines | `1.11+` |
+| Java               | `11+`   |
+| Gradle             | `8+`    |
 
 ---
 
@@ -93,18 +93,16 @@ Slash is distributed as three artifacts. In practice you only need to declare tw
 
 ```toml
 [versions]
-slash = "0.20.0-alpha.4"
-ksp   = "2.3.7"           # must match your Kotlin plugin version exactly
+slash = "0.20.2"
+ksp   = "2.3.9"           # must match your Kotlin plugin version exactly
 
 [libraries]
 slash-core          = { module = "io.github.blad3mak3r.slash:slash-core",          version.ref = "slash" }
 slash-ksp-processor = { module = "io.github.blad3mak3r.slash:slash-ksp-processor", version.ref = "slash" }
 
 [plugins]
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ksp = { id = "com.google.devtoo.devtools.ksp", version.ref = "ksp" }
 ```
-
-> The KSP version must match your Kotlin version. Check the [KSP releases](https://github.com/google/ksp/releases) page for the correct pairing (e.g. Kotlin `2.3.20` → KSP `2.3.20-...`).
 
 ### 2. Root Build File (`build.gradle.kts`)
 
