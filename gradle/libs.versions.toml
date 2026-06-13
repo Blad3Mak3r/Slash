@@ -1,11 +1,11 @@
 [versions]
 coroutines = "1.11.0"
-jda = "6.4.1"
+jda = "6.4.2"
 kotlin = "2.4.0"
 kotlinpoet = "2.3.0"
 ksp = "2.3.9"
 publish = "0.35.0"
-slf4j = "2.0.17"
+slf4j = "2.0.18"
 versions = "0.54.0"
 
 [libraries]
