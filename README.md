@@ -221,11 +221,11 @@ class StatsCommand {
     suspend fun userStats(ctx: SlashCommandContext, user: User?) { ... }
 
     // /stats server info
-    @OnSlashCommand(group = "server", name = "info")
+    @OnSlashCommand(name = "info", group = "server")
     suspend fun serverInfo(ctx: SlashCommandContext) { ... }
 
     // /stats server members
-    @OnSlashCommand(group = "server", name = "members")
+    @OnSlashCommand(name = "members", group = "server")
     suspend fun serverMembers(ctx: SlashCommandContext) { ... }
 }
 ```
@@ -318,10 +318,10 @@ class ColorCommand {
 }
 ```
 
-For subcommand handlers, set `group` and `name` on `@OnAutoComplete` to match the handler:
+For subcommand handlers, set `name` and `group` on `@OnAutoComplete` to match the handler:
 
 ```kotlin
-@OnAutoComplete(group = "clips", name = "top", option = "channel")
+@OnAutoComplete(name = "top", group = "clips", option = "channel")
 suspend fun completeChannel(ctx: AutoCompleteContext, channel: String) { ... }
 ```
 
@@ -372,11 +372,11 @@ Declare required Discord permissions at class level (all handlers) or function l
 @ApplicationCommand(name = "setup")
 class SetupCommand {
 
-    @OnSlashCommand(group = "greetings", name = "preview")
+    @OnSlashCommand(name = "preview", group = "greetings")
     @Permissions([Permission.MESSAGE_EMBED_LINKS], PermissionTarget.BOT)  // bot needs embed links
     suspend fun greetingsPreview(ctx: GuildSlashCommandContext) { ... }
 
-    @OnSlashCommand(group = "greetings", name = "set")
+    @OnSlashCommand(name = "set", group = "greetings")
     @Permissions([Permission.MANAGE_GUILD])                               // user needs manage guild
     suspend fun greetingsSet(ctx: GuildSlashCommandContext, channel: TextChannel) { ... }
 }
